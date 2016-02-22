@@ -1,0 +1,74 @@
+/*--小テスト一覧画面セレクトボックス---*/
+.quiz-list-select {
+    margin: 1em!important;
+}
+/*--時間目安、合格点などサブ説明のテキスト表示---*/
+.quiz-passing-text {
+    margin-right:1.5em;
+}
+/*--小テスト一覧画面の編集者向け詳細情報枠---*/
+.quiz-editor-dl {
+    margin:0px;
+    clear: left;
+}
+.quiz-editor-dl dt {
+    float:left;
+    margin-right:1em;
+}
+.quiz-editor-dl dd {
+    float:left;
+    margin-right:4em;
+}
+/*--小テスト追加画面の過去の小テストセレクトリスト用---*/
+.quiz-select-box {
+    height:150px;
+    overflow-y: scroll;
+    list-style:none;
+    padding:0px;
+}
+.quiz-select-box li {
+    padding:0px 0.5em
+}
+/*--小テスト編集画面のform-group枠への追加スタイル---*/
+.quiz-group { margin-top:0.5em ;margin-bottom:1.5em;margin-left: 2em;
+}
+.quiz-supplemental-item {
+    margin-left:3em;
+}
+/*--小テスト編集画面の小テストタイトルスタイル---*/
+.quiz-setting-ttl {
+    padding: 10px 20px 0px;
+}
+.quiz-setting-ttl-help {
+    padding-bottom:1em;
+    padding-left: 2em;
+}
+/*--小テスト編集画面の質問アコーディオンスタイル---*/
+.quiz-accordion-header-title {
+    line-height:2em;
+    padding-left:0.5em;
+}
+/*--小テスト編集画面の選択肢リスト---*/
+.quiz-edit-choice-list-group {
+    margin-bottom: 5px;
+}
+/*--小テスト編集画面の「正解にする」---*/
+.quiz-edit-correct-option {
+    margin-right:15px;
+}
+/*
+ * 編集画面ステップメニュー
+ */
+.quiz-steps {
+    height:auto;
+}
+.quiz-step-item {
+    float: left;
+    height: 100%;
+    padding: 6px 1em 3px 0px;
+    text-align: center;
+    font-size: 12px;
+}
+.quiz-step-item .glyphicon {
+    float:right;
+}

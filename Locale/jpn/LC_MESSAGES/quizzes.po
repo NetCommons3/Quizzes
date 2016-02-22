@@ -1,0 +1,396 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: /Controller/QuizEditController.php:340
+msgid "page"
+msgstr "ページ"
+
+#: /Controller/QuizEditController.php:341
+#: /Model/QuizQuestion.php:174
+msgid "New Question"
+msgstr "新規問題"
+
+#: /Controller/QuizEditController.php:342
+#: /Model/QuizChoice.php:130
+msgid "new choice"
+msgstr "新規選択肢"
+
+#: /Controller/QuizzesController.php:215
+msgid "View All"
+msgstr "全て表示"
+
+#: /Controller/QuizzesController.php:216
+msgid "Unanswered"
+msgstr "未受験"
+
+#: /Controller/QuizzesController.php:217
+msgid "Answered"
+msgstr "受験済"
+
+#: /Controller/QuizzesController.php:220
+#: /View/Helper/QuizAnswerButtonHelper.php:66
+msgid "Test"
+msgstr "テストモード"
+
+#: /Controller/Component/QuizzesComponent.php:305;306;307;308
+msgid "item"
+msgstr "件"
+
+#: /Controller/Component/QuizzesComponent.php:319
+msgid "New Modified"
+msgstr "更新順"
+
+#: /Controller/Component/QuizzesComponent.php:320
+msgid "Registration order"
+msgstr "登録順"
+
+#: /Controller/Component/QuizzesComponent.php:321
+#: /Model/ActionQuizAdd.php:60
+#: /View/QuizEdit/edit.ctp:47
+msgid "Title"
+msgstr "タイトル"
+
+#: /Controller/Component/QuizzesComponent.php:322
+msgid "End period"
+msgstr "終了期日"
+
+#: /Controller/Component/QuizzesComponent.php:333
+msgid "Single choice"
+msgstr "択一選択"
+
+#: /Controller/Component/QuizzesComponent.php:334
+msgid "Multiple choice"
+msgstr "複数選択"
+
+#: /Controller/Component/QuizzesComponent.php:335
+msgid "Word"
+msgstr "単語"
+
+#: /Controller/Component/QuizzesComponent.php:336
+msgid "Multiple word"
+msgstr "単語（複数）"
+
+#: /Controller/Component/QuizzesComponent.php:337
+msgid "Multiple text"
+msgstr "記述式"
+
+#: /Model/ActionQuizAdd.php:54
+msgid "Please choose create option."
+msgstr "作成方法を選んでください。"
+
+#: /Model/ActionQuizAdd.php:66;70
+msgid "Please select past quiz."
+msgstr "参考にする過去の小テストをひとつ選んでください。"
+
+#: /Model/ActionQuizAdd.php:254
+msgid "file upload error."
+msgstr "ファイルアップロードエラー"
+
+#: /Model/ActionQuizAdd.php:263;270;277
+msgid "illegal import file."
+msgstr "インポートファイルの内容が不正です。"
+
+#: /Model/ActionQuizAdd.php:290
+msgid "version is different."
+msgstr "インポートファイルは異なるバージョンの小テストで作成されています。ここでは取り込めません。"
+
+#: /Model/QuizPage.php:134
+msgid "First Page"
+msgstr "１ページ目"
+
+#: /View/Elements/QuizEdit/edit_flow_chart.ctp:14
+msgid "Set questions"
+msgstr "問題作成"
+
+#: /View/Elements/QuizEdit/edit_flow_chart.ctp:15
+msgid "Set result display"
+msgstr "結果表示設定"
+
+#: /View/Elements/QuizEdit/edit_flow_chart.ctp:16
+msgid "Set quiz"
+msgstr "小テスト設定"
+
+#: /View/Elements/QuizEdit/quiz_title.ctp:14
+msgid "If you want to change the quiz title, please edit in \"Set quiz\" step."
+msgstr "テストタイトルの変更は、「小テスト設定」のステップで再度変更できます。"
+
+#: /View/Elements/QuizEdit/Edit/delete_form.ctp:31
+msgid "Quiz"
+msgstr "小テスト"
+
+#: /View/Elements/QuizEdit/EditQuestion/accordion_heading.ctp:16
+msgid "copy to another page"
+msgstr "別ページへコピー"
+
+#: /View/Elements/QuizEdit/EditQuestion/accordion_heading.ctp:20
+msgid "destination page number"
+msgstr "コピー先ページ番号"
+
+#: /View/Elements/QuizEdit/EditQuestion/accordion_heading.ctp:28
+msgid "Do you want to delete this question ?"
+msgstr "この問題を削除してよいですか？"
+
+#: /View/Elements/QuizEdit/EditQuestion/add_question_button.ctp:18
+msgid "Add Question"
+msgstr "問題追加"
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/multiple_word_option.ctp:4
+msgid "add words"
+msgstr "単語追加"
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/multiple_word_option.ctp:14
+msgid "the word order to a fixed"
+msgstr "単語回答の順不同を認める"
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/multiple_word_option.ctp:27
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/simple_choice_option.ctp:62
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/word_option.ctp:7
+msgid "You can not use the character of |, : for choice text "
+msgstr "「|」「:」の文字は回答のテキストに含めてはいけません。"
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/simple_choice_option.ctp:20;70
+msgid "add choices"
+msgstr "選択肢追加"
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/simple_choice_option.ctp:30
+msgid "randomaize choices"
+msgstr "選択肢をランダムな順番で表示する"
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/word.ctp:5
+msgid "Add Correct"
+msgstr "正解を追加する"
+
+#: /View/Elements/Quizzes/add_button.ctp:23
+msgid "Create article"
+msgstr "小テストを追加する"
+
+#: /View/Elements/Quizzes/answer_status.ctp:20
+msgid "Answer status"
+msgstr "回答状態"
+
+#: /View/Elements/Quizzes/create_new.ctp:14
+msgid "Create new quiz"
+msgstr "小テストを作成する"
+
+#: /View/Elements/Quizzes/create_new.ctp:21
+msgid "Quiz title"
+msgstr "小テストタイトル"
+
+#: /View/Elements/Quizzes/create_new.ctp:23
+msgid "Please input quiz title"
+msgstr "小テストのタイトルを入力してください。"
+
+#: /View/Elements/Quizzes/create_reuse.ctp:14
+msgid "Re-use past quiz"
+msgstr "過去の小テストから作成する"
+
+#: /View/Elements/Quizzes/create_reuse.ctp:25
+msgid "Past quiz"
+msgstr "以前に作成されている小テスト"
+
+#: /View/Elements/Quizzes/create_reuse.ctp:34
+msgid "Refine by entering the part of the quiz name"
+msgstr "小テストのタイトルの一部を入力して、下のリストの内容を絞り込むことができます"
+
+#: /View/Elements/Quizzes/create_reuse.ctp:50
+#: /View/QuizEdit/edit.ctp:82
+#: /View/Quizzes/index.ctp:36
+msgid " - "
+msgstr ""
+
+#: /View/Elements/Quizzes/create_reuse.ctp:52
+msgid "Implementation"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_template.ctp:13
+msgid "Create from Template"
+msgstr "テンプレートから作成する"
+
+#: /View/Elements/Quizzes/create_template.ctp:23
+msgid "Quiz template file"
+msgstr "テンプレートファイル"
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:24
+msgid "Author"
+msgstr "作成者"
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:26
+msgid "Modified by"
+msgstr "更新者"
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:32
+msgid "Pages"
+msgstr "ページ数"
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:34
+msgid "Questions"
+msgstr "問題数"
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:36
+msgid "Answers"
+msgstr "回答者数"
+
+#: /View/Helper/QuizAnswerButtonHelper.php:86
+msgid "Answer"
+msgstr "回答"
+
+#: /View/Helper/QuizAnswerButtonHelper.php:103
+msgid "Unpublished"
+msgstr "未発行"
+
+#: /View/Helper/QuizAnswerButtonHelper.php:107
+msgid "Finished"
+msgstr "終了"
+
+#: /View/Helper/QuizAnswerCorrectHelper.php:54
+msgid "commentary"
+msgstr "解説"
+
+#: /View/Helper/QuizStatusLabelHelper.php:31
+msgid "Undefined"
+msgstr "未定義"
+
+#: /View/Helper/QuizStatusLabelHelper.php:49
+msgid "Before public"
+msgstr "公開前"
+
+#: /View/Helper/QuizStatusLabelHelper.php:53
+msgid "End"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:52
+msgid "Sub Title"
+msgstr "サブタイトル"
+
+#: /View/QuizEdit/edit.ctp:54
+msgid "Please enter if there is a sub title"
+msgstr "サブタイトルがあれば入力してください"
+
+#: /View/QuizEdit/edit.ctp:59
+msgid "Quiz answer period"
+msgstr "回答期間"
+
+#: /View/QuizEdit/edit.ctp:64
+msgid "set the answer period"
+msgstr "回答期間を設定する"
+
+#: /View/QuizEdit/edit.ctp:72
+msgid "After approval will be immediately published . Stop of the quiz to select the stop from the quiz data list ."
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:93
+msgid "Quiz method"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:97
+msgid "accept the non-members answer"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:100
+msgid "use key phrase"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:109
+msgid "forgive the repetition of the answer"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:112
+msgid "do image authentication"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:117
+msgid "Deliver e-mail when submitted"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:121
+msgid "Quiz open mail"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:125
+msgid "Deliver e-mail when quiz has opened"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:130
+msgid "open mail subject"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:133
+msgid "open mail text"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:66
+msgid "set page random"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:109
+msgid "Allotment"
+msgstr "配点"
+
+#: /View/QuizEdit/edit_question.ctp:119
+msgid "question sentence"
+msgstr "問題文"
+
+#: /View/QuizEdit/edit_question.ctp:130
+msgid "Question type"
+msgstr "問題タイプ"
+
+#: /View/QuizEdit/edit_question.ctp:174
+msgid "Do you want to delete this page?"
+msgstr "本当にこのページを削除してよろしいですか？"
+
+#: /View/QuizEdit/edit_question.ctp:175
+msgid "Delete this page"
+msgstr "ページ削除"
+
+#: /View/QuizEdit/edit_question.ctp:183
+msgid "Add Page"
+msgstr "ページ追加"
+
+#: /View/QuizEdit/edit_result.ctp:48
+msgid "not disclose the correct"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:48
+msgid "publish correct"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:51
+msgid "not disclose the total result"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:51
+msgid "publish aggregate result"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:58
+msgid "Question you want to display the aggregate results"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:71
+msgid "There is an error"
+msgstr ""
+
+#: /View/Quizzes/add.ctp:27
+msgid "You can create a new quiz. Please choose how to create."
+msgstr ""
+
+#: /View/Quizzes/no_quiz.ctp:28
+msgid "no quiz"
+msgstr "小テストはまだありません"
+
+#: /View/Quizzes/no_quiz.ctp:33
+msgid "Please create new quiz by pressing the \"+\" button."
+msgstr "＋ボタンをクリックして、小テストを作成してください。"
+

@@ -1,0 +1,404 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: /Controller/QuizEditController.php:340
+msgid "page"
+msgstr ""
+
+#: /Controller/QuizEditController.php:341
+#: /Model/QuizQuestion.php:174
+msgid "New Question"
+msgstr ""
+
+#: /Controller/QuizEditController.php:342
+#: /Model/QuizChoice.php:130
+msgid "new choice"
+msgstr ""
+
+#: /Controller/QuizzesController.php:215
+msgid "View All"
+msgstr ""
+
+#: /Controller/QuizzesController.php:216
+msgid "Unanswered"
+msgstr ""
+
+#: /Controller/QuizzesController.php:217
+msgid "Answered"
+msgstr ""
+
+#: /Controller/QuizzesController.php:220
+#: /View/Helper/QuizAnswerButtonHelper.php:66
+msgid "Test"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:305;306;307;308
+msgid "item"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:319
+msgid "New Modified"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:320
+msgid "Registration order"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:321
+#: /Model/ActionQuizAdd.php:60
+#: /View/QuizEdit/edit.ctp:47
+msgid "Title"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:322
+msgid "End period"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:333
+msgid "Single choice"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:334
+msgid "Multiple choice"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:335
+msgid "Word"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:336
+msgid "Multiple word"
+msgstr ""
+
+#: /Controller/Component/QuizzesComponent.php:337
+msgid "Multiple text"
+msgstr ""
+
+#: /Model/ActionQuizAdd.php:54
+msgid "Please choose create option."
+msgstr ""
+
+#: /Model/ActionQuizAdd.php:66;70
+msgid "Please select past quiz."
+msgstr ""
+
+#: /Model/ActionQuizAdd.php:254
+msgid "file upload error."
+msgstr ""
+
+#: /Model/ActionQuizAdd.php:263;270;277
+msgid "illegal import file."
+msgstr ""
+
+#: /Model/ActionQuizAdd.php:290
+msgid "version is different."
+msgstr ""
+
+#: /Model/QuizPage.php:134
+msgid "First Page"
+msgstr ""
+
+#: /View/Elements/QuizEdit/edit_flow_chart.ctp:14
+msgid "Set questions"
+msgstr ""
+
+#: /View/Elements/QuizEdit/edit_flow_chart.ctp:15
+msgid "Set result display"
+msgstr ""
+
+#: /View/Elements/QuizEdit/edit_flow_chart.ctp:16
+msgid "Set quiz"
+msgstr ""
+
+#: /View/Elements/QuizEdit/quiz_title.ctp:14
+msgid "If you want to change the quiz title, please edit in \"Set quiz\" step."
+msgstr ""
+
+#: /View/Elements/QuizEdit/Edit/delete_form.ctp:31
+msgid "Quiz"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/accordion_heading.ctp:16
+msgid "copy to another page"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/accordion_heading.ctp:20
+msgid "destination page number"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/accordion_heading.ctp:28
+msgid "Do you want to delete this question ?"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/add_question_button.ctp:18
+msgid "Add Question"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/multiple_word_option.ctp:4
+msgid "add words"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/multiple_word_option.ctp:14
+msgid "the word order to a fixed"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/multiple_word_option.ctp:27
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/simple_choice_option.ctp:62
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/word_option.ctp:7
+msgid "You can not use the character of |, : for choice text "
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/simple_choice_option.ctp:20;70
+msgid "add choices"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/simple_choice_option.ctp:30
+msgid "randomaize choices"
+msgstr ""
+
+#: /View/Elements/QuizEdit/EditQuestion/options_before_published/word.ctp:5
+msgid "Add Correct"
+msgstr ""
+
+#: /View/Elements/Quizzes/add_button.ctp:23
+msgid "Create article"
+msgstr ""
+
+#: /View/Elements/Quizzes/answer_status.ctp:20
+msgid "Answer status"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_new.ctp:14
+msgid "Create new quiz"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_new.ctp:21
+msgid "Quiz title"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_new.ctp:23
+msgid "Please input quiz title"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_reuse.ctp:14
+msgid "Re-use past quiz"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_reuse.ctp:25
+msgid "Past quiz"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_reuse.ctp:34
+msgid "Refine by entering the part of the quiz name"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_reuse.ctp:50
+#: /View/QuizEdit/edit.ctp:82
+#: /View/Quizzes/index.ctp:36
+msgid " - "
+msgstr ""
+
+#: /View/Elements/Quizzes/create_reuse.ctp:52
+msgid "Implementation"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_template.ctp:13
+msgid "Create from Template"
+msgstr ""
+
+#: /View/Elements/Quizzes/create_template.ctp:23
+msgid "Quiz template file"
+msgstr ""
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:24
+msgid "Author"
+msgstr ""
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:26
+msgid "Modified by"
+msgstr ""
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:32
+msgid "Pages"
+msgstr ""
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:34
+msgid "Questions"
+msgstr ""
+
+#: /View/Elements/Quizzes/detail_for_editor.ctp:36
+msgid "Answers"
+msgstr ""
+
+#: /View/Helper/QuizAnswerButtonHelper.php:86
+msgid "Answer"
+msgstr ""
+
+#: /View/Helper/QuizAnswerButtonHelper.php:103
+msgid "Unpublished"
+msgstr ""
+
+#: /View/Helper/QuizAnswerButtonHelper.php:107
+msgid "Finished"
+msgstr ""
+
+#: /View/Helper/QuizAnswerCorrectHelper.php:54
+msgid "commentary"
+msgstr ""
+
+#: /View/Helper/QuizStatusLabelHelper.php:31
+msgid "Undefined"
+msgstr ""
+
+#: /View/Helper/QuizStatusLabelHelper.php:49
+msgid "Before public"
+msgstr ""
+
+#: /View/Helper/QuizStatusLabelHelper.php:53
+msgid "End"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:52
+msgid "Sub Title"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:54
+msgid "Please enter if there is a sub title"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:59
+msgid "Quiz answer period"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:64
+msgid "set the answer period"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:72
+msgid "After approval will be immediately published . Stop of the quiz to select the stop from the quiz data list ."
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:93
+msgid "Quiz method"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:97
+msgid "accept the non-members answer"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:100
+msgid "use key phrase"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:109
+msgid "forgive the repetition of the answer"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:112
+msgid "do image authentication"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:117
+msgid "Deliver e-mail when submitted"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:121
+msgid "Quiz open mail"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:125
+msgid "Deliver e-mail when quiz has opened"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:130
+msgid "open mail subject"
+msgstr ""
+
+#: /View/QuizEdit/edit.ctp:133
+msgid "open mail text"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:66
+msgid "set page random"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:99
+msgid "Required"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:106
+msgid "set answer to this question is required"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:109
+msgid "Allotment"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:119
+msgid "question sentence"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:130
+msgid "Question type"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:174
+msgid "Do you want to delete this page?"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:175
+msgid "Delete this page"
+msgstr ""
+
+#: /View/QuizEdit/edit_question.ctp:183
+msgid "Add Page"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:48
+msgid "not disclose the correct"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:48
+msgid "publish correct"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:51
+msgid "not disclose the total result"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:51
+msgid "publish aggregate result"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:58
+msgid "Question you want to display the aggregate results"
+msgstr ""
+
+#: /View/QuizEdit/edit_result.ctp:71
+msgid "There is an error"
+msgstr ""
+
+#: /View/Quizzes/add.ctp:27
+msgid "You can create a new quiz. Please choose how to create."
+msgstr ""
+
+#: /View/Quizzes/no_quiz.ctp:28
+msgid "no quiz"
+msgstr ""
+
+#: /View/Quizzes/no_quiz.ctp:33
+msgid "Please create new quiz by pressing the \"+\" button."
+msgstr ""
+
