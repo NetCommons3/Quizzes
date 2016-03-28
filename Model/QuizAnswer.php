@@ -117,6 +117,7 @@ class QuizAnswer extends QuizzesAppModel {
 			),
 			'recursive' => -1,
 		));
+		$this->log($ret, 'debug');
 		// 未採点があるうちは
 		if ($ret > 0) {
 			return null;
@@ -138,6 +139,7 @@ class QuizAnswer extends QuizzesAppModel {
 		if (! $ret) {
 			return 0;
 		}
+		$this->log($ret, 'debug');
 		return $ret[0]['total_score'];
 	}
 

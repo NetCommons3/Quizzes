@@ -10,5 +10,5 @@
  */
 ?>
 <?php if (in_array($quizKey, $passQuizKeys)): ?>
-    <?php echo $this->NetCommonsHtml->titleIcon('/net_commons/img/title_icon/mark_quiz_pass.svg'); ?>
+    <?php echo $this->TitleIcon->titleIcon('/net_commons/img/title_icon/10_051_pass.svg'); ?>
 <?php endif;

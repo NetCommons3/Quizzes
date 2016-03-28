@@ -14,7 +14,7 @@
 	array(QuizzesComponent::QUIZ_CREATE_OPT_REUSE => __d('quizzes', 'Re-use past quiz')),
 	array('ng-model' => 'createOption',
 	'hiddenField' => false,
-	'ng-disabled' => 'quizzes.length == 0',
+	'ng-disabled' => 'pastQuizzes.length == 0',
 	));
 ?>
 <div class="row form-horizontal" collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_REUSE; ?>'">

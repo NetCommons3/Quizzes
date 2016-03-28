@@ -165,8 +165,12 @@ class QuizResultHelper extends AppHelper {
 		$variance = $general['general']['samp_score'];
 		$std = sqrt($variance);
 		$avg = $general['general']['avg_score'];
-		$stdDiv = ($summary['QuizAnswerSummary']['summary_score'] - $avg) * 10 / $std;
-		$stdScore = 50 + $stdDiv;
+		if ($std == 0) {
+			$stdScore = 50;
+		} else {
+			$stdDiv = ($summary['QuizAnswerSummary']['summary_score'] - $avg) * 10 / $std;
+			$stdScore = 50 + $stdDiv;
+		}
 		return round($stdScore);
 	}
 /**

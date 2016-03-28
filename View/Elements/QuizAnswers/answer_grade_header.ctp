@@ -21,7 +21,7 @@
     <?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
     <div class="h2">
         <?php if ($gradePass == QuizzesComponent::STATUS_GRADE_PASS): ?>
-            <?php echo $this->NetCommonsHtml->titleIcon('/net_commons/img/title_icon/mark_quiz_pass.svg'); ?>
+            <?php echo $this->TitleIcon->titleIcon('/net_commons/img/title_icon/10_051_pass.svg'); ?>
         <?php endif; ?>
         <?php if (is_null($summary['QuizAnswerSummary']['summary_score'])): ?>
             未採点があります。まだ得点は出されていません。

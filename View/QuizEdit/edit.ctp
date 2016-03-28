@@ -9,12 +9,10 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 echo $this->element('Quizzes.scripts');
+echo $this->Wysiwyg->wysiwygScript();
 echo $this->NetCommonsHtml->script(array(
 	'/components/moment/min/moment.min.js',
 	'/components/moment/min/moment-with-locales.min.js',
-	'/components/tinymce-dist/tinymce.min.js',
-	'/components/angular-ui-tinymce/src/tinymce.js',
-	'/net_commons/js/wysiwyg.js',
 	'/quizzes/js/quizzes_edit.js',
 ));
 $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->data));
@@ -56,6 +54,8 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 			<?php else: ?>
 				<?php echo $this->element('Quizzes.QuizEdit/Edit/quiz_method/group_method'); ?>
 			<?php endif; ?>
+
+			<hr />
 
 			<?php echo $this->Workflow->inputComment('Quiz.status'); ?>
 		</div>

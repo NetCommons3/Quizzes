@@ -76,6 +76,7 @@ class QuizzesController extends QuizzesAppController {
 		'Workflow.Workflow',
 		'NetCommons.Date',
 		'NetCommons.DisplayNumber',
+		'NetCommons.TitleIcon',
 		'NetCommons.Button',
 		'Quizzes.QuizStatusLabel',
 		'Quizzes.QuizAnswerButton',

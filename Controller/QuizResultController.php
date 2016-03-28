@@ -54,6 +54,7 @@ class QuizResultController extends QuizzesAppController {
 	public $helpers = [
 		'NetCommons.Date',
 		'NetCommons.DisplayNumber',
+		'NetCommons.TitleIcon',
 		'Workflow.Workflow',
 		'Quizzes.QuizResult'
 	];

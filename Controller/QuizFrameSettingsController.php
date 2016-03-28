@@ -45,13 +45,6 @@ class QuizFrameSettingsController extends QuizzesAppController {
  * @var array
  */
 	public $components = array(
-		'Blocks.BlockTabs' => array(
-			'mainTabs' => array(
-				'block_index' => array('url' => array('controller' => 'quiz_blocks')),
-				'role_permissions' => array('url' => array('controller' => 'quiz_block_role_permissions')),
-				'frame_settings' => array('url' => array('controller' => 'quiz_frame_settings')),
-			),
-		),
 		'NetCommons.Permission' => array(
 			//アクセスの権限
 			'allow' => array(
@@ -68,6 +61,15 @@ class QuizFrameSettingsController extends QuizzesAppController {
  * @var array
  */
 	public $helpers = array(
+		'Blocks.BlockTabs' => array(
+			'mainTabs' => array(
+				'block_index' => array('url' => array('controller' => 'quiz_blocks')),
+				'role_permissions' => array('url' => array('controller' => 'quiz_block_role_permissions')),
+				'frame_settings' => array('url' => array('controller' => 'quiz_frame_settings')),
+				'mail_settings' => array('url' => array('controller' => 'quiz_mail_settings')),
+			),
+		),
+		'NetCommons.DisplayNumber',
 		'NetCommons.Date',
 	);
 

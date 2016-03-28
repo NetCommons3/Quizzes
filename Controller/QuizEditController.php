@@ -55,6 +55,7 @@ class QuizEditController extends QuizzesAppController {
  */
 	public $helpers = array(
 		'Workflow.Workflow',
+		'Wysiwyg.Wysiwyg',
 		'Quizzes.QuestionEdit',
 		'Quizzes.QuizAnswerCorrect'
 	);

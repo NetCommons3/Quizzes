@@ -271,6 +271,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			$data['elapsed_second'] = strtotime($nowTime) - strtotime($summary[$this->alias]['answer_start_time']);
 
 			if (!is_null($score)) {
+				$this->log('SCOREはNULLじゃなかったよ', 'debug');
 				$data['is_grade_finished'] = true;
 				$data['summary_score'] = $score;
 				if ($quiz['Quiz']['passing_grade'] > 0 && $score >= $quiz['Quiz']['passing_grade']) {
@@ -287,10 +288,11 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			} else {
 				$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
 			}
-
+			$this->log($data, 'debug');
 			if (! $this->save($data, false, array(
 				'answer_status',
 				'summary_score',
+				'is_grade_finished',
 				'passing_status',
 				'answer_finish_time',
 				'elapsed_second',

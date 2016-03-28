@@ -13,9 +13,6 @@ echo $this->element('Quizzes.scripts');
 echo $this->NetCommonsHtml->script(array(
 	'/components/moment/min/moment.min.js',
 	'/components/moment/min/moment-with-locales.min.js',
-	'/components/tinymce-dist/tinymce.min.js',
-	'/components/angular-ui-tinymce/src/tinymce.js',
-	'/net_commons/js/wysiwyg.js',
 	'/quizzes/js/quizzes_edit_question.js',
 ));
 $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->data));
@@ -77,7 +74,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 						</div>
 						<div  class="col-sm-12" ng-show="page.isPageDescription == 1">
 							<?php /* ページ冒頭文 */
-								echo $this->NetCommonsForm->input('QuizPage.{{pageIndex}}.page_description',
+								echo $this->NetCommonsForm->wysiwyg('QuizPage.{{pageIndex}}.page_description',
 									array('type' => 'wysiswyg',
 										'id' => false,
 										'label' => false,

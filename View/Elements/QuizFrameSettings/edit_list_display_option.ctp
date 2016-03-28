@@ -11,14 +11,13 @@
 ?>
 
 <div class='form-group'>
-	<?php echo $this->NetCommonsForm->input('display_num_per_page', array(
-		'label' => __d('quizzes', 'Visible quiz row'),
-		'type' => 'select',
-		'options' => QuizzesComponent::getDisplayNumberOptions(),
-		'selected' => $quizFrameSettings['display_num_per_page'],
-		'autofocus' => true,
-	));
-	?>
+	<?php echo $this->DisplayNumber->select('QuizFrameSetting.display_num_per_page', array(
+	'label' => __d('Quizzes', 'Visible quiz row'),
+	'unit' => array(
+	'single' => __d('net_commons', '%s item'),
+	'multiple' => __d('net_commons', '%s items')
+	),
+	)); ?>
 </div>
 
 <div class='form-group'>

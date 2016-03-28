@@ -41,13 +41,6 @@ class QuizBlockRolePermissionsController extends QuizzesAppController {
  * @var array
  */
 	public $components = array(
-		'Blocks.BlockTabs' => array(
-			'mainTabs' => array(
-				'block_index' => array('url' => array('controller' => 'quiz_blocks')),
-				'role_permissions' => array('url' => array('controller' => 'quiz_block_role_permissions')),
-				'frame_settings' => array('url' => array('controller' => 'quiz_frame_settings')),
-			),
-		),
 		'NetCommons.Permission' => array(
 			//アクセスの権限
 			'allow' => array(
@@ -63,6 +56,14 @@ class QuizBlockRolePermissionsController extends QuizzesAppController {
  */
 	public $helpers = array(
 		'Blocks.BlockRolePermissionForm',
+		'Blocks.BlockTabs' => array(
+			'mainTabs' => array(
+				'block_index' => array('url' => array('controller' => 'quiz_blocks')),
+				'role_permissions' => array('url' => array('controller' => 'quiz_block_role_permissions')),
+				'frame_settings' => array('url' => array('controller' => 'quiz_frame_settings')),
+				'mail_settings' => array('url' => array('controller' => 'quiz_mail_settings')),
+			),
+		),
 		'NetCommons.Date',
 	);
 
@@ -81,7 +82,7 @@ class QuizBlockRolePermissionsController extends QuizzesAppController {
 			array('content_creatable', 'content_publishable'/*, 'content_comment_creatable', 'content_comment_publishable'*/)
 		);
 		$this->set('roles', $permissions['Roles']);
-		if ($this->request->isPost()) {
+		if ($this->request->is('post')) {
 			if ($this->QuizSetting->saveQuizSetting($this->request->data)) {
 				$this->NetCommons->setFlashNotification(__d('net_commons', 'Successfully saved.'), array(
 					'class' => 'success',

@@ -57,6 +57,7 @@ class QuizAnswersController extends QuizzesAppController {
  */
 	public $helpers = [
 		'NetCommons.Date',
+		'NetCommons.TitleIcon',
 		'Workflow.Workflow',
 		'Quizzes.QuizAnswer',
 		'Quizzes.QuizGrading'
@@ -72,7 +73,7 @@ class QuizAnswersController extends QuizzesAppController {
  * target isAbleToAnswer Action
  *
  */
-	private $__ableToAnswerAction = ['start', 'view', 'confirm', 'grading'];
+	private $__ableToAnswerAction = ['start', 'view', 'confirm'/*, 'grading'*/];
 
 /**
  * beforeFilter

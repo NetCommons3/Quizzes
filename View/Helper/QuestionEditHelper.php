@@ -55,18 +55,16 @@ class QuestionEditHelper extends AppHelper {
 		if ($type == 'checkbox') {
 			$ret .= '<div class="checkbox ' . $disabled . '"><label>';
 		}
-		if ($type == 'wysiswyg') {
-			$ret .= '<div class="nc-wysiwyg-alert">';
-		}
 
 		$options = Hash::merge(array('div' => false, 'label' => false), $options);
-		$ret .= $this->NetCommonsForm->input($fieldName, $options);
+		if ($type == 'wysiswyg') {
+			$ret .= $this->NetCommonsForm->wysiwyg($fieldName, $options);
+		} else {
+			$ret .= $this->NetCommonsForm->input($fieldName, $options);
+		}
 
 		if ($type == 'checkbox') {
 			$ret .= $label . '</label></div>';
-		}
-		if ($type == 'wysiswyg') {
-			$ret .= '</div>';
 		}
 		$ret .= '</div></div>';
 		return $ret;
@@ -169,8 +167,7 @@ class QuestionEditHelper extends AppHelper {
 			));
 		}
 
-		$ret = $this->_View->element('NetCommons.datetimepicker');
-		$ret .= '<div class="form-group "><div class="input-group">';
+		$ret = '<div class="form-group "><div class="input-group">';
 		$ret .= $this->NetCommonsForm->input($fieldName, $options);
 		if (!empty($help)) {
 			$ret .= '<span class="help-block">' . $help . '</span>';
