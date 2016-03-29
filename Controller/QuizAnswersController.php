@@ -374,7 +374,7 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->set('passQuizKeys', $this->QuizzesPassQuiz->getPassQuizKeys());
 		$this->set('gradePass', $gradePass);
 		$this->set('isMineAnswer', $isMineAnswer);
-		$this->request->data['QuizAnswer'] = $summary['QuizAnswer'];
+		$this->request->data['QuizAnswer'] = Hash::combine($summary['QuizAnswer'], '{n}.id', '{n}');
 		$this->NetCommons->handleValidationError($this->QuizAnswerGrade->validationErrors);
 
 		if ($canEdit) {

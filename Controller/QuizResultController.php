@@ -139,14 +139,22 @@ class QuizResultController extends QuizzesAppController {
 		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
 
 		// サマリID
-		$summaryId = $this->params['pass'][2];
-		$summary = $this->QuizAnswerSummary->findById($summaryId);
-		if (! $summary) {
-			$this->setAction('throwBadRequest');
+		$summaryId = null;
+		if (isset($this->params['pass'][2])) {
+			$summaryId = $this->params['pass'][2];
+			$summary = $this->QuizAnswerSummary->findById($summaryId);
+			if (! $summary) {
+				$this->setAction('throwBadRequest');
+			}
+			$userId = $summary['QuizAnswerSummary']['user_id'];
+		} else {
+			// サマリの指定がないということは
+			// テスト一覧からいきなり結果を見ようとしているということ
+			// つまり編集権限はなくって、自分のデータを見たい人ということ
+			$userId = Current::read('User.id');
 		}
-		$userId = $summary['QuizAnswerSummary']['user_id'];
 
-		if (! $canEdit) {
+		if (! $canEdit && $summaryId) {
 			// 自分の？
 			if (! $this->QuizzesOwnAnswer->checkOwnAnsweredSummaryId($summaryId)) {
 				$this->setAction('throwBadRequest');
@@ -168,7 +176,11 @@ class QuizResultController extends QuizzesAppController {
 				'user_id' => $userId
 			);
 
-			$handleName = $summary['User']['handlename'];
+			if (isset($summary['User']['handlename'])) {
+				$handleName = $summary['User']['handlename'];
+			} else {
+				$handleName = Current::read('User.handlename');
+			}
 
 			$scoreHistory = $this->QuizAnswerSummary->find('all', array(
 				'fields' => array('answer_number', 'summary_score'),

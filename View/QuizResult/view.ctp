@@ -18,23 +18,28 @@ echo $this->NetCommonsHtml->script(array(
 '/quizzes/js/quizzes_result.js'
 ));
 echo $this->NetCommonsHtml->css('/components/nvd3/nv.d3.css');
-$jsScoreHistory = NetCommonsAppController::camelizeKeyRecursive($scoreHistory);
+if ($scoreHistory) {
+	$jsScoreHistory = NetCommonsAppController::camelizeKeyRecursive($scoreHistory);
+} else {
+	$jsScoreHistory = array();
+}
 
 ?>
 
 <article ng-controller="QuizResultView" ng-init="initialize(<?php echo h(json_encode($jsScoreHistory)); ?>)">
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
 
-	<h2><?php echo sprintf('%sさんの成績', $handleName); ?></h2>
 	<?php if ($scoreHistory): ?>
-	<section>
-		<h3>得点推移</h3>
-		<nvd3 options="opt" data="data"></nvd3>
-	</section>
+		<h2><?php echo sprintf('%sさんの成績', $handleName); ?></h2>
+		<section>
+			<h3>得点推移</h3>
+			<nvd3 options="opt" data="data"></nvd3>
+		</section>
 	<?php endif; ?>
 
 	<?php echo $this->element('Quizzes.QuizResult/overall_performance'); ?>
 
+	<?php if ($summaryList): ?>
 	<section>
 	<h3>成績履歴</h3>
 	<table class="table">
@@ -95,6 +100,8 @@ $jsScoreHistory = NetCommonsAppController::camelizeKeyRecursive($scoreHistory);
 	<?php echo $this->element('NetCommons.paginator'); ?>
 
 	</section>
+	<?php endif; ?>
+
 	<div class="text-center">
 		<?php echo $this->BackTo->pageLinkButton('小テストＴＯＰへ戻る', array('icon' => 'remove', 'iconSize' => 'lg')); ?>
 		<?php if ($this->Workflow->canEdit('Quiz', $quiz)) : ?>

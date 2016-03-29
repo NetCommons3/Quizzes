@@ -223,7 +223,7 @@ class QuizGradingHelper extends AppHelper {
 		if (! $this->_View->Workflow->canEdit('Quiz', $quiz)) {
 			return '';
 		}
-		$fieldNameBase = 'QuizAnswer.' . $questionIndex . '.';
+		$fieldNameBase = 'QuizAnswer.' . $answer['id'] . '.';
 		$ret = '<dt>採点</dt><dd><div class="form-inline"><div class="form-group">';
 		$ret .= $this->Form->input($fieldNameBase . 'correct_status', array(
 			'type' => 'radio',
