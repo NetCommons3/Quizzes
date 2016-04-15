@@ -13,8 +13,7 @@ NetCommonsApp.requires.push('nvd3');
  * @param {function($scope)} Controller
  */
 NetCommonsApp.controller('QuizGrade',
-    function($scope, $window, $sce, $timeout, $log,
-             NetCommonsBase, NetCommonsFlash) {
+    function($scope, $window, $sce, $timeout, $log) {
       $scope.initialize = function(correctRate) {
 
         $scope.config = {

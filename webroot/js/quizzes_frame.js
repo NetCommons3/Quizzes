@@ -15,7 +15,7 @@
  */
 
 NetCommonsApp.controller('QuizzesFrame',
-    function($scope, $sce, $log, NetCommonsBase, $attrs, $timeout) {
+    function($scope, $sce, $log, $attrs, $timeout) {
       /**
        * Initialize
        *
