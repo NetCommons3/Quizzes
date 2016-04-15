@@ -42,7 +42,7 @@ if ($scoreHistory) {
 	<?php if ($summaryList): ?>
 	<section>
 	<h3>成績履歴</h3>
-	<table class="table">
+	<table class="table quiz-result-table">
 		<tr class="">
 			<th><a href="#">回</a></th>
 			<th>完答</th>
@@ -56,7 +56,7 @@ if ($scoreHistory) {
 		</tr>
 		<?php foreach ($summaryList as $summary): ?>
 			<tr class="<?php echo $this->QuizResult->getPassClass($quiz, $summary); ?>" >
-				<td>
+				<td class="text-right">
 					<?php echo $this->NetCommonsHtml->link($summary['QuizAnswerSummary']['answer_number'], NetCommonsUrl::actionUrl(array(
 					'plugin' => 'quizzes',
 					'controller' => 'quiz_answers',
@@ -67,28 +67,28 @@ if ($scoreHistory) {
 					'frame_id' => Current::read('Frame.id')
 					))); ?>
 				</td>
-				<td>
+				<td class="text-center">
 					<?php echo $this->QuizResult->getComplete($quiz, $summary); ?>
 				</td>
-				<td>
+				<td class="text-center">
 					<?php echo $this->QuizResult->getPassing($quiz, $summary); ?>
 				</td>
-				<td>
+				<td class="text-center">
 					<?php echo $this->QuizResult->getWithinTime($quiz, $summary); ?>
 				</td>
 				<td>
 					<?php echo $summary['QuizAnswerSummary']['answer_finish_time']; ?>
 				</td>
-				<td>
+				<td class="text-right">
 					<?php echo $this->QuizResult->getElapsed($quiz, $summary); ?>
 				</td>
-				<td>
+				<td class="text-right">
 					<?php echo $summary['QuizAnswerSummary']['summary_score']; ?>
 				</td>
-				<td>
+				<td class="text-right">
 					<?php echo $this->QuizResult->getStdScore($general, $summary); ?>
 				</td>
-				<td>
+				<td class="text-center">
 					<?php if (! $summary['QuizAnswerSummary']['is_grade_finished']): ?>
 						<span class="label label-danger">未採点あり</span>
 					<?php endif; ?>

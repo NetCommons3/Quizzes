@@ -58,7 +58,7 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 			</div>
 		</div>
 		<h3>受験者一覧</h3>
-		<table class="table">
+		<table class="table quiz-result-table">
 			<tr>
 				<th>
 					<?php echo $this->Paginator->sort('User.handlename', __d('quizzes', '解答者名')); ?>
@@ -90,29 +90,29 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 					<td>
 						<?php echo $this->QuizResult->getHandleNameLink($quiz, $summary); ?>
 					</td>
-					<td><?php echo h($summary['QuizAnswerSummary']['answer_number']); ?></td>
-					<td>
+					<td class="text-right"><?php echo h($summary['QuizAnswerSummary']['answer_number']); ?></td>
+					<td class="text-center">
 						<?php echo $this->QuizResult->getPassing($quiz, $summary); ?>
 					</td>
-					<td>
+					<td class="text-center">
 						<?php echo $this->QuizResult->getWithinTime($quiz, $summary); ?>
 					</td>
-					<td>
+					<td class="text-right">
 						<?php echo $this->QuizResult->getScore($summary); ?>
 					</td>
-					<td>
+					<td class="text-right">
 						<?php echo $this->QuizResult->getStdScore($general, $summary); ?>
 					</td>
-					<td>
+					<td class="text-right">
 						<?php echo $this->QuizResult->getAvgElapsed($quiz, $summary); ?>
 					</td>
-					<td>
+					<td class="text-right">
 						<?php echo h($summary['Statistics']['max_score']); ?>
 					</td>
-					<td>
+					<td class="text-right">
 						<?php echo h($summary['Statistics']['min_score']); ?>
 					</td>
-					<td>
+					<td class="text-center">
 						<?php echo $this->QuizResult->getNotScoring($quiz, $summary); ?>
 					</td>
 				</tr>

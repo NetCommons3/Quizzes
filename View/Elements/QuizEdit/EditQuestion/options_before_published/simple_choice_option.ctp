@@ -16,6 +16,22 @@
 		<button type="button" class="btn btn-default pull-right" ng-click="addChoice($event, pageIndex, qIndex, question.quizChoice.length);">
 			<span class="glyphicon glyphicon-plus"></span><?php echo __d('quizzes', 'add choices'); ?>
 		</button>
+		<?php /* 選択肢を横並びにする */ ?>
+		<label class="checkbox-inline">
+			<?php echo $this->NetCommonsForm->checkbox('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.is_choice_horizon',
+			array(
+			'value' => QuizzesComponent::USES_USE,
+			'ng-model' => 'question.isChoiceHorizon',
+			'ng-checked' => 'question.isChoiceHorizon == ' . QuizzesComponent::USES_USE
+			));
+			?>
+			<?php echo __d('quizzes', 'horizontal choices'); ?>
+			<?php echo $this->element(
+			'Quizzes.QuizEdit/ng_errors', array(
+			'errorArrayName' => 'question.errorMessages.isChoiceHorizon',
+			)); ?>
+		</label>
+		<?php /* 選択肢をランダムにする */ ?>
 		<label class="checkbox-inline">
 			<?php echo $this->NetCommonsForm->checkbox('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.is_choice_random',
 			array(
@@ -25,6 +41,10 @@
 			));
 			?>
 			<?php echo __d('quizzes', 'randomaize choices'); ?>
+			<?php echo $this->element(
+			'Quizzes.QuizEdit/ng_errors', array(
+			'errorArrayName' => 'question.errorMessages.isChoiceRandom',
+			)); ?>
 		</label>
 	</div>
 </div>

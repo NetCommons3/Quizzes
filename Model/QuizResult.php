@@ -157,7 +157,10 @@ class QuizResult extends QuizzesAppModel {
 			'group' => array('quiz_key'),
 			'recursive' => -1,
 		));
-		return $general[0][0];
+		$general = $general[0][0];
+		$general['avg_score'] = round(floatval($general['avg_score']), 1);
+		$general['samp_score'] = round(floatval($general['samp_score']), 1);
+		return $general;
 	}
 /**
  * getScoreDistribution

@@ -64,6 +64,7 @@ class QuizzesController extends QuizzesAppController {
 		'Quizzes.QuizzesOwnAnswer',		// 回答ID管理
 		'Quizzes.QuizzesPassQuiz',		// 合格小テスト管理
 		'Quizzes.QuizzesAnswerStart',
+		'Quizzes.QuizzesShuffle',
 		'Paginator',
 	);
 
@@ -91,6 +92,8 @@ class QuizzesController extends QuizzesAppController {
 	public function index() {
 		// この閲覧者が「回答スタートした」記録をセッションから消しておく
 		$this->QuizzesAnswerStart->deleteStartQuizOfThisUser();
+		// テストページ記憶も消しておく
+		$this->QuizzesShuffle->clear();
 
 		// 表示方法設定値取得
 		list(, $displayNum, $sort, $dir) =
@@ -99,7 +102,7 @@ class QuizzesController extends QuizzesAppController {
 		// 条件設定値取得
 		$conditions = $this->Quiz->getCondition();
 
-		// データ取得
+		// データ取得の条件設定
 		$this->Paginator->settings = array_merge(
 			$this->Paginator->settings,
 			array(
@@ -111,14 +114,18 @@ class QuizzesController extends QuizzesAppController {
 				'recursive' => 0,
 			)
 		);
+		// 絞込の指定がない場合は、デフォルトは全て表示です
 		if (! isset($this->params['named']['answer_status'])) {
 			$this->request->params['named']['answer_status'] = self::QUIZ_ANSWER_VIEW_ALL;
 		}
+		// データ取得
 		$quizzes = $this->paginate('Quiz', $this->_getPaginateFilter());
+
 		$this->set('quizzes', $quizzes);
-		$this->set('currentStatus', isset($this->params['named']['answer_status']) ? $this->params['named']['answer_status'] : self::QUIZ_ANSWER_VIEW_ALL);
+		$this->set('currentStatus', $this->request->params['named']['answer_status']);
 		$this->set('filterList', $this->_getFilterSelectList());
 
+		// 回答済み、合格済、未採点ありなどの小テストキー配列を確保する
 		$this->__setOwnAnsweredQuizKeys();
 		$this->__setPassQuizKeys();
 		$this->__setNotScoringQuizKeys();
@@ -216,6 +223,7 @@ class QuizzesController extends QuizzesAppController {
 
 /**
  * Set view value of answered quiz keys
+ * 閲覧者がすでに回答し終えている小テストのキーの配列を確保する
  *
  * @return void
  */
@@ -226,10 +234,12 @@ class QuizzesController extends QuizzesAppController {
 		}
 
 		$this->set('ownAnsweredKeys', $this->QuizzesOwnAnswerQuiz->getOwnAnsweredKeys());
+		$this->set('ownAnsweredCounts', $this->QuizzesOwnAnswerQuiz->getOwnAnsweredCounts());
 	}
 
 /**
  * Set view value of passed quiz keys
+ * 閲覧者がすでに合格している小テストのキーの配列を確保する
  *
  * @return void
  */
@@ -239,6 +249,7 @@ class QuizzesController extends QuizzesAppController {
 
 /**
  * Set view value of not scoring quiz keys
+ * 閲覧者が解答し終えていて、かつ、未採点である小テストのキーの配列を確保する
  *
  * @return void
  */

@@ -11,12 +11,12 @@
 ?>
 
 <div class="pull-right" ng-if="isPublished == 0">
-	<div class="btn-group" dropdown dropdown-append-to-body>
-		<button type="button" class="btn btn-default" dropdown-toggle >
+	<div class="btn-group" uib-dropdown dropdown-append-to-body>
+		<button type="button" class="btn btn-default" uib-dropdown-toggle >
 			<?php echo __d('quizzes', 'copy to another page'); ?>
 			<span class="caret"></span>
 		</button>
-		<ul class="dropdown-menu" role="menu">
+		<ul class="dropdown-menu" uib-dropdown-menu role="menu">
 			<li role="presentation" class="dropdown-header"><?php echo __d('quizzes', 'destination page number'); ?></li>
 			<li ng-repeat="(copyPageIndex, copyPage) in quiz.quizPage">
 				<a href="#" ng-click="copyQuestionToAnotherPage($event, pageIndex, qIndex, copyPage.pageSequence)">{{1 * copyPage.pageSequence + 1}}</a>

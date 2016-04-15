@@ -35,11 +35,7 @@
 					<label class="pull-right text-muted"><?php echo sprintf('(配点%3d点)', $question['allotment']); ?></label>
 
 					<label class="control-label">
-						<?php if ($quiz['Quiz']['page_count'] > 1): ?>
-							<?php echo sprintf('ページ%2d - 問題%2d：', $pIndex + 1, $qIndex + 1); ?>
-						<?php else: ?>
-							<?php echo sprintf('問題%2d：', $qIndex + 1); ?>
-						<?php endif; ?>
+						<?php echo sprintf('問題%2d：', $question['serial_number'] + 1); ?>
 					</label>
 
 					<p >

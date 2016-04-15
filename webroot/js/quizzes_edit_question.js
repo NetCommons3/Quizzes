@@ -14,7 +14,6 @@
  * @param {function($scope, $sce)} Controller
  */
 
-NetCommonsApp.constant('moment', moment);
 angular.module('angular-toArrayFilter', [])
   .filter('toArray', function() {
       return function(obj, addKey) {
@@ -73,8 +72,7 @@ angular.module('html-to-plaintext-module', [])
 NetCommonsApp.requires.push('html-to-plaintext-module');
 
 NetCommonsApp.controller('QuizzesEditQuestion',
-    function($scope, NetCommonsBase, NetCommonsWysiwyg,
-    $timeout, moment) {
+    function($scope, NetCommonsWysiwyg, $timeout) {
 
       /**
        * tinymce
@@ -89,8 +87,6 @@ NetCommonsApp.controller('QuizzesEditQuestion',
        * @param {number} users.id
        * @return {string}
        */
-      $scope.serverValidationClear = NetCommonsBase.serverValidationClear;
-
       $scope.isTrue = '1';
 
       /**

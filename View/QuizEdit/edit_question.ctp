@@ -11,8 +11,6 @@
 
 echo $this->element('Quizzes.scripts');
 echo $this->NetCommonsHtml->script(array(
-	'/components/moment/min/moment.min.js',
-	'/components/moment/min/moment-with-locales.min.js',
 	'/quizzes/js/quizzes_edit_question.js',
 ));
 $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->data));
@@ -48,60 +46,31 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 	<div class="modal-body">
 		<?php echo $this->QuestionEdit->getEditFlowChart(1); ?>
 		<?php echo $this->element('Quizzes.QuizEdit/quiz_title'); ?>
-		<tabset>
-			<tab ng-repeat="(pageIndex, page) in quiz.quizPage" active="page.tabActive">
-				<tab-heading>
+		<uib-tabset>
+			<uib-tab ng-repeat="(pageIndex, page) in quiz.quizPage" active="page.tabActive">
+				<uib-tab-heading>
 					{{pageIndex+1}}<span class="glyphicon glyphicon-exclamation-sign text-danger" ng-if="page.hasError"></span>
-				</tab-heading>
+				</uib-tab-heading>
 
 				<div class="tab-body">
 					<div class="row">
-						<div class="col-sm-12">
-							<div class="checkbox">
-								<label>
-									<?php echo $this->NetCommonsForm->input('QuizPage.{{pageIndex}}.is_page_description', array(
-									'type' => 'checkbox',
-									'div' => false,
-									'label' => '問題ページの先頭に文章を入れる',
-									'class' => '',
-									'error' => false,
-									'ng-model' => 'page.isPageDescription',
-									'ng-checked' => 'page.isPageDescription == ' . QuizzesComponent::USES_USE,
-									));
-									?>
-								</label>
-							</div>
-						</div>
-						<div  class="col-sm-12" ng-show="page.isPageDescription == 1">
-							<?php /* ページ冒頭文 */
-								echo $this->NetCommonsForm->wysiwyg('QuizPage.{{pageIndex}}.page_description',
-									array('type' => 'wysiswyg',
-										'id' => false,
-										'label' => false,
-										'ng-model' => 'page.pageDescription',
-										'ui-tinymce' => 'tinymce.options',
-										'rows' => 5,
-										'ng-disabled' => 'isPublished != 0',
-								));
-							?>
-						</div>
+						<?php echo $this->element($elementFolder . 'page_lead'); ?>
 					</div>
-					<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/hidden_page_info_set'); ?>
 
 					<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/add_question_button'); ?>
 					<div class="clearfix"></div>
 
-						<accordion close-others="true">
-							<accordion-group
+						<uib-accordion close-others="true">
+							<uib-accordion-group
 									class="form-horizontal"
 									ng-repeat="(qIndex, question) in page.quizQuestion"
 									is-open="question.isOpen">
 
-								<accordion-heading>
+								<uib-accordion-heading>
 									<?php /* 質問ヘッダーセット（移動ボタン、削除ボタンなどの集合体 */
 										echo $this->element('Quizzes.QuizEdit/EditQuestion/accordion_heading'); ?>
 									<div class="clearfix"></div>
-								</accordion-heading>
+								</uib-accordion-heading>
 								<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/hidden_question_info_set'); ?>
 
 								<?php /* ここから質問本体設定 */
@@ -162,8 +131,8 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 										</div>
 									</div>
 								</div >
-						</accordion-group>
-					</accordion>
+						</uib-accordion-group>
+					</uib-accordion>
 
 
 					<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/add_question_button'); ?>
@@ -176,14 +145,14 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 						</button>
 					</div>
 				</div>
-			</tab>
-			<tab class="quiz-add-page-tab" ng-click="addPage($event)" ng-if="isPublished == 0">
-				<tab-heading>
+			</uib-tab>
+			<?php if (! $isPublished): ?>
+				<a class="quiz-add-page-tab" ng-click="addPage($event)">
 					<span class="glyphicon glyphicon-plus"></span>
 					<span class=""><?php echo __d('quizzes', 'Add Page'); ?></span>
-				</tab-heading>
-			</tab>
-		</tabset>
+				</a>
+			<?php endif; ?>
+		</uib-tabset>
 
 
 	</div>

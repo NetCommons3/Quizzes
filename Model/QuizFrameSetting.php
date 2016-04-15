@@ -75,7 +75,8 @@ class QuizFrameSetting extends QuizzesAppModel {
 		return array(
 			'offset' => 0,
 			'limit' => $limit,
-			'order' => 'Quiz.' . $sort . ' ' . $dir);
+			'order' => array('Quiz.' . $sort . ' ' . $dir)
+		);
 	}
 /**
  * getQuizFrameSetting 指定されたframe_keyの設定要件を取り出す

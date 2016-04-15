@@ -133,6 +133,24 @@ class Quiz extends QuizzesAppModel {
 		));
 	}
 /**
+ * Called before each save operation, after validation. Return a non-true result
+ * to halt the save.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if the operation should continue, false if it should abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforesave
+ * @see Model::save()
+ */
+	public function beforeSave($options = array()) {
+		$this->data['perfect_score'] = 0;
+		foreach ($this->data['QuizPage'] as $page) {
+			foreach ($page['QuizQuestion'] as $question) {
+				$this->data['perfect_score'] = $question['allotment'];
+			}
+		}
+		return true;
+	}
+/**
  * AfterFind Callback function
  *
  * @param array $results found data records
@@ -141,9 +159,6 @@ class Quiz extends QuizzesAppModel {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function afterFind($results, $primary = false) {
-		if ($this->recursive == -1) {
-			return $results;
-		}
 		$this->QuizPage = ClassRegistry::init('Quizzes.QuizPage', true);
 		$this->QuizAnswerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary', true);
 
@@ -168,17 +183,19 @@ class Quiz extends QuizzesAppModel {
 			$val['Quiz']['page_count'] = 0;
 			$val['Quiz']['question_count'] = 0;
 
-			$this->QuizPage->setPageToQuiz($val);
-
-			// 回答数取り出し
-			$val['Quiz']['all_answer_count'] = $this->QuizAnswerSummary->find('count', array(
-				'conditions' => array(
-					'quiz_key' => $val['Quiz']['key'],
-					'answer_status' => QuizzesComponent::ACTION_ACT,
-					'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
-				),
-				'recursive' => -1
-			));
+			if ($this->recursive >= 0) {
+				// ページ情報取り出し
+				$this->QuizPage->setPageToQuiz($val);
+				// 回答数取り出し
+				$val['Quiz']['all_answer_count'] = $this->QuizAnswerSummary->find('count', array(
+					'conditions' => array(
+						'quiz_key' => $val['Quiz']['key'],
+						'answer_status' => QuizzesComponent::ACTION_ACT,
+						'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
+					),
+					'recursive' => -1
+				));
+			}
 		}
 		return $results;
 	}
@@ -193,9 +210,8 @@ class Quiz extends QuizzesAppModel {
  */
 	public function getPeriodStatus($check, $startTime, $endTime) {
 		$ret = QuizzesComponent::QUIZ_PERIOD_STAT_IN;
-
-		if ($check == WorkflowBehavior::PUBLIC_TYPE_LIMITED) {
-			$nowTime = (new NetCommonsTime())->getNowDatetime();
+		if ($check == QuizzesComponent::USES_USE) {
+			$nowTime = strtotime((new NetCommonsTime())->getNowDatetime());
 			if ($nowTime < strtotime($startTime)) {
 				$ret = QuizzesComponent::QUIZ_PERIOD_STAT_BEFORE;
 			}
@@ -265,11 +281,13 @@ class Quiz extends QuizzesAppModel {
 		$this->QuizFrameSetting = ClassRegistry::init('Quizzes.QuizFrameSetting', true);
 		$defaultOptions = $this->QuizFrameSetting->getQuizFrameSettingConditions(Current::read('Frame.key'));
 		$options = Hash::merge($defaultOptions, $options);
-		$list = $this->find('all', array(
-			'recursive' => 0,
-			'conditions' => $conditions,
-			$options
-		));
+		$this->recursive = -1;
+		$list = $this->find('all',
+			Hash::merge(
+				array('conditions' => $conditions),
+				$options
+			)
+		);
 		return $list;
 	}
 

@@ -15,7 +15,7 @@
  */
 
 NetCommonsApp.controller('QuizzesEdit',
-    function($scope, NetCommonsBase, NetCommonsWysiwyg, $timeout) {
+    function($scope, NetCommonsWysiwyg, $timeout) {
 
       /**
        * tinymce
@@ -23,14 +23,6 @@ NetCommonsApp.controller('QuizzesEdit',
        * @type {object}
        */
       $scope.tinymce = NetCommonsWysiwyg.new();
-
-      /**
-       * serverValidationClear method
-       *
-       * @param {number} users.id
-       * @return {string}
-       */
-      $scope.serverValidationClear = NetCommonsBase.serverValidationClear;
 
       /**
        * Initialize

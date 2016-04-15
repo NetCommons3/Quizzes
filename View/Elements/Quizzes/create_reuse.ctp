@@ -17,7 +17,7 @@
 	'ng-disabled' => 'pastQuizzes.length == 0',
 	));
 ?>
-<div class="row form-horizontal" collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_REUSE; ?>'">
+<div class="row form-horizontal" uib-collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_REUSE; ?>'">
 	<div class="col-lg-11 col-lg-offset-1">
 		<div class="form-group">
 			<div class="col-lg-3">
@@ -34,10 +34,10 @@
 				'placeholder' => __d('quizzes', 'Refine by entering the part of the quiz name')
 			));?>
 
-			<ul class="col-lg-12 quiz-select-box form-control ">
+			<ul class="col-lg-12 quiz-select-box form-control">
 				<li class="animate-repeat btn-default"
 					ng-repeat="item in pastQuizzes | filter:q" ng-model="$parent.pastQuizSelect"
-					btn-radio="item.quiz.id" uncheckable>
+					uib-btn-radio="item.quiz.id" uncheckable>
 
 					{{item.quiz.title}}
 

@@ -24,7 +24,7 @@
 			</div>
 			<div class="col-sm-4">
 				<div class="progress">
-					<progressbar class="progress-striped" value="<?php echo $progress ?>" type="warning"><?php echo $progress ?>%</progressbar>
+					<uib-progressbar class="progress-striped" value="<?php echo $progress ?>" type="warning"><?php echo $progress ?>%</uib-progressbar>
 				</div>
 			</div>
 		</div>
@@ -51,7 +51,7 @@
 		<label class="pull-right text-muted"><?php echo sprintf('(配点%3d点)', $question['allotment']); ?></label>
 
 		<label class="control-label">
-			<?php echo sprintf('問題%2d：', $index + 1); ?>
+			<?php echo sprintf('問題%2d：', $question['serial_number'] + 1); ?>
 		</label>
 
 		<p >

@@ -29,12 +29,18 @@ class QuizzesShuffleComponent extends Component {
 	public function shufflePage(&$quiz) {
 		$session = $this->_Collection->load('Session');
 		$pages = $quiz['QuizPage'];
-		$sessionPath = 'Quizzes.' . $quiz['Quiz']['key'] . '.QuizPage';
+		$sessionPath = 'Quizzes.quizShuffles.' . $quiz['Quiz']['key'] . '.QuizPage';
 		if ($session->check($sessionPath)) {
 			$pages = $session->read($sessionPath);
 		} else {
 			if ($quiz['Quiz']['is_page_random'] == QuizzesComponent::USES_USE) {
 				shuffle($pages);
+			}
+			$serialNumber = 0;
+			foreach ($pages as &$page) {
+				foreach ($page['QuizQuestion'] as &$question) {
+					$question['serial_number'] = $serialNumber++;
+				}
 			}
 			$session->write($sessionPath, $pages);
 		}
@@ -51,7 +57,7 @@ class QuizzesShuffleComponent extends Component {
  */
 	public function getNextPage($quiz, $nowPageSeq) {
 		$session = $this->_Collection->load('Session');
-		$sessionPath = 'Quizzes.' . $quiz['Quiz']['key'] . '.QuizPage';
+		$sessionPath = 'Quizzes.quizShuffles.' . $quiz['Quiz']['key'] . '.QuizPage';
 		$pages = $session->read($sessionPath);
 		foreach ($pages as $index => $page) {
 			if ($page['page_sequence'] == $nowPageSeq) {
@@ -78,7 +84,7 @@ class QuizzesShuffleComponent extends Component {
 			foreach ($page['QuizQuestion'] as &$q) {
 				$choices = $q['QuizChoice'];
 				if ($q['is_choice_random'] == QuizzesComponent::USES_USE) {
-					$sessionPath = 'Quizzes.' . $quiz['Quiz']['key'] . '.QuizQuestion.' . $q['key'] . '.QuizChoice';
+					$sessionPath = 'Quizzes.quizShuffles.' . $quiz['Quiz']['key'] . '.QuizQuestion.' . $q['key'] . '.QuizChoice';
 					if ($session->check($sessionPath)) {
 						$choices = $session->read($sessionPath);
 					} else {
@@ -89,5 +95,19 @@ class QuizzesShuffleComponent extends Component {
 				$q['QuizChoice'] = $choices;
 			}
 		}
+	}
+/**
+ * clear
+ *
+ * @param string $quizKey quiz key
+ * @return void
+ */
+	public function clear($quizKey = '') {
+		$sessionPath = 'Quizzes.quizShuffles';
+		if (! empty($quizKey)) {
+			$sessionPath .= '.' . $quizKey;
+		}
+		$session = $this->_Collection->load('Session');
+		$session->delete($sessionPath);
 	}
 }

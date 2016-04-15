@@ -77,18 +77,26 @@ class QuizAnswerHelper extends AppHelper {
 		if (isset($question['QuizChoice'])) {
 			$choices = $question['QuizChoice'];
 			$options = $this->_getChoiceOptionElement($choices);
-			$ret = $this->Form->input($fieldName, array(
+			$setting = array(
 				'type' => 'radio',
 				'options' => $options,
 				'div' => false,
 				'legend' => false,
 				'label' => false,
-				'before' => '<label class="radio-inline">',
-				'separator' => '</label><label class="radio-inline">',
-				'after' => '</label>',
+				'before' => '<div class="radio"><label>',
+				'separator' => '</label></div><div class="radio"><label>',
+				'after' => '</label></div>',
 				'disabled' => $readonly,
 				'error' => false,
-			));
+			);
+			if ($question['is_choice_horizon'] == QuizzesComponent::USES_USE) {
+				$setting = Hash::merge($setting, array(
+					'before' => '<label class="radio-inline">',
+					'separator' => '</label><label class="radio-inline">',
+					'after' => '</label>',
+				));
+			}
+			$ret = $this->Form->input($fieldName, $setting);
 		}
 		return $ret;
 	}
@@ -108,13 +116,18 @@ class QuizAnswerHelper extends AppHelper {
 			$afterLabel = '';
 			$options = $this->_getChoiceOptionElement($question['QuizChoice']);
 
+			$checkboxClass = 'checkbox';
+			if ($question['is_choice_horizon'] == QuizzesComponent::USES_USE) {
+				$checkboxClass = 'checkbox-inline';
+			}
+
 			$ret .= $this->NetCommonsForm->input($fieldName, array(
 				'type' => 'select',
 				'multiple' => 'checkbox',
 				'options' => $options,
 				'label' => false,
 				'div' => false,
-				'class' => 'checkbox-inline nc-checkbox',
+				'class' => $checkboxClass . ' nc-checkbox',
 				'disabled' => $readonly,
 				'hiddenField' => !$readonly,
 				'error' => false,

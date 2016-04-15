@@ -15,7 +15,7 @@
  */
 
 NetCommonsApp.controller('QuizzesAdd',
-    function($scope, NetCommonsBase) {
+    function($scope) {
       /**
        * Initialize
        *

@@ -38,6 +38,7 @@ echo $this->element('Quizzes.scripts');
 						</h2>
 						<p>
 							<?php echo $this->element('Quizzes.pass_line', array('quiz' => $quiz)); ?>
+							<?php echo $this->element('Quizzes.answer_count', array('quiz' => $quiz)); ?>
 						</p>
 					</div>
 

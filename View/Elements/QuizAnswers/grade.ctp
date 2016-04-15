@@ -9,10 +9,12 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
+<?php $questionIndex = 0; ?>
 <?php foreach($quiz['QuizPage'] as $pIndex => $page): ?>
     <?php foreach($page['QuizQuestion'] as $qIndex => $question): ?>
         <div class="form-group">
-            <?php echo $this->QuizGrading->grading($quiz, $pIndex, $qIndex, $question, $summary); ?>
+            <?php echo $this->QuizGrading->grading($quiz, $pIndex, $qIndex, $questionIndex, $question, $summary); ?>
+            <?php $questionIndex++; ?>
         </div>
     <?php endforeach; ?>
 <?php endforeach;

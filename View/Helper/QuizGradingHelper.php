@@ -33,17 +33,18 @@ class QuizGradingHelper extends AppHelper {
  * @param array $quiz 小テストデータ
  * @param int $pageIndex ページインデックス
  * @param int $questionIndex 質問インデックス
+ * @param int $serialIndex 質問通番
  * @param array $question 問題
  * @param array $answers 回答
  * @return string 回答のHTML
  */
-	public function grading($quiz, $pageIndex, $questionIndex, $question, $answers) {
+	public function grading($quiz, $pageIndex, $questionIndex, $serialIndex, $question, $answers) {
 		$answer = Hash::extract($answers, 'QuizAnswer.{n}[quiz_question_key=' . $question['key'] . ']');
 		if ($answer) {
 			$answer = $answer[0];
 		}
 		$ret = $this->getScoreLabel($question, $answer);
-		$ret .= $this->getQuestionLabel($quiz, $pageIndex, $questionIndex, $question, $answer);
+		$ret .= $this->getQuestionLabel($serialIndex, $question, $answer);
 		$ret .= $question['question_value'];
 		$ret .= '<dl class="dl-horizontal">';
 		$ret .= $this->getAnswer($question, $answer);
@@ -271,20 +272,14 @@ class QuizGradingHelper extends AppHelper {
 /**
  * 問題ラベル（正解・不正解ラベル付き）
  *
- * @param array $quiz 小テストデータ
- * @param int $pageIndex ページインデックス
  * @param int $questionIndex 質問インデックス
  * @param array $question 問題
  * @param array $answer 回答
  * @return string 回答のHTML
  */
-	public function getQuestionLabel($quiz, $pageIndex, $questionIndex, $question, $answer) {
+	public function getQuestionLabel($questionIndex, $question, $answer) {
 		$ret = '<label class="control-label">';
-		if ($quiz['Quiz']['page_count'] > 1) {
-			$ret .= sprintf('ページ%2d - 問題%2d：', $pageIndex + 1, $questionIndex + 1);
-		} else {
-			$ret .= sprintf('問題%2d：', $questionIndex + 1);
-		}
+		$ret .= sprintf('問題%2d：', $questionIndex + 1);
 		$ret .= $this->getGradingLabel($answer);
 		$ret .= '</label>';
 		return $ret;
@@ -332,4 +327,75 @@ class QuizGradingHelper extends AppHelper {
 		}
 		return $correctRate;
 	}
+/**
+ * 採点画面のヘッダ
+ *
+ * @param array $quiz 小テストデータ
+ * @param int $gradePass 合格状況
+ * @param array $summary 回答まとめ
+ * @return string header描画HTML
+ */
+	public function getGradeHeader($quiz, $gradePass, $summary) {
+		$ret = '';
+		$headerClass = '';
+		if ($gradePass == QuizzesComponent::STATUS_GRADE_YET) {
+			$headerClass = 'well';
+		} elseif ($gradePass == QuizzesComponent::STATUS_GRADE_PASS) {
+			$headerClass = 'alert-success';
+		} elseif ($gradePass == QuizzesComponent::STATUS_GRADE_FAIL) {
+			$headerClass = 'alert-danger';
+		}
+		$ret = '<div class="alert ' . $headerClass . '">';
+		$ret .= $this->_View->element('Quizzes.QuizAnswers/answer_header');
+		$ret .= '<div class="h2">';
+		if ($gradePass == QuizzesComponent::STATUS_GRADE_PASS) {
+			$ret .= $this->TitleIcon->titleIcon('/net_commons/img/title_icon/10_051_pass.svg');
+		}
+		$ret .= $this->_getScoreSummary($quiz, $summary);
+		$ret .= $this->_getElapseTimeSummary($quiz, $summary);
+
+		$ret .= '</div></div>';
+		return $ret;
+	}
+/**
+ * 採点画面のヘッダ（得点部
+ *
+ * @param array $quiz 小テストデータ
+ * @param array $summary 回答まとめ
+ * @return string header描画HTML
+ */
+	protected function _getScoreSummary($quiz, $summary) {
+		$ret = sprintf(__d('quizzes', '得点%d点'), $summary['QuizAnswerSummary']['summary_score']);
+		if ($summary['QuizAnswerSummary']['is_grade_finished'] == false) {
+			$notScoring = Hash::extract($summary, 'QuizAnswer.{n}[correct_status=' . QuizzesComponent::STATUS_GRADE_YET . ']');
+			$notScorePoint = 0;
+			foreach ($notScoring as $not) {
+				$notScoreQuestion = Hash::extract($quiz['QuizPage'], '{n}.QuizQuestion.{n}[key=' . $not['quiz_question_key'] . ']');
+				foreach ($notScoreQuestion as $question) {
+					$notScorePoint += $question['allotment'];
+				}
+			}
+			$ret .= sprintf(__d('quizzes', ' +未採点分が%d点あります'), $notScorePoint);
+		}
+		return $ret;
+	}
+/**
+ * 採点画面のヘッダ（時間部
+ *
+ * @param array $quiz 小テストデータ
+ * @param array $summary 回答まとめ
+ * @return string header描画HTML
+ */
+	protected function _getElapseTimeSummary($quiz, $summary) {
+		$ret = '<div class="h3">';
+		$ret .= sprintf(__d('quizzes', '解答にかかった時間：%d分'), $summary['QuizAnswerSummary']['elapsed_second'] / 60);
+		if ($quiz['Quiz']['estimated_time'] > 0 && $quiz['Quiz']['estimated_time'] * 60 < $summary['QuizAnswerSummary']['elapsed_second']) {
+			$ret .= '<span class="text-danger">';
+			$ret .= sprintf(__d('quizzes', '  %d分オーバーです'), ($summary['QuizAnswerSummary']['elapsed_second'] - $quiz['Quiz']['estimated_time'] * 60) / 60);
+			$ret .= '</span>';
+		}
+		$ret .= '</div>';
+		return $ret;
+	}
+
 }

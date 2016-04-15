@@ -24,7 +24,7 @@ class QuizAnswerButtonHelper extends AppHelper {
  * @var array
  */
 	public $helpers = array(
-		'NetCommonsHtml',
+		'NetCommons.NetCommonsHtml',
 		'Html'
 	);
 
@@ -38,25 +38,23 @@ class QuizAnswerButtonHelper extends AppHelper {
 		//
 		//回答ボタンの(回答済み|回答する|テスト)の決定
 		//
-		// satus != 公開状態 つまり編集者が見ている場合は「テスト」
+		// status != 公開状態 つまり編集者が見ている場合は「テスト」
 		//
-		// 公開状態の場合が枝分かれする
-		// 公開時期にマッチしていない = 回答前＝回答する（disabled） 回答後＝回答済み（disabled）
+		// まだ回答できる状態だったら
+		// 回答してもしてなくても「回答」
+		//
+		// 回答期間外はdisabled
 		//
 		// 公開期間中
-		// 繰り返しの回答を許さない = 回答前＝回答する　回答後＝回答済み（Disabled）
-		// 合格まで繰り返しを許す = 合格前＝回答する　合格後＝回答済み（Disabled）
-		// 繰り返しの回答を許す = いずれの状態でも「回答する」
+		// 繰り返しの回答を許さない = Disabled
+		// 合格まで繰り返しを許す = 合格前＝able　合格後＝Disabled
+		//
+		// 状態がdisableのもので、かつ、解答していないとき[未回答]
+		// 状態がdisableで、解答をしているときは[終了]
 
 		$key = $quiz['Quiz']['key'];
 
-		// 編集権限がない人が閲覧しているとき、未公開アンケートはFindされていないので対策する必要はない
-		// ボタン表示ができるかできないか
-		// 編集権限がないのに公開状態じゃないアンケートの場合はボタンを表示しない
-		//
-		//if ($questionnaire['Questionnaire']['status'] != WorkflowComponent::STATUS_PUBLISHED && !$editable) {
-		//	return '';
-		//}
+		// 編集権限がない人が閲覧しているとき、未公開小テストはFindされていないので対策する必要はない
 
 		$buttonStr = '<a class="btn btn-%s quiz-listbtn %s" %s href="%s">%s</a>';
 
@@ -73,18 +71,16 @@ class QuizAnswerButtonHelper extends AppHelper {
 				'frame_id' => Current::read('Frame.id'),
 			));
 			return sprintf($buttonStr, $answerButtonClass, '', '', $url, $answerButtonLabel);
-		} else {
-			$url = NetCommonsUrl::actionUrl(array(
-				'controller' => 'quiz_answers',
-				'action' => 'view',
-				Current::read('Block.id'),
-				$key,
-				'frame_id' => Current::read('Frame.id'),
-			));
 		}
 
-		// 何事もなければ回答可能のボタン
-		$answerButtonLabel = __d('quizzes', 'Answer');
+		$url = NetCommonsUrl::actionUrl(array(
+			'controller' => 'quiz_answers',
+			'action' => 'view',
+			Current::read('Block.id'),
+			$key,
+			'frame_id' => Current::read('Frame.id'),
+		));
+
 		$answerButtonClass = 'success';
 		$answerButtonDisabled = '';
 
@@ -107,17 +103,29 @@ class QuizAnswerButtonHelper extends AppHelper {
 			$answerButtonDisabled = 'disabled';
 		}
 
-		// ラベル名の決定
-		if ($quiz['Quiz']['period_range_stat'] == QuizzesComponent::QUIZ_PERIOD_STAT_BEFORE) {
-			// 未公開
-			$answerButtonLabel = __d('quizzes', 'Unpublished');
-		}
-		if (in_array($key, $this->_View->viewVars['ownAnsweredKeys'])) {
-			// 回答済み
-			$answerButtonLabel = __d('quizzes', 'Finished');
-		}
+		$answerButtonLabel = $this->_getLabel($quiz, $answerButtonDisabled);
 
 		return sprintf($buttonStr, $answerButtonClass, '', $answerButtonDisabled, $url, $answerButtonLabel);
+	}
+/**
+ * _getLabel 回答済み 回答 終了 ラベルの取得
+ *
+ * @param array $quiz 小テスト
+ * @param string $answerButtonDisabled ボタン操作可能状態
+ * @return string
+ */
+	protected function _getLabel($quiz, $answerButtonDisabled) {
+		// 操作可能状態だったら無条件に「回答」だけのボタン
+		if ($answerButtonDisabled == '') {
+			return __d('quizzes', 'Answer');
+		}
+		// 操作不可能のときだけ分岐
+		$key = $quiz['Quiz']['key'];
+		// 未回答
+		if (! in_array($key, $this->_View->viewVars['ownAnsweredKeys'])) {
+			return __d('quizzes', 'Unanswered');
+		}
+		return __d('quizzes', 'Finished');
 	}
 
 }

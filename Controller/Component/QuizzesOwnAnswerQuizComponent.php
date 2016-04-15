@@ -29,6 +29,15 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 	private $__ownAnsweredKeys = null;
 
 /**
+ * Answered quiz keys
+ *
+ * 回答済み小テスト回答数
+ *
+ * @var array
+ */
+	private $__ownAnsweredCounts = null;
+
+/**
  * 指定された小テストに該当する回答中小テストのサマリを取得する
  *
  * @param string $quizKey 回答済に追加する小テストキー
@@ -112,13 +121,15 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		}
 
 		$this->__ownAnsweredKeys = array();
+		$this->__ownAnsweredCounts = array();
 
 		if (empty(Current::read('User.id'))) {
 			$session = $this->_Collection->load('Session');
 			$blockId = Current::read('Block.id');
 			$ownAnsweredKeys = $session->read('Quizzes.ownAnsweredQuizKeys.' . $blockId);
 			if (isset($ownAnsweredKeys)) {
-				$this->__ownAnsweredKeys = explode(',', $ownAnsweredKeys);
+				$this->__ownAnsweredKeys = array_keys($ownAnsweredKeys);
+				$this->__ownAnsweredCounts = $ownAnsweredKeys;
 			}
 
 			return $this->__ownAnsweredKeys;
@@ -129,19 +140,34 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 			'user_id' => Current::read('User.id'),
 			'answer_status' => QuizzesComponent::ACTION_ACT,
 			'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM,
-			'answer_number' => 1
 		);
 		$ownAnsweredKeys = $answerSummary->find(
-			'list',
+			'all',
 			array(
+				'fields' => array('QuizAnswerSummary.quiz_key', 'COUNT(QuizAnswerSummary.id) AS cnt'),
 				'conditions' => $conditions,
-				'fields' => array('QuizAnswerSummary.quiz_key'),
-				'recursive' => -1
+				//'fields' => array('QuizAnswerSummary.quiz_key'),
+				'recursive' => -1,
+				'group' => 'quiz_key'
 			)
 		);
-		$this->__ownAnsweredKeys = array_values($ownAnsweredKeys);	// idの使用を防ぐ（いらない？）
-
+		if ($ownAnsweredKeys) {
+			$ownAnsweredKeys = Hash::combine($ownAnsweredKeys, '{n}.QuizAnswerSummary.quiz_key', '{n}.{n}.cnt');
+			$this->__ownAnsweredKeys = array_keys($ownAnsweredKeys);
+			$this->__ownAnsweredCounts = $ownAnsweredKeys;
+		}
 		return $this->__ownAnsweredKeys;
+	}
+/**
+ * 回答済み小テスト回数リストを取得する
+ *
+ * @return Answered Quiz keys list
+ */
+	function getOwnAnsweredCounts() {
+		if (is_null($this->__ownAnsweredCounts)) {
+			$this->getOwnAnsweredKeys();
+		}
+		return $this->__ownAnsweredCounts;
 	}
 /**
  * 小テスト回答済みかどうかを返す
@@ -172,6 +198,11 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		}
 		// 回答済み小テスト配列に追加
 		$this->__ownAnsweredKeys[] = $quizKey;
+		if (isset($this->__ownAnsweredCounts[$quizKey])) {
+			$this->__ownAnsweredCounts[$quizKey]++;
+		} else {
+			$this->__ownAnsweredCounts[$quizKey] = 1;
+		}
 		// ログイン状態の人の場合はこれ以上の処理は不要
 		if (! empty(Current::read('User.id'))) {
 			return;
@@ -179,7 +210,7 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		// 未ログインの人の場合はセッションに書いておく
 		$session = $this->_Collection->load('Session');
 		$blockId = Current::read('Block.id');
-		$session->write('Quizzes.ownAnsweredQuizKeys.' . $blockId, implode(',', $this->__ownAnsweredKeys));
+		$session->write('Quizzes.ownAnsweredQuizKeys.' . $blockId, $this->__ownAnsweredCounts);
 
 		// 回答中アンケートからは削除しておく
 		$this->deleteProgressiveSummaryOfThisUser($quizKey);

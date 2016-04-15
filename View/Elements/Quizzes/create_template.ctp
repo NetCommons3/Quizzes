@@ -15,7 +15,7 @@
 	'hiddenField' => false,
 	));
 ?>
-<div class="row" collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_TEMPLATE; ?>'">
+<div class="row" uib-collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_TEMPLATE; ?>'">
 	<div class="col-lg-11 col-lg-offset-1">
 		<?php echo $this->NetCommonsForm->input('template_file', array(
 			'type' => 'file',

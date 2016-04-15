@@ -43,6 +43,12 @@
     padding-bottom:1em;
     padding-left: 2em;
 }
+/*--小テスト編集画面のページ追加タブスタイル--*/
+.quiz-add-page-tab {
+    display: block;
+    padding: 10px 25px;
+    float: left;
+}
 /*--小テスト編集画面の質問アコーディオンスタイル---*/
 .quiz-accordion-header-title {
     line-height:2em;
@@ -72,3 +78,5 @@
 .quiz-step-item .glyphicon {
     float:right;
 }
+.quiz-result-table {}
+.quiz-result-table th {text-align:center;}

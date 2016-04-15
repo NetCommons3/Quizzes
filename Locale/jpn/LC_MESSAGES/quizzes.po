@@ -268,7 +268,7 @@ msgstr "公開前"
 
 #: /View/Helper/QuizStatusLabelHelper.php:53
 msgid "End"
-msgstr ""
+msgstr "終了"
 
 #: /View/QuizEdit/edit.ctp:52
 msgid "Sub Title"
