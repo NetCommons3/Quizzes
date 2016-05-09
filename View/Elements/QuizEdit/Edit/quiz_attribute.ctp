@@ -60,14 +60,16 @@ if ($isPublished) {
 			'div' => 'form-inline',
 			'class' => 'form-control',
 			'ng-model' => 'quiz.quiz.passingGrade',
-			'after' => ' 点以上を合格とする',
+			'after' => __d('quizzes', ' 点以上を合格とする'),
 			'disabled' => $disabled,
 			'aria-describedby' => 'quizPassLineHelp'
 		));
 		?>
 		</div>
 	</div>
-	<span id="quizPassLineHelp" class="help-block col-lg-offset-2">※未設定にしておくと合否判定は行われません。　※実施後は変更できません。</span>
+	<span id="quizPassLineHelp" class="help-block col-lg-offset-2">
+		<?php echo __d('quizzes', '※未設定にしておくと合否判定は行われません。　※実施後は変更できません。'); ?>
+	</span>
 </div>
 
 <?php

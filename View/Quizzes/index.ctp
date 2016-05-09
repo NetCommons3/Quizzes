@@ -53,7 +53,11 @@ echo $this->element('Quizzes.scripts');
 				<?php if (in_array($quiz['Quiz']['key'], $notScoringQuizKeys)): ?>
 				<div class="col-md-12 col-xs-12 alert alert-warning alert-dismissible" role="alert">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<a href="#"><span class="text-danger">※未採点のデータがあります</span></a>
+					<a href="#">
+						<span class="text-danger">
+							<?php echo __d('quizzes', '! There is a non-scoring of data'); /* '※未採点のデータがあります' */ ?>
+						</span>
+					</a>
 				</div>
 				<?php endif; ?>
 

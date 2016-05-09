@@ -133,8 +133,14 @@ class QuizResult extends QuizzesAppModel {
  */
 	public function getAllResult() {
 		$ret = array();
-		$ret['general'] = $this->getGeneralInformation($this->_quiz['Quiz']['key'], $this->_userSummaryIds);
-		$ret['score_distribution'] = $this->getScoreDistribution($this->_quiz, $this->_userSummaryIds);
+		$ret['general'] = $this->getGeneralInformation(
+			$this->_quiz['Quiz']['key'],
+			$this->_userSummaryIds
+		);
+		$ret['score_distribution'] = $this->getScoreDistribution(
+			$this->_quiz,
+			$this->_userSummaryIds
+		);
 		return $ret;
 	}
 /**
@@ -183,7 +189,10 @@ class QuizResult extends QuizzesAppModel {
 			$rangeHigh = $baseScore * ($i + 1);
 			$dispersion[$i]['label'] = sprintf('%d - %d', round($rangeLow), round($rangeHigh));
 			// それぞれの範囲の人数を取得
-			$condition = Hash::merge($baseCondition, array('summary_score BETWEEN ? AND ?' => array($rangeLow, $rangeHigh)));
+			$condition = Hash::merge(
+				$baseCondition,
+				array('summary_score BETWEEN ? AND ?' => array($rangeLow, $rangeHigh))
+			);
 			$number = $this->QuizAnswerSummary->find('all', array(
 				'fields' => array(
 					'COUNT(*) AS number',
@@ -251,7 +260,8 @@ class QuizResult extends QuizzesAppModel {
  * @param array $extra 追加情報
  * @return array レコード
  */
-	public function paginate($conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
+	public function paginate(
+		$conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
 		$recursive = 0;
 		$fields = array('QuizAnswerSummary.*', 'User.*', 'Statistics.*');
 		$joins = $this->_getJoins();

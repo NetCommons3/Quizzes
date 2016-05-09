@@ -63,7 +63,7 @@
 				<div class="radio pull-right quiz-edit-correct-option" ng-if="question.questionType == <?php echo QuizzesComponent::TYPE_SELECTION; ?>">
 					<label>
 						<?php echo $this->NetCommonsForm->radio('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.0.correct',
-						array('{{choice.choiceLabel}}' => '正解にする'),
+						array('{{choice.choiceLabel}}' => __d('quizzes', '正解にする')),
 						array(
 						'label' => false,
 						'ng-checked' => 'choice.choiceLabel == question.quizCorrect[0].correct',
@@ -83,7 +83,7 @@
 						'hiddenField' => false
 						));
 						?>
-						正解にする
+						<?php echo __d('quizzes', '正解にする'); ?>
 					</label>
 				</div>
 				<div class="form-inline">

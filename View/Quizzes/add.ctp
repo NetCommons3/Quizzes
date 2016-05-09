@@ -25,7 +25,7 @@ $jsPastQuizzes = NetCommonsAppController::camelizeKeyRecursive($pastQuizzes);
 
 				<div class="col-lg-12">
 					<p>
-						<?php echo __d('quizzes', '新しい小テストを作ることができます。作成方法を下に表示されている中から選んでください。'); ?>
+						<?php echo __d('quizzes', 'You can create a new quiz . Please choose from that are displayed how to create below .'); /*新しい小テストを作ることができます。作成方法を下に表示されている中から選んでください。*/ ?>
 					</p>
 				</div>
 

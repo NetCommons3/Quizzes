@@ -84,7 +84,12 @@ class QuizzesShuffleComponent extends Component {
 			foreach ($page['QuizQuestion'] as &$q) {
 				$choices = $q['QuizChoice'];
 				if ($q['is_choice_random'] == QuizzesComponent::USES_USE) {
-					$sessionPath = 'Quizzes.quizShuffles.' . $quiz['Quiz']['key'] . '.QuizQuestion.' . $q['key'] . '.QuizChoice';
+					$sessionPath =
+						'Quizzes.quizShuffles.' .
+						$quiz['Quiz']['key'] .
+						'.QuizQuestion.' .
+						$q['key'] .
+						'.QuizChoice';
 					if ($session->check($sessionPath)) {
 						$choices = $session->read($sessionPath);
 					} else {

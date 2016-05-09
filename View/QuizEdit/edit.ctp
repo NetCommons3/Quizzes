@@ -39,12 +39,12 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 		echo $this->NetCommonsForm->hidden('Quiz.export_key');
 	?>
 		<div class="modal-body">
-			<label class="h3"><?php echo __d('quizzes', '形式の設定'); ?></label>
+			<label class="h3"><?php echo __d('quizzes', 'Setting of format'); /* '形式の設定' */ ?></label>
 			<div class="form-group quiz-group">
 				<?php echo $this->element('Quizzes.QuizEdit/Edit/quiz_attribute', array('isPublished' => $isPublished)); ?>
 			</div>
 
-			<label class="h3"><?php echo __d('quizzes', '実施方法の設定'); ?></label>
+			<label class="h3"><?php echo __d('quizzes', 'Setting method of implementation'); /* '実施方法の設定' */ ?></label>
 			<div class="form-group quiz-group">
 				<?php echo $this->element('Quizzes.QuizEdit/Edit/quiz_method/period'); ?>
 			</div>

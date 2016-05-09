@@ -58,10 +58,18 @@ class QuizBlockRolePermissionsController extends QuizzesAppController {
 		'Blocks.BlockRolePermissionForm',
 		'Blocks.BlockTabs' => array(
 			'mainTabs' => array(
-				'block_index' => array('url' => array('controller' => 'quiz_blocks')),
-				'role_permissions' => array('url' => array('controller' => 'quiz_block_role_permissions')),
-				'frame_settings' => array('url' => array('controller' => 'quiz_frame_settings')),
-				'mail_settings' => array('url' => array('controller' => 'quiz_mail_settings')),
+				'block_index' => array(
+					'url' => array('controller' => 'quiz_blocks')
+				),
+				'role_permissions' => array(
+					'url' => array('controller' => 'quiz_block_role_permissions')
+				),
+				'frame_settings' => array(
+					'url' => array('controller' => 'quiz_frame_settings')
+				),
+				'mail_settings' => array(
+					'url' => array('controller' => 'quiz_mail_settings')
+				),
 			),
 		),
 		'NetCommons.Date',
@@ -79,7 +87,7 @@ class QuizBlockRolePermissionsController extends QuizzesAppController {
 			return false;
 		}
 		$permissions = $this->Workflow->getBlockRolePermissions(
-			array('content_creatable', 'content_publishable'/*, 'content_comment_creatable', 'content_comment_publishable'*/)
+			array('content_creatable', 'content_publishable')
 		);
 		$this->set('roles', $permissions['Roles']);
 		if ($this->request->is('post')) {

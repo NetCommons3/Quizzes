@@ -130,14 +130,14 @@ class QuizBlocksController extends QuizzesAppController {
  * @throws InternalErrorException
  */
 	public function download() {
-		/*
 		// NetCommonsお約束：コンテンツ操作のためのURLには対象のコンテンツキーが必ず含まれている
 		// まずは、そのキーを取り出す
 		// アンケートキー
-		$questionnaireKey = $this->_getQuestionnaireKeyFromPass();
+		/*
+		$quizKey = $this->_getQuizKeyFromPass();
 		// キー情報をもとにデータを取り出す
-		$questionnaire = $this->QuestionnaireAnswerSummaryCsv->getQuestionnaireForAnswerCsv($questionnaireKey);
-		if (! $questionnaire) {
+		$quiz = $this->QuizAnswerSummaryCsv->getQuizForAnswerCsv($quizKey);
+		if (! $quiz) {
 			$this->setAction('throwBadRequest');
 			return;
 		}
@@ -145,12 +145,15 @@ class QuizBlocksController extends QuizzesAppController {
 		if (! empty($this->request->data['AuthorizationKey']['authorization_key'])) {
 			$zipPassword = $this->request->data['AuthorizationKey']['authorization_key'];
 		} else {
-			$this->NetCommons->setFlashNotification(__d('questionnaires', 'Setting of password is required always to download answers.'),
-				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL));
+			$this->NetCommons->setFlashNotification(
+				__d('quizzes', 'Setting of password is required always to download answers.'),
+				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL)
+			);
 			$this->redirect(NetCommonsUrl::actionUrl(array(
-				'controller' => 'questionnaire_blocks',
+				'controller' => 'quiz_blocks',
 				'action' => 'index',
-				'frame_id' => Current::read('Frame.id'))));
+				'frame_id' => Current::read('Frame.id')))
+			);
 			return;
 		}
 
@@ -163,31 +166,37 @@ class QuizBlocksController extends QuizzesAppController {
 			// QUESTIONNAIRE_CSV_UNIT_NUMBER分に制限して取得する
 			$offset = 0;
 			do {
-				$datas = $this->QuestionnaireAnswerSummaryCsv->getAnswerSummaryCsv($questionnaire, self::QUESTIONNAIRE_CSV_UNIT_NUMBER, $offset);
+				$datas = $this->QuizAnswerSummaryCsv->getAnswerSummaryCsv(
+					$quiz,
+					self::QUIZ_CSV_UNIT_NUMBER, $offset
+				);
 				// CSV形式で書きこみ
 				foreach ($datas as $data) {
 					$csvFile->add($data);
 				}
 				$dataCount = count($datas);	// データ数カウント
 				$offset += $dataCount;		// 次の取得開始位置をずらす
-			} while ($dataCount == self::QUESTIONNAIRE_CSV_UNIT_NUMBER);
+			} while ($dataCount == self::QUIZ_CSV_UNIT_NUMBER);
 			// データ取得数が制限値分だけとれている間は繰り返す
 
 		} catch (Exception $e) {
 			// NetCommonsお約束:エラーメッセージのFlash表示
-			$this->NetCommons->setFlashNotification(__d('questionnaires', 'download error'),
-				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL));
+			$this->NetCommons->setFlashNotification(
+				__d('quizzes', 'download error'),
+				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL)
+			);
 			$this->redirect(NetCommonsUrl::actionUrl(array(
-				'controller' => 'questionnaire_blocks',
+				'controller' => 'quiz_blocks',
 				'action' => 'index',
-				'frame_id' => Current::read('Frame.id'))));
+				'frame_id' => Current::read('Frame.id')))
+			);
 			return;
 		}
 		// Downloadの時はviewを使用しない
 		$this->autoRender = false;
 		// ダウンロードファイル名決定 アンケート名称をつける
-		$zipFileName = $questionnaire['Questionnaire']['title'] . '.zip';
-		$downloadFileName = $questionnaire['Questionnaire']['title'] . '.csv';
+		$zipFileName = $quiz['Quiz']['title'] . '.zip';
+		$downloadFileName = $quiz['Quiz']['title'] . '.csv';
 		// 出力
 		return $csvFile->zipDownload(rawurlencode($zipFileName), $downloadFileName, $zipPassword);
 		*/
@@ -205,10 +214,10 @@ class QuizBlocksController extends QuizzesAppController {
 		// NetCommonsお約束：コンテンツ操作のためのURLには対象のコンテンツキーが必ず含まれている
 		// まずは、そのキーを取り出す
 		// アンケートキー
-		$questionnaireKey = $this->_getQuestionnaireKeyFromPass();
+		$quizKey = $this->_getQuizKeyFromPass();
 		// キー情報をもとにデータを取り出す
-		$questionnaire = $this->QuestionnaireAnswerSummaryCsv->getQuestionnaireForAnswerCsv($questionnaireKey);
-		if (! $questionnaire) {
+		$quiz = $this->QuizAnswerSummaryCsv->getQuizForAnswerCsv($quizKey);
+		if (! $quiz) {
 			$this->setAction('throwBadRequest');
 			return;
 		}
@@ -218,19 +227,19 @@ class QuizBlocksController extends QuizzesAppController {
 			$zipFile = new ZipDownloader();
 
 			// Export用のデータ配列を取得する
-			$zipData = $this->QuestionnaireExport->getExportData($questionnaireKey);
+			$zipData = $this->QuizExport->getExportData($quizKey);
 
 			// Export用ファイルデータをZIPファイルに出力する
 			// ※この中でWYSISWYGエディタデータは適宜処理されている
-			$this->QuestionnaireExport->putToZip($zipFile, $zipData);
+			$this->QuizExport->putToZip($zipFile, $zipData);
 
 			// アーカイブ閉じる
 			$zipFile->close();
 		} catch(Exception $e) {
-			$this->Session->setFlash(__d('questionnaires', 'export error') . $e->getMessage(),
+			$this->Session->setFlash(__d('quizzes', 'export error') . $e->getMessage(),
 				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL));
 			$this->redirect(NetCommonsUrl::actionUrl(array(
-				'controller' => 'questionnaire_blocks',
+				'controller' => 'quiz_blocks',
 				'action' => 'index',
 				'frame_id' => Current::read('Frame.id'))));
 			return;
@@ -240,17 +249,17 @@ class QuizBlocksController extends QuizzesAppController {
 		// アンケートデータファイルのフィンガープリントを得る
 		$fingerPrint = sha1_file($zipFile->path, false);
 		// フィンガープリントをアーカイブに加える
-		$zipWrapperFile->addFromString(QuestionnairesComponent::QUESTIONNAIRE_FINGER_PRINT_FILENAME, $fingerPrint);
+		$zipWrapperFile->addFromString(QuizzesComponent::QUIZ_FINGER_PRINT_FILENAME, $fingerPrint);
 		// 本体ファイルを
-		$zipWrapperFile->addFile($zipFile->path, QuestionnairesComponent::QUESTIONNAIRE_TEMPLATE_FILENAME);
+		$zipWrapperFile->addFile($zipFile->path, QuizzesComponent::QUIZ_TEMPLATE_FILENAME);
 		// export-key 設定
-		$this->Questionnaire->saveExportKey($questionnaire['Questionnaire']['id'], $fingerPrint);
+		$this->Quiz->saveExportKey($quiz['Quiz']['id'], $fingerPrint);
 
 		// viewを使用しない
 		$this->autoRender = false;
 
 		// ダウンロード出力ファイル名確定
-		$exportFileName = $questionnaire['Questionnaire']['title'] . '.zip';
+		$exportFileName = $quiz['Quiz']['title'] . '.zip';
 		// 出力
 		return $zipWrapperFile->download(rawurlencode($exportFileName));
 		*/

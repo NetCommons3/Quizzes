@@ -86,12 +86,12 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 												'ng-disabled' => 'isPublished != 0',
 												'after' => ' / ' . '{{getAllotmentSum()}}',
 										));
-									/* 質問文 */
+									/* 質問文 問題文を入れてください */
 									echo $this->QuestionEdit->questionInput('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.question_value',
 										__d('quizzes', 'question sentence'),
 										array('type' => 'wysiswyg',
 											'required' => true,
-											'placeholder' => '問題文を入れてください',
+											'placeholder' => __d('quizzes', 'Please input the question statement'),
 											'id' => false,
 											'ng-model' => 'question.questionValue',
 											'ui-tinymce' => 'tinymce.options',

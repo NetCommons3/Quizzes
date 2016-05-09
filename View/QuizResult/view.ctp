@@ -30,9 +30,13 @@ if ($scoreHistory) {
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
 
 	<?php if ($scoreHistory): ?>
-		<h2><?php echo sprintf('%sさんの成績', $handleName); ?></h2>
+		<h2>
+			<?php echo sprintf(__d('quizzes', '%sさんの成績'), $handleName); ?>
+		</h2>
 		<section>
-			<h3>得点推移</h3>
+			<h3>
+				<?php echo __d('quizzes', '得点推移'); ?>
+			</h3>
 			<nvd3 options="opt" data="data"></nvd3>
 		</section>
 	<?php endif; ?>
@@ -41,18 +45,20 @@ if ($scoreHistory) {
 
 	<?php if ($summaryList): ?>
 	<section>
-	<h3>成績履歴</h3>
+	<h3>
+		<?php echo __d('quizzes', '成績履歴'); ?>
+	</h3>
 	<table class="table quiz-result-table">
 		<tr class="">
-			<th><a href="#">回</a></th>
-			<th>完答</th>
-			<th>合格</th>
-			<th>時間内</th>
-			<th><a href="">日時</a></th>
-			<th><a href="">時間</a></th>
-			<th><a href="">得点</a></th>
-			<th><a href="">偏差値</a></th>
-			<th><a href="">採点</a></th>
+			<th><a href="#"><?php echo __d('quizzes', '回'); ?></a></th>
+			<th><?php echo __d('quizzes', '完答'); ?></th>
+			<th><?php echo __d('quizzes', '合格'); ?></th>
+			<th><?php echo __d('quizzes', '時間内'); ?></th>
+			<th><a href=""><?php echo __d('quizzes', '日時'); ?></a></th>
+			<th><a href=""><?php echo __d('quizzes', '時間'); ?></a></th>
+			<th><a href=""><?php echo __d('quizzes', '得点'); ?></a></th>
+			<th><a href=""><?php echo __d('quizzes', '偏差値'); ?></a></th>
+			<th><a href=""><?php echo __d('quizzes', '採点'); ?></a></th>
 		</tr>
 		<?php foreach ($summaryList as $summary): ?>
 			<tr class="<?php echo $this->QuizResult->getPassClass($quiz, $summary); ?>" >
@@ -90,7 +96,7 @@ if ($scoreHistory) {
 				</td>
 				<td class="text-center">
 					<?php if (! $summary['QuizAnswerSummary']['is_grade_finished']): ?>
-						<span class="label label-danger">未採点あり</span>
+						<span class="label label-danger"><?php echo __d('quizzes', '未採点あり'); ?></span>
 					<?php endif; ?>
 				</td>
 			</tr>
@@ -103,9 +109,9 @@ if ($scoreHistory) {
 	<?php endif; ?>
 
 	<div class="text-center">
-		<?php echo $this->BackTo->pageLinkButton('小テストＴＯＰへ戻る', array('icon' => 'remove', 'iconSize' => 'lg')); ?>
+		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', '小テストＴＯＰへ戻る'), array('icon' => 'remove', 'iconSize' => 'lg')); ?>
 		<?php if ($this->Workflow->canEdit('Quiz', $quiz)) : ?>
-			<?php echo $this->BackTo->linkButton('受験者一覧に戻る',
+			<?php echo $this->BackTo->linkButton(__d('quizzes', '受験者一覧に戻る'),
 			NetCommonsUrl::actionUrl(array(
 			'action' => 'index',
 			'block_id' => Current::read('Block.id'),

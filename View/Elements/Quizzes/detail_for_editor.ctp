@@ -22,9 +22,9 @@
 			<small>
 				<dl class="quiz-editor-dl">
 					<dt><?php echo __d('quizzes', 'Author'); ?></dt>
-					<dd><?php echo $quiz['TrackableCreator']['username']; ?></dd>
+					<dd><?php echo $quiz['TrackableCreator']['handlename']; ?></dd>
 					<dt><?php echo __d('quizzes', 'Modified by'); ?></dt>
-					<dd><?php echo $quiz['TrackableUpdater']['username']; ?>
+					<dd><?php echo $quiz['TrackableUpdater']['handlename']; ?>
 						(<?php echo $this->Date->dateFormat($quiz['Quiz']['modified']); ?>)
 					</dd>
 				</dl>

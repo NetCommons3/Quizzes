@@ -73,7 +73,8 @@ class QuizResultHelper extends AppHelper {
 		if ($quiz['Quiz']['estimated_time'] != 0) {
 			$withinTime = $this->_getValue($summary, 'within_time_status');
 		}
-		if ($passing == QuizzesComponent::STATUS_GRADE_PASS && $withinTime == QuizzesComponent::STATUS_GRADE_PASS) {
+		if ($passing == QuizzesComponent::STATUS_GRADE_PASS &&
+			$withinTime == QuizzesComponent::STATUS_GRADE_PASS) {
 			return 'success';
 		}
 		return '';

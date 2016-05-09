@@ -9,6 +9,12 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
+/**
+ * Quizzes Migration
+ *
+ * @author Allcreator <info@allcreator.net>
+ * @package NetCommons\Quizzes\Config\Migration
+ */
 class AddChoiceHorizon extends CakeMigration {
 
 /**

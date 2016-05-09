@@ -79,9 +79,15 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		if (! $summary) {
 			$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
 			$session = $this->_Collection->load('Session');
-			$summary = $answerSummary->forceGetProgressiveAnswerSummary($quiz, Current::read('User.id'), $session->id());
+			$summary = $answerSummary->forceGetProgressiveAnswerSummary(
+				$quiz, Current::read('User.id'),
+				$session->id()
+			);
 			if ($summary) {
-				$this->saveProgressiveSummaryOfThisUser($quiz['Quiz']['key'], $summary['QuizAnswerSummary']['id']);
+				$this->saveProgressiveSummaryOfThisUser(
+					$quiz['Quiz']['key'],
+					$summary['QuizAnswerSummary']['id']
+				);
 			}
 		}
 
@@ -144,7 +150,10 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		$ownAnsweredKeys = $answerSummary->find(
 			'all',
 			array(
-				'fields' => array('QuizAnswerSummary.quiz_key', 'COUNT(QuizAnswerSummary.id) AS cnt'),
+				'fields' => array(
+					'QuizAnswerSummary.quiz_key',
+					'COUNT(QuizAnswerSummary.id) AS cnt'
+				),
 				'conditions' => $conditions,
 				//'fields' => array('QuizAnswerSummary.quiz_key'),
 				'recursive' => -1,
@@ -152,7 +161,11 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 			)
 		);
 		if ($ownAnsweredKeys) {
-			$ownAnsweredKeys = Hash::combine($ownAnsweredKeys, '{n}.QuizAnswerSummary.quiz_key', '{n}.{n}.cnt');
+			$ownAnsweredKeys = Hash::combine(
+				$ownAnsweredKeys,
+				'{n}.QuizAnswerSummary.quiz_key',
+				'{n}.{n}.cnt'
+			);
 			$this->__ownAnsweredKeys = array_keys($ownAnsweredKeys);
 			$this->__ownAnsweredCounts = $ownAnsweredKeys;
 		}
@@ -163,7 +176,7 @@ class QuizzesOwnAnswerQuizComponent extends Component {
  *
  * @return Answered Quiz keys list
  */
-	function getOwnAnsweredCounts() {
+	public function getOwnAnsweredCounts() {
 		if (is_null($this->__ownAnsweredCounts)) {
 			$this->getOwnAnsweredKeys();
 		}
@@ -210,7 +223,10 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		// 未ログインの人の場合はセッションに書いておく
 		$session = $this->_Collection->load('Session');
 		$blockId = Current::read('Block.id');
-		$session->write('Quizzes.ownAnsweredQuizKeys.' . $blockId, $this->__ownAnsweredCounts);
+		$session->write(
+			'Quizzes.ownAnsweredQuizKeys.' . $blockId,
+			$this->__ownAnsweredCounts
+		);
 
 		// 回答中アンケートからは削除しておく
 		$this->deleteProgressiveSummaryOfThisUser($quizKey);

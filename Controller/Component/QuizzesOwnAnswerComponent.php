@@ -65,7 +65,7 @@ class QuizzesOwnAnswerComponent extends Component {
 				'recursive' => -1
 			)
 		);
-		$this->__answeredSummaryIds = array_values($answerSummaryIds);	// idの使用を防ぐ（いらない？）
+		$this->__answeredSummaryIds = array_values($answerSummaryIds);
 
 		return $this->__answeredSummaryIds;
 	}
@@ -107,6 +107,9 @@ class QuizzesOwnAnswerComponent extends Component {
 		// 未ログインの人の場合はセッションに書いておく
 		$session = $this->_Collection->load('Session');
 		$blockId = Current::read('Block.id');
-		$session->write('Quizzes.answeredSummaryIds.' . $blockId, implode(',', $this->getAnsweredSummaryIds()));
+		$session->write(
+			'Quizzes.answeredSummaryIds.' . $blockId,
+			implode(',', $this->getAnsweredSummaryIds())
+		);
 	}
 }

@@ -105,7 +105,14 @@ class QuizAnswerButtonHelper extends AppHelper {
 
 		$answerButtonLabel = $this->_getLabel($quiz, $answerButtonDisabled);
 
-		return sprintf($buttonStr, $answerButtonClass, '', $answerButtonDisabled, $url, $answerButtonLabel);
+		return sprintf(
+			$buttonStr,
+			$answerButtonClass,
+			'',
+			$answerButtonDisabled,
+			$url,
+			$answerButtonLabel
+		);
 	}
 /**
  * _getLabel 回答済み 回答 終了 ラベルの取得

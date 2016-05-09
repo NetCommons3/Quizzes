@@ -11,8 +11,11 @@
 ?>
 <div class="form-group quiz-group">
 	<?php
-					echo $this->QuestionEdit->quizAttributeCheckbox('is_no_member_allow',
-	__d('quizzes', '非会員の回答を許す' . '<span class="text-muted" ng-show="quiz.quiz.isNoMemberAllow == 1">　　非会員にも回答を許す場合は、画像認証または認証キーのチェックをONにすることを推奨します。</span>'));
+		echo $this->QuestionEdit->quizAttributeCheckbox('is_no_member_allow',
+		__d('quizzes', '非会員の回答を許す') .
+		'<span class="text-muted" ng-show="quiz.quiz.isNoMemberAllow == 1">' .
+	　　__d('quizzes', '非会員にも回答を許す場合は、画像認証または認証キーのチェックをONにすることを推奨します。') .
+		'</span>');
 	?>
 
 	<div ng-show="quiz.quiz.isNoMemberAllow == 1" style="padding-left:30px;">

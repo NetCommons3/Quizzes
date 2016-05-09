@@ -181,7 +181,10 @@ class QuizAnswersController extends QuizzesAppController {
 			$this->QuizzesAnswerStart->saveStartQuizOfThisUser($quizKey);
 
 			// 回答サマリレコードを作成
-			$summaryId = $this->QuizAnswerSummary->saveStartSummary($quiz, $this->QuizzesOwnAnswer->getAnsweredSummaryIds());
+			$summaryId = $this->QuizAnswerSummary->saveStartSummary(
+				$quiz,
+				$this->QuizzesOwnAnswer->getAnsweredSummaryIds()
+			);
 
 			// 回答サマリIDをセッションに記録
 			$this->QuizzesOwnAnswerQuiz->saveProgressiveSummaryOfThisUser($quizKey, $summaryId);
@@ -249,11 +252,8 @@ class QuizAnswersController extends QuizzesAppController {
 				return;
 			}
 		} else {
-			//if ($this->request->is('post') && $this->request->data('QuizPage.page_sequence') && $nextPageSeq == $this->data['QuizPage']['page_sequence']) {
-			//} else {
 			$setAnswers = $this->QuizAnswer->getProgressiveAnswerOfThisSummary($summary);
 			$this->request->data['QuizAnswer'] = $setAnswers;
-			//}
 		}
 
 		// 質問情報をView変数にセット
@@ -291,14 +291,18 @@ class QuizAnswersController extends QuizzesAppController {
 			// 回答を確定して採点
 			$this->QuizAnswer->saveConfirmAnswer($this->__quiz, $summary);
 			// サマリ状態を完了に変える
-			$newSummary = $this->QuizAnswerSummary->saveEndSummary($this->__quiz, $summary['QuizAnswerSummary']['id']);
+			$newSummary = $this->QuizAnswerSummary->saveEndSummary(
+				$this->__quiz,
+				$summary['QuizAnswerSummary']['id']
+			);
 			// 回答済み小テストキーをセッション記録
 			$this->QuizzesOwnAnswerQuiz->saveOwnAnsweredKeys($quizKey);
 			// 回答済みサマリIDをセッション記録
 			$this->QuizzesOwnAnswer->saveAnsweredSummaryIds($newSummary['id']);
 
 			// 合格済み記録
-			if ($this->QuizAnswerSummary->isPassAnswer($this->__quiz, $newSummary) == QuizzesComponent::STATUS_GRADE_PASS) {
+			$isPassAnswer = $this->QuizAnswerSummary->isPassAnswer($this->__quiz, $newSummary);
+			if ($isPassAnswer == QuizzesComponent::STATUS_GRADE_PASS) {
 				$this->QuizzesPassQuiz->savePassQuizKeys($quizKey);
 			}
 

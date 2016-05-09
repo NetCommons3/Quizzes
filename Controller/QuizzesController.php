@@ -254,7 +254,9 @@ class QuizzesController extends QuizzesAppController {
  * @return void
  */
 	private function __setNotScoringQuizKeys() {
-		$notScoringQuiz = $this->QuizAnswer->getNotScoringQuizKey($this->QuizzesOwnAnswer->getAnsweredSummaryIds());
+		$notScoringQuiz = $this->QuizAnswer->getNotScoringQuizKey(
+			$this->QuizzesOwnAnswer->getAnsweredSummaryIds()
+		);
 		$this->set('notScoringQuizKeys', $notScoringQuiz);
 	}
 

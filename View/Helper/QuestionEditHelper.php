@@ -129,7 +129,7 @@ class QuestionEditHelper extends AppHelper {
 			$ret .= '<span class="help-block">' . $help . '</span>';
 		}
 		$ret .= '</label>';
-		$ret .= '<div class="has-error">' . $this->NetCommonsForm->error($fieldName, null, array('class' => 'help-block')) . '</div>';
+		$ret .= $this->NetCommonsForm->error($fieldName, null, array('class' => 'help-block'));
 		$ret .= '</div>';
 		return $ret;
 	}
@@ -156,7 +156,7 @@ class QuestionEditHelper extends AppHelper {
 			'datetimepicker-options' => "{format:'YYYY-MM-DD HH:mm'}",
 			'show-meridian' => 'false',
 			'label' => $label,
-			'div' => false);
+		);
 		if (! empty($minMax)) {
 			$min = $minMax['min'];
 			$max = $minMax['max'];
@@ -167,12 +167,10 @@ class QuestionEditHelper extends AppHelper {
 			));
 		}
 
-		$ret = '<div class="form-group "><div class="input-group">';
-		$ret .= $this->NetCommonsForm->input($fieldName, $options);
+		$ret = $this->NetCommonsForm->input($fieldName, $options);
 		if (!empty($help)) {
 			$ret .= '<span class="help-block">' . $help . '</span>';
 		}
-		$ret .= '<div class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></div></div></div>';
 		return $ret;
 	}
 

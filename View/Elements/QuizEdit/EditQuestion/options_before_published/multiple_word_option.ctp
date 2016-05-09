@@ -1,6 +1,6 @@
 <?php
 /**
- * answer header view template
+ * 複数単語設定テンプレート
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author Allcreator <info@allcreator.net>

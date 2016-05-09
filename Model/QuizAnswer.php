@@ -166,7 +166,10 @@ class QuizAnswer extends QuizzesAppModel {
 				// データ保存
 				$saveAnswer = $answer[0];
 				if (is_array($saveAnswer['answer_value'])) {
-					$saveAnswer['answer_value'] = implode(QuizzesComponent::ANSWER_DELIMITER, $saveAnswer['answer_value']);
+					$saveAnswer['answer_value'] = implode(
+						QuizzesComponent::ANSWER_DELIMITER,
+						$saveAnswer['answer_value']
+					);
 				}
 				$saveAnswer['quiz_answer_summary_id'] = $summaryId;
 				$this->create();
@@ -215,7 +218,11 @@ class QuizAnswer extends QuizzesAppModel {
 				continue;
 			}
 			// その回答データが正解か判定し
-			$isCorrect = $this->_scoreAnswer($question[0]['question_type'], $answer, $question[0]['QuizCorrect']);
+			$isCorrect = $this->_scoreAnswer(
+				$question[0]['question_type'],
+				$answer,
+				$question[0]['QuizCorrect']
+			);
 			// 回答データを更新する
 			$answer['QuizAnswer']['correct_status'] = $isCorrect;
 			if ($isCorrect == QuizzesComponent::STATUS_GRADE_PASS) {
@@ -330,7 +337,10 @@ class QuizAnswer extends QuizzesAppModel {
 		if (!empty($answers)) {
 			foreach ($answers as $ans) {
 				if (strpos($ans['QuizAnswer']['answer_value'], QuizzesComponent::ANSWER_DELIMITER)) {
-					$ans['QuizAnswer']['answer_value'] = explode(QuizzesComponent::ANSWER_DELIMITER, $ans['QuizAnswer']['answer_value']);
+					$ans['QuizAnswer']['answer_value'] = explode(
+						QuizzesComponent::ANSWER_DELIMITER,
+						$ans['QuizAnswer']['answer_value']
+					);
 				}
 				$answers[$ans['QuizAnswer']['quiz_question_key']][] = $ans['QuizAnswer'];
 			}

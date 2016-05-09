@@ -170,7 +170,6 @@ class QuizFrameSetting extends QuizzesAppModel {
 			$this->create();
 			$this->set($data);
 			if (! $this->validates()) {
-				$this->log($this->validationErrors, 'debug');
 				return false;
 			}
 
@@ -179,7 +178,6 @@ class QuizFrameSetting extends QuizzesAppModel {
 			if (isset($data['QuizFrameDisplayQuizzes'])) {
 				$ret = $this->QuizFrameDisplayQuiz->validateFrameDisplayQuiz($data);
 				if ($ret === false) {
-					$this->log($this->QuizFrameDisplayQuiz->validationErrors, 'debug');
 					return false;
 				}
 			}

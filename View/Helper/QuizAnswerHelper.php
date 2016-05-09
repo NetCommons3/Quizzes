@@ -59,7 +59,10 @@ class QuizAnswerHelper extends AppHelper {
 			array($index, $fieldName, $question, $readonly));
 
 		$ret .= $this->_error($fieldName);
-		$ret .= $this->NetCommonsForm->hidden('QuizAnswer.' . $index . '.0.quiz_question_key', array('value' => $index));
+		$ret .= $this->NetCommonsForm->hidden(
+			'QuizAnswer.' . $index . '.0.quiz_question_key',
+			array('value' => $index)
+		);
 		$ret .= $this->NetCommonsForm->hidden('QuizAnswer.' . $index . '.0.id');
 		return $ret;
 	}

@@ -338,7 +338,10 @@ class ActionQuizAdd extends QuizzesAppModel {
 					if ($model->getColumnType($columnName) == 'text') {
 						// keyと同じ名前のフォルダの下にあるkeyの名前のZIPファイルを渡して
 						// その返ってきた値をこのカラムに設定
-						$value = $wysiswyg->getFromWysIsWygZIP($folderPath . DS . $value, $model->alias . '.' . $columnName);
+						$value = $wysiswyg->getFromWysIsWygZIP(
+							$folderPath . DS . $value,
+							$model->alias . '.' . $columnName
+						);
 					}
 				}
 			}

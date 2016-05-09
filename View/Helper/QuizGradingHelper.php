@@ -23,8 +23,9 @@ class QuizGradingHelper extends AppHelper {
  * @var array
  */
 	public $helpers = array(
-		'NetCommonsForm',
-		'Form'
+		'NetCommons.NetCommonsForm',
+		'Form',
+		'Quizzes.QuizAnswerCorrect'
 	);
 
 /**
@@ -39,7 +40,10 @@ class QuizGradingHelper extends AppHelper {
  * @return string 回答のHTML
  */
 	public function grading($quiz, $pageIndex, $questionIndex, $serialIndex, $question, $answers) {
-		$answer = Hash::extract($answers, 'QuizAnswer.{n}[quiz_question_key=' . $question['key'] . ']');
+		$answer = Hash::extract(
+			$answers,
+			'QuizAnswer.{n}[quiz_question_key=' . $question['key'] . ']'
+		);
 		if ($answer) {
 			$answer = $answer[0];
 		}
@@ -49,7 +53,7 @@ class QuizGradingHelper extends AppHelper {
 		$ret .= '<dl class="dl-horizontal">';
 		$ret .= $this->getAnswer($question, $answer);
 		if ($quiz['Quiz']['is_correct_show'] == true) {
-			$ret .= $this->getCorrect($question, $answer);
+			$ret .= $this->QuizAnswerCorrect->getCorrect($question, $answer);
 		}
 		$ret .= $this->getToGrade($quiz, $pageIndex, $questionIndex, $question, $answer);
 		if ($quiz['Quiz']['is_total_show'] == true) {
@@ -68,11 +72,16 @@ class QuizGradingHelper extends AppHelper {
 	public function getScoreLabel($question, $answer) {
 		$ret = '<label class="pull-right text-muted">';
 		if ($answer['correct_status'] != QuizzesComponent::STATUS_GRADE_YET) {
-			$ret .= sprintf('(%3d点', $answer['score']);
+			$ret .= sprintf(
+				__d('quizzes', '(%3d点 / 配点%3d点)'),
+				$answer['score'],
+				$question['allotment']);
 		} else {
-			$ret .= '(未採点';
+			$ret .= sprintf(
+				__d('quizzes', '(未採点 / 配点%3d点)'),
+				$question['allotment']
+			);
 		}
-		$ret .= sprintf(' / 配点%3d点)', $question['allotment']);
 		$ret .= '</label>';
 		return $ret;
 	}
@@ -85,7 +94,7 @@ class QuizGradingHelper extends AppHelper {
  * @return string 解答の文字列
  */
 	public function getAnswer($question, $answer) {
-		$ret = '<dt>' . 'あなたの解答' . '</dt>';
+		$ret = '<dt>' . __d('quizzes', 'あなたの解答') . '</dt>';
 		$ret .= '<dd>';
 		$this->_setupAnswer($question, $answer);
 		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_SELECTION) {
@@ -101,100 +110,6 @@ class QuizGradingHelper extends AppHelper {
 		return $ret;
 	}
 /**
- * 正解表示
- *
- * @param array $question 問題
- * @param array $answer 回答
- * @return string 正解の文字列
- */
-	public function getCorrect($question, $answer) {
-		// 長文記述に正解はない
-		if ($question['question_type'] == QuizzesComponent::TYPE_TEXT_AREA) {
-			return '';
-		}
-		$ret = '<dt>' . '正解' . '</dt>';
-		$ret .= '<dd>';
-		$ret .= $this->_getCorrect($question['question_type'], $question['QuizCorrect']);
-		$ret .= '</dd>';
-		if (! empty($question['commentary'])) {
-			$ret .= '<dt>' . '解説' . '</dt>';
-			$ret .= '<dd>' . $question['commentary'] . '</dd>';
-		}
-		return $ret;
-	}
-/**
- * 正解表示
- *
- * @param int $type 問題タイプ
- * @param array $corrects 正解
- * @return string 正解の文字列
- */
-	protected function _getCorrect($type, $corrects) {
-		if ($type == QuizzesComponent::TYPE_SELECTION) {
-			$ret = $this->_getSingleSelectCorrect($corrects[0]);
-		} elseif ($type == QuizzesComponent::TYPE_MULTIPLE_SELECTION) {
-			$ret = $this->_getMultipleSelectCorrect($corrects[0]);
-		} elseif ($type == QuizzesComponent::TYPE_WORD) {
-			$ret = $this->_getWordCorrect($corrects[0]);
-		} elseif ($type == QuizzesComponent::TYPE_MULTIPLE_WORD) {
-			$ret = $this->_getMultipleWordCorrect($corrects);
-		}
-		return $ret;
-	}
-/**
- * 択一選択正解表示
- *
- * @param array $correct 正解
- * @return string 正解の文字列
- */
-	protected function _getSingleSelectCorrect($correct) {
-		return $correct['correct'];
-	}
-/**
- * 複数選択正解表示
- *
- * @param array $correct 正解
- * @return string 正解の文字列
- */
-	protected function _getMultipleSelectCorrect($correct) {
-		return implode(',', explode(QuizzesComponent::ANSWER_DELIMITER, $correct['correct']));
-	}
-/**
- * 単語正解表示
- *
- * @param array $correct 正解
- * @return string 正解の文字列
- */
-	protected function _getWordCorrect($correct) {
-		$words = explode(QuizzesComponent::ANSWER_DELIMITER, $correct['correct']);
-
-		$ret = array_shift($words);
-		if (! empty($words)) {
-			$ret .= ' <buttontype="button" class="btn btn-default btn-sm" popover-placement="right" popover="';
-			foreach ($words as $word) {
-				$ret .= $word . ',';
-			}
-			$ret .= '">他に認められる解答</button>';
-		}
-		return $ret;
-	}
-/**
- * 単語複数正解表示
- *
- * @param array $corrects 正解
- * @return string 正解の文字列
- */
-	protected function _getMultipleWordCorrect($corrects) {
-		$ret = '';
-		foreach ($corrects as $index => $correct) {
-			$ret .= sprintf('(%d) ', $index + 1);
-			$ret .= $this->_getWordCorrect($correct);
-			$ret .= '<br />';
-		}
-		return $ret;
-	}
-
-/**
  * 回答データのセットアップ
  *
  * @param array $question 問題
@@ -204,7 +119,10 @@ class QuizGradingHelper extends AppHelper {
 	protected function _setupAnswer($question, &$answer) {
 		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_SELECTION ||
 			$question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
-			$answer['answer_value'] = explode(QuizzesComponent::ANSWER_DELIMITER, $answer['answer_value']);
+			$answer['answer_value'] = explode(
+				QuizzesComponent::ANSWER_DELIMITER,
+				$answer['answer_value']
+			);
 		}
 	}
 /**
@@ -229,9 +147,10 @@ class QuizGradingHelper extends AppHelper {
 		$ret .= $this->Form->input($fieldNameBase . 'correct_status', array(
 			'type' => 'radio',
 			'options' => array(
-				QuizzesComponent::STATUS_GRADE_YET => '未採点',
-				QuizzesComponent::STATUS_GRADE_PASS => '正解',
-				QuizzesComponent::STATUS_GRADE_FAIL => '不正解'),
+				QuizzesComponent::STATUS_GRADE_YET => __d('quizzes', '未採点'),
+				QuizzesComponent::STATUS_GRADE_PASS => __d('quizzes', '正解'),
+				QuizzesComponent::STATUS_GRADE_FAIL => __d('quizzes', '不正解'),
+			),
 			'div' => false,
 			'legend' => false,
 			'label' => false,
@@ -250,7 +169,7 @@ class QuizGradingHelper extends AppHelper {
 			'min' => 0
 		));
 		$ret .= $this->Form->hidden($fieldNameBase . 'id', array('value' => $answer['id']));
-		$ret .= sprintf(' / %d 点', $question['allotment']);
+		$ret .= sprintf(__d('quizzes', ' / %d 点'), $question['allotment']);
 		$ret .= '</div></div></dd>';
 		return $ret;
 	}
@@ -262,7 +181,7 @@ class QuizGradingHelper extends AppHelper {
  */
 	public function getCorrectTotal($question) {
 		$questionId = $question['id'];
-		$ret = '<dt>' . '正答比率' . '</dt>';
+		$ret = '<dt>' . __d('quizzes', '正答比率') . '</dt>';
 		$ret .= '<dd>';
 		$ret .= '<nvd3 options="config"';
 		$ret .= ' data=' . "'" . 'data["' . $questionId . '"]' . "'></nvd3>";
@@ -279,7 +198,7 @@ class QuizGradingHelper extends AppHelper {
  */
 	public function getQuestionLabel($questionIndex, $question, $answer) {
 		$ret = '<label class="control-label">';
-		$ret .= sprintf('問題%2d：', $questionIndex + 1);
+		$ret .= sprintf(__d('quizzes', '問題%2d：'), $questionIndex + 1);
 		$ret .= $this->getGradingLabel($answer);
 		$ret .= '</label>';
 		return $ret;
@@ -293,17 +212,17 @@ class QuizGradingHelper extends AppHelper {
 	public function getGradingLabel($answer) {
 		if (! isset($answer['correct_status'])) {
 			$class = 'default';
-			$label = '未回答';
+			$label = __d('quizzes', '未回答');
 		}
 		if ($answer['correct_status'] == QuizzesComponent::STATUS_GRADE_YET) {
 			$class = 'danger';
-			$label = '未採点';
+			$label = __d('quizzes', '未採点');
 		} elseif ($answer['correct_status'] == QuizzesComponent::STATUS_GRADE_FAIL) {
 			$class = 'warning';
-			$label = '不正解';
+			$label = __d('quizzes', '不正解');
 		} else {
 			$class = 'success';
-			$label = '正解';
+			$label = __d('quizzes', '正解');
 		}
 		$ret = sprintf('<span class="label label-%s">%s</span>', $class, $label);
 		return $ret;
@@ -319,9 +238,18 @@ class QuizGradingHelper extends AppHelper {
 		foreach ($quiz['QuizPage'] as $page) {
 			foreach ($page['QuizQuestion'] as $question) {
 				$correctRate[$question['id']] = [
-					['key' => ' 未採点・未回答　　 ', 'color' => '#777777', 'values' => [['value' => $question['rest_percentage']]]],
-					['key' => ' 正解 ', 'color' => '#5cb85c', 'values' => [['value' => $question['correct_percentage']]]],
-					['key' => ' 不正解 ', 'color' => '#f0ad4e', 'values' => [['value' => $question['wrong_percentage']]]],
+					['key' => __d('quizzes', '未採点・未回答'),
+						'color' => '#777777',
+						'values' => [['value' => $question['rest_percentage']]]
+					],
+					['key' => __d('quizzes', '正解'),
+						'color' => '#5cb85c',
+						'values' => [['value' => $question['correct_percentage']]]
+					],
+					['key' => __d('quizzes', '不正解'),
+						'color' => '#f0ad4e',
+						'values' => [['value' => $question['wrong_percentage']]]
+					],
 				];
 			}
 		}
@@ -367,10 +295,16 @@ class QuizGradingHelper extends AppHelper {
 	protected function _getScoreSummary($quiz, $summary) {
 		$ret = sprintf(__d('quizzes', '得点%d点'), $summary['QuizAnswerSummary']['summary_score']);
 		if ($summary['QuizAnswerSummary']['is_grade_finished'] == false) {
-			$notScoring = Hash::extract($summary, 'QuizAnswer.{n}[correct_status=' . QuizzesComponent::STATUS_GRADE_YET . ']');
+			$notScoring = Hash::extract(
+				$summary,
+				'QuizAnswer.{n}[correct_status=' . QuizzesComponent::STATUS_GRADE_YET . ']'
+			);
 			$notScorePoint = 0;
 			foreach ($notScoring as $not) {
-				$notScoreQuestion = Hash::extract($quiz['QuizPage'], '{n}.QuizQuestion.{n}[key=' . $not['quiz_question_key'] . ']');
+				$notScoreQuestion = Hash::extract(
+					$quiz['QuizPage'],
+					'{n}.QuizQuestion.{n}[key=' . $not['quiz_question_key'] . ']'
+				);
 				foreach ($notScoreQuestion as $question) {
 					$notScorePoint += $question['allotment'];
 				}
@@ -387,11 +321,15 @@ class QuizGradingHelper extends AppHelper {
  * @return string header描画HTML
  */
 	protected function _getElapseTimeSummary($quiz, $summary) {
+		$elapsedSec = $summary['QuizAnswerSummary']['elapsed_second'];
+		$elapsedMin = $elapsedSec / 60;
 		$ret = '<div class="h3">';
-		$ret .= sprintf(__d('quizzes', '解答にかかった時間：%d分'), $summary['QuizAnswerSummary']['elapsed_second'] / 60);
-		if ($quiz['Quiz']['estimated_time'] > 0 && $quiz['Quiz']['estimated_time'] * 60 < $summary['QuizAnswerSummary']['elapsed_second']) {
+		$ret .= sprintf(__d('quizzes', '解答にかかった時間：%d分'), $elapsedMin);
+		if ($quiz['Quiz']['estimated_time'] > 0 && $quiz['Quiz']['estimated_time'] * 60 < $elapsedSec) {
 			$ret .= '<span class="text-danger">';
-			$ret .= sprintf(__d('quizzes', '  %d分オーバーです'), ($summary['QuizAnswerSummary']['elapsed_second'] - $quiz['Quiz']['estimated_time'] * 60) / 60);
+			$ret .= sprintf(
+				__d('quizzes', '  %d分オーバーです'),
+				($elapsedSec - $quiz['Quiz']['estimated_time'] * 60) / 60);
 			$ret .= '</span>';
 		}
 		$ret .= '</div>';

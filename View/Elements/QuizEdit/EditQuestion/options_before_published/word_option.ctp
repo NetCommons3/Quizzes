@@ -1,6 +1,6 @@
 <?php
 /**
- * answer header view template
+ * quizzes word setting view template
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author Allcreator <info@allcreator.net>

@@ -21,7 +21,9 @@ echo $this->element('Quizzes.scripts');
 		<?php echo $this->NetCommonsForm->hidden('Block.id', array('value' => $blockId)); ?>
 
 		<div class="form-group col-lg-12">
-			<p class="lead">これから小テストを始めます。用意ができたら下の「テストを開始する」ボタンを押して、テストを開始してください。</p>
+			<p class="lead">
+				<?php echo __d('quizzes', 'これから小テストを始めます。用意ができたら下の「テストを開始する」ボタンを押して、テストを開始してください。'); ?>
+			</p>
 			<?php if ($quiz['Quiz']['is_image_authentication'] == QuizzesComponent::USES_USE): ?>
 				<?php echo $this->element('VisualCaptcha.visual_captcha', array()); ?>
 			<?php endif; ?>
@@ -32,7 +34,7 @@ echo $this->element('Quizzes.scripts');
 
 		<div class="text-center">
 			<?php echo $this->BackTo->pageLinkButton(__d('net_commons', 'Cancel'), array('icon' => 'remove')); ?>
-			<?php echo $this->Button->save('テストを開始する', array('icon' => 'chevron-right')) ?>
+			<?php echo $this->Button->save(__d('quizzes', 'テストを開始する'), array('icon' => 'chevron-right')) ?>
 		</div>
 
 		<?php echo $this->NetCommonsForm->end(); ?>

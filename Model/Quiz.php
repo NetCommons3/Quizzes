@@ -279,7 +279,9 @@ class Quiz extends QuizzesAppModel {
 
 		// 取得オプション
 		$this->QuizFrameSetting = ClassRegistry::init('Quizzes.QuizFrameSetting', true);
-		$defaultOptions = $this->QuizFrameSetting->getQuizFrameSettingConditions(Current::read('Frame.key'));
+		$defaultOptions = $this->QuizFrameSetting->getQuizFrameSettingConditions(
+			Current::read('Frame.key')
+		);
 		$options = Hash::merge($defaultOptions, $options);
 		$this->recursive = -1;
 		$list = $this->find('all',

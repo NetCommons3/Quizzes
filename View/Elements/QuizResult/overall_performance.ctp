@@ -10,24 +10,28 @@
  */
 ?>
 <section>
-    <span class="pull-right help-block">※繰り返し受験を認めている場合は、データは全て直近の回答をもとに算出しています。</span>
-    <h3>全体成績</h3>
+    <span class="pull-right help-block">
+        <?php echo __d('quizzes', '※繰り返し受験を認めている場合は、データは全て直近の回答をもとに算出しています。'); ?>
+    </span>
+    <h3>
+        <?php echo __d('quizzes', '全体成績'); ?>
+    </h3>
     <table class="table quiz-result-table">
         <tr>
-            <th>総受験者数</th>
-            <th>平均所要時間</th>
-            <th>平均点</th>
-            <th>最高点</th>
-            <th>最低点</th>
-            <th>分散</th>
+            <th><?php echo __d('quizzes', '総受験者数'); ?></th>
+            <th><?php echo __d('quizzes', '平均所要時間'); ?></th>
+            <th><?php echo __d('quizzes', '平均点'); ?></th>
+            <th><?php echo __d('quizzes', '最高点'); ?></th>
+            <th><?php echo __d('quizzes', '最低点'); ?></th>
+            <th><?php echo __d('quizzes', '分散'); ?></th>
         </tr>
         <tr>
             <td class="text-right"><?php echo $general['general']['number_pepole']; ?></td>
             <td class="text-right">
                 <?php if ($general['general']['avg_time'] < 60): ?>
-                   <?php echo sprintf('%d秒', $general['general']['avg_time']); ?>
+                   <?php echo sprintf(__d('quizzes', '%d秒'), $general['general']['avg_time']); ?>
                 <?php else: ?>
-                    <?php echo sprintf('%d分', $general['general']['avg_time'] / 60); ?>
+                    <?php echo sprintf(__d('quizzes', '%d分'), $general['general']['avg_time'] / 60); ?>
                 <?php endif; ?>
             </td>
             <td class="text-right"><?php echo $general['general']['avg_score']; ?></td>

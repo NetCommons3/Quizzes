@@ -27,37 +27,45 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 	<?php echo $this->element('Quizzes.QuizResult/overall_performance'); ?>
 
 	<section>
-		<h3>得点分布</h3>
+		<h3>
+			<?php echo __d('quizzes', '得点分布'); ?>
+		</h3>
 		<nvd3 options="opt" data="data"></nvd3>
 	</section>
 
 	<section class="clearfix">
 		<div class="form-inline pull-right">
 			<div class="form-group quiz-list-select">
-				<label>表示人数：</label>
+				<label>
+					<?php echo __d('quizzes', '表示人数：'); ?>
+				</label>
 				<?php echo $this->DisplayNumber->dropDownToggle(); ?>
 			</div>
 			<div class="form-group quiz-list-select">
-				<label>絞り込み：</label>
+				<label>
+					<?php echo __d('quizzes', '絞り込み：'); ?>
+				</label>
 				<?php echo $this->element('Quizzes.QuizResult/select_pass', array(
 				'list' => array(
-					'' => '得点',
-					'2' => '合格',
-					'1' => '不合格'
+					'' => __d('quizzes', '得点'),
+					'2' => __d('quizzes', '合格'),
+					'1' => __d('quizzes', '不合格')
 				),
 				'currentStatus' => $passFilterStatus,
 				'keyName' => 'passing_status')); ?>
 				<?php echo $this->element('Quizzes.QuizResult/select_pass', array(
 					'list' => array(
-						'' => '時間内',
-						'2' => '合格',
-						'1' => '不合格'
+						'' => __d('quizzes', '時間内'),
+						'2' => __d('quizzes', '合格'),
+						'1' => __d('quizzes', '不合格')
 					),
 					'currentStatus' => $winthinTimeFilterStatus,
 					'keyName' => 'within_time_status')); ?>
 			</div>
 		</div>
-		<h3>受験者一覧</h3>
+		<h3>
+			<?php echo __d('quizzes', '受験者一覧'); ?>
+		</h3>
 		<table class="table quiz-result-table">
 			<tr>
 				<th>
@@ -118,14 +126,16 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 				</tr>
 			<?php endforeach; ?>
 		</table>
-		<span class="help-block">※未ログインでの回答は履歴管理が不可能なため全て１度だけの解答として扱われています。</span>
+		<span class="help-block">
+			<?php echo __d('quizzes', '※未ログインでの回答は履歴管理が不可能なため全て１度だけの解答として扱われています。'); ?>
+		</span>
 
 		<?php echo $this->element('NetCommons.paginator'); ?>
 
 	</section>
 
 	<div class="text-center">
-		<?php echo $this->BackTo->pageLinkButton('小テストＴＯＰへ戻る', array('icon' => 'remove', 'iconSize' => 'lg')); ?>
+		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', '小テストＴＯＰへ戻る'), array('icon' => 'remove', 'iconSize' => 'lg')); ?>
 	</div>
 
 </article>

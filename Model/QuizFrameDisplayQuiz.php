@@ -141,7 +141,7 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 		if (!$this->saveDisplayQuiz($saveData)) {
 			return false;
 		}
-		$action = "'" . 'quiz_answers/view/' . Current::read('Block.id') . '/' . $saveData['quiz_key'] . "'";
+		$action = '\'quiz_answers/view/' . Current::read('Block.id') . '/' . $saveData['quiz_key'] . "'";
 		if (!$this->updateFrameDefaultAction($action)) {
 			return false;
 		}

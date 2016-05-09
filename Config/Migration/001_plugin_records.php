@@ -50,6 +50,8 @@ class PluginRecords extends NetCommonsMigration {
 				'default_setting_action' => 'quiz_blocks/index',
 				'name' => '小テスト',
 				'type' => 1,
+				'display_topics' => 1,
+				'display_search' => 1,
 			),
 			//英語
 			array(
@@ -60,6 +62,8 @@ class PluginRecords extends NetCommonsMigration {
 				'default_setting_action' => 'quiz_blocks/index',
 				'name' => 'Quizzes',
 				'type' => 1,
+				'display_topics' => 1,
+				'display_search' => 1,
 			),
 		),
 		'PluginsRole' => array(

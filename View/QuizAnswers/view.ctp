@@ -48,10 +48,12 @@
 							has-error
 							<?php endif ?>">
 
-		<label class="pull-right text-muted"><?php echo sprintf('(配点%3d点)', $question['allotment']); ?></label>
+		<label class="pull-right text-muted">
+			<?php echo sprintf(__d('quizzes', '(配点%3d点)'), $question['allotment']); ?>
+		</label>
 
 		<label class="control-label">
-			<?php echo sprintf('問題%2d：', $question['serial_number'] + 1); ?>
+			<?php echo sprintf(__d('quizzes', '問題%2d：'), $question['serial_number'] + 1); ?>
 		</label>
 
 		<p >

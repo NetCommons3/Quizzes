@@ -21,7 +21,7 @@
 			<?php echo __d('quizzes', 'この問題にもう一度挑戦する'); ?>
 		</a>
 	<?php else: ?>
-		<?php echo $this->BackTo->pageLinkButton('最初に戻る', array(
+		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', '最初に戻る'), array(
 			'icon' => 'remove',
 			'iconSize' => 'lg'));
 			?>

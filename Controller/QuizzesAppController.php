@@ -149,11 +149,21 @@ class QuizzesAppController extends AppController {
 
 		foreach ($obj['QuizPage'] as &$page) {
 			if (!Hash::check($page, 'QuizQuestion.{n}')) {
-				$page['QuizQuestion'] = Hash::sort($page['QuizQuestion'], '{n}.question_sequence', 'asc', 'numeric');
+				$page['QuizQuestion'] = Hash::sort(
+					$page['QuizQuestion'],
+					'{n}.question_sequence',
+					'asc',
+					'numeric'
+				);
 
 				foreach ($page['QuizQuestion'] as &$question) {
 					if (!Hash::check($question, 'QuizChoice.{n}')) {
-						$question['QuizChoice'] = Hash::sort($question['QuizChoice'], '{n}.choice_sequence', 'asc', 'numeric');
+						$question['QuizChoice'] = Hash::sort(
+							$question['QuizChoice'],
+							'{n}.choice_sequence',
+							'asc',
+							'numeric'
+						);
 					}
 				}
 			}
