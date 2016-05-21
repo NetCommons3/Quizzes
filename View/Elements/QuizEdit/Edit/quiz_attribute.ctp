@@ -27,7 +27,10 @@ if ($isPublished) {
 <div class="form-horizontal">
 	<div class="form-group">
 		<?php
-			echo $this->NetCommonsForm->label('estimated_time', __d('quizzes', '時間の目安'), array(
+			echo $this->NetCommonsForm->label(
+			'estimated_time',
+			__d('quizzes', 'Estimated time'), /* 時間の目安 */
+			array(
 			'class' => 'col-lg-2 control-label'
 			));
 		?>
@@ -38,17 +41,22 @@ if ($isPublished) {
 			'type' => 'number',
 			'div' => 'form-inline',
 			'class' => 'form-control',
-			'after' => ' 分',
+			'after' => __d('quizzes', ' min'), /* 分 */
+			'min' => 0,
 			'ng-model' => 'quiz.quiz.estimatedTime',
 			'disabled' => $disabled,
-			'aria-describedby' => 'quizPassLineHelp'
+			'aria-describedby' => 'quizPassLineHelp',
+			'ng-change' => 'changePassLine()'
 		));
 		?>
 		</div>
 	</div>
 	<div class="form-group">
 		<?php
-			echo $this->NetCommonsForm->label('passing_grade', __d('quizzes', '合格点'), array(
+			echo $this->NetCommonsForm->label(
+			'passing_grade',
+			__d('quizzes', 'Passing score'), /* 合格点 */
+			array(
 			'class' => 'col-lg-2 control-label'
 		));
 		?>
@@ -60,32 +68,40 @@ if ($isPublished) {
 			'div' => 'form-inline',
 			'class' => 'form-control',
 			'ng-model' => 'quiz.quiz.passingGrade',
-			'after' => __d('quizzes', ' 点以上を合格とする'),
+			'after' => __d('quizzes', ' it\'s the passing score') . ' / {{quiz.quiz.perfectScore}}', /* 点以上を合格とする */
+			'min' => 0,
+			'max' => '{{quiz.quiz.perfectScore}}',
 			'disabled' => $disabled,
-			'aria-describedby' => 'quizPassLineHelp'
+			'aria-describedby' => 'quizPassLineHelp',
+			'ng-change' => 'changePassLine()'
 		));
 		?>
 		</div>
 	</div>
 	<span id="quizPassLineHelp" class="help-block col-lg-offset-2">
-		<?php echo __d('quizzes', '※未設定にしておくと合否判定は行われません。　※実施後は変更できません。'); ?>
+		<?php /* ※0にしておくと判定は行われません。　※実施後は変更できません。 */
+		echo __d('quizzes', '! If set "0" for passing score, then pass - fail decision will be not performed. <br /> ! Once you start, you cannnot edit it.');
+		?>
 	</span>
 </div>
 
 <?php
 	echo $this->QuestionEdit->quizAttributeCheckbox('is_repeat_allow',
-	__d('quizzes', '繰り返し回答をさせる'));
+	__d('quizzes', 'Repeat answer')); /* 繰り返し回答をさせる */
 ?>
 <div class="quiz-supplemental-item" ng-show="quiz.quiz.isRepeatAllow==1">
 	<?php
 	echo $this->QuestionEdit->quizAttributeCheckbox('is_repeat_until_passing',
-	__d('quizzes', '繰り返しできるのは合格するまでとする'));
+	__d('quizzes', 'is allowed until pass'), /* 繰り返しできるのは合格するまでとする */
+	array(
+	'ng-disabled' => '!hasPassLine()'
+	));
 	?>
 </div>
 <?php
 echo $this->QuestionEdit->quizAttributeCheckbox('is_page_random',
-	__d('quizzes', 'ページの表示順序をランダムにする'));
+	__d('quizzes', 'Random page')); /* ページの表示順序をランダムにする */
 echo $this->QuestionEdit->quizAttributeCheckbox('is_correct_show',
-	__d('quizzes', '採点結果画面に「正解・解説」を表示する。'));
+	__d('quizzes', 'display the  correct answer and commentary ')); /*採点結果画面に「正解・解説」を表示する。*/
 echo $this->QuestionEdit->quizAttributeCheckbox('is_total_show',
-	__d('quizzes', '採点結果画面に正答率の集計グラフを合わせて表示する'));
+	__d('quizzes', 'Display a graph of the  correct answers ratio')); /* 採点結果画面に正答率の集計グラフを合わせて表示する */

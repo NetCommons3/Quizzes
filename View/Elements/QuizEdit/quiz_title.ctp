@@ -9,7 +9,12 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
-<div class="bg-info">
-    <h2 class="quiz-setting-ttl">{{quiz.quiz.title}}</h2>
-    <span class="help-block quiz-setting-ttl-help"><?php echo __d('quizzes', 'If you want to change the quiz title, please edit in "Set quiz" step.'); ?></span>
-</div>
+<!--<div class="bg-info">-->
+<h1 class="">
+    {{quiz.quiz.title}}
+    <small>
+      <div class="help-block small">
+       <?php echo __d('quizzes', 'If you want to change the quiz title, please edit in "Set quiz" step.'); ?>
+       </div>
+    </small>
+</h1>

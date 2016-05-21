@@ -27,6 +27,7 @@ class QuizQuestion extends QuizzesAppModel {
  */
 	public $actsAs = array(
 		'NetCommons.OriginalKey',
+		'Quizzes.QuizQuestionValidate',
 	);
 
 /**
@@ -35,86 +36,6 @@ class QuizQuestion extends QuizzesAppModel {
  * @var array
  */
 	public $validate = array(
-		'key' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				'on' => 'update', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'language_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'question_sequence' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'question_type' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'is_require' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'is_choice_random' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'allotment' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'quiz_page_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -125,13 +46,6 @@ class QuizQuestion extends QuizzesAppModel {
  * @var array
  */
 	public $belongsTo = array(
-		'Language' => array(
-			'className' => 'Language',
-			'foreignKey' => 'language_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
 		'QuizPage' => array(
 			'className' => 'Quizzes.QuizPage',
 			'foreignKey' => 'quiz_page_id',
@@ -176,6 +90,100 @@ class QuizQuestion extends QuizzesAppModel {
 	);
 
 /**
+ * Constructor. Binds the model's database table to the object.
+ *
+ * @param bool|int|string|array $id Set this ID for this model on startup,
+ * can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ * @see Model::__construct()
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$this->loadModels([
+			'QuizChoice' => 'Quizzes.QuizChoice',
+			'QuizCorrect' => 'Quizzes.QuizCorrect',
+		]);
+	}
+
+/**
+ * Called during validation operations, before validation. Please note that custom
+ * validation rules can be defined in $validate.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if validate operation should continue, false to abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @see Model::save()
+ */
+	public function beforeValidate($options = array()) {
+		$qIndex = $options['questionIndex'];
+		// Questionモデルは繰り返し判定が行われる可能性高いのでvalidateルールは最初に初期化
+		// mergeはしません
+		$this->validate = array(
+			'question_sequence' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+				'comparison' => array(
+					'rule' => array('comparison', '==', $qIndex),
+					'message' => __d('quizzes', 'question sequence is illegal.')
+				),
+			),
+			'question_type' => array(
+				'inList' => array(
+					'rule' => array('inList', QuizzesComponent::$typesList),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'question_value' => array(
+				'notBlank' => array(
+					'rule' => array('notBlank'),
+					'message' => __d('quizzes', 'Please input question text.'),
+				),
+			),
+			'is_choice_random' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'is_choice_horizon' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'is_order_fixed' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'allotment' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					'required' => true,
+					'allowEmpty' => false,
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+				'comparison' => array(
+					'rule' => array('comparison', '>', 0),
+					'message' => __d('quizzes', 'Please enter a number greater than 0 .'),
+				),
+			),
+		);
+		// validates時にはまだquiz_page_idの設定ができないのでチェックしないことにする
+		// quiz_page_idの設定は上位のQuizPageクラスで責任を持って行われるものとする
+
+		parent::beforeValidate($options);
+
+		return true;
+	}
+/**
  * getDefaultQuestion
  * get default data of quiz question
  *
@@ -187,11 +195,14 @@ class QuizQuestion extends QuizzesAppModel {
 			'question_sequence' => 0,
 			'question_value' => __d('quizzes', 'New Question') . '1',
 			'question_type' => QuizzesComponent::TYPE_SELECTION,
-			'allotment' => 0,
-			'commentary' => '',
 			'is_choice_random' => QuizzesComponent::USES_NOT_USE,
+			'is_choice_horizon' => QuizzesComponent::USES_NOT_USE,
+			'is_order_fixed' => QuizzesComponent::USES_NOT_USE,
+			'allotment' => 10,
+			'commentary' => '',
 		);
-		$question['QuizChoice'][0] = $this->QuizChoice->getDefaultChoice();
+		$question['QuizChoice'] = $this->QuizChoice->getDefaultChoice();
+		$question['QuizCorrect'] = $this->QuizCorrect->getDefaultCorrect();
 		return $question;
 	}
 
@@ -236,10 +247,6 @@ class QuizQuestion extends QuizzesAppModel {
  * @return bool
  */
 	public function saveQuizQuestion(&$questions) {
-		$this->loadModels([
-			'QuizCorrect' => 'Quizzes.QuizCorrect',
-			'QuizChoice' => 'Quizzes.QuizChoice',
-		]);
 		// QuizQuestionが単独でSaveされることはない
 		// 必ず上位のQuizのSaveの折に呼び出される
 		// なので、$this->setDataSource('master');といった

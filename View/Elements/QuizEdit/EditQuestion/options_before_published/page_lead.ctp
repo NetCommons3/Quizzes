@@ -12,10 +12,11 @@
 <div class="col-sm-12">
 	<div class="checkbox">
 		<label>
-			<?php echo $this->NetCommonsForm->input('QuizPage.{{pageIndex}}.is_page_description', array(
+			<?php /* 問題ページの先頭に文章を入れる */
+			echo $this->NetCommonsForm->input('QuizPage.{{pageIndex}}.is_page_description', array(
 			'type' => 'checkbox',
 			'div' => false,
-			'label' => __d('quizzes', '問題ページの先頭に文章を入れる'),
+			'label' => __d('quizzes', 'Place the text at the top of the page'),
 			'class' => '',
 			'error' => false,
 			'ng-model' => 'page.isPageDescription',
@@ -27,13 +28,11 @@
 </div>
 <div  class="col-sm-12" ng-show="page.isPageDescription == 1">
 	<?php /* ページ冒頭文 */
-								echo $this->NetCommonsForm->wysiwyg('QuizPage.{{pageIndex}}.page_description',
-	array('type' => 'wysiswyg',
+	echo $this->NetCommonsForm->wysiwyg('QuizPage.{{pageIndex}}.page_description',
+	array(//'type' => 'wysiwyg',
 	'id' => false,
 	'label' => false,
 	'ng-model' => 'page.pageDescription',
-	'ui-tinymce' => 'tinymce.options',
-	'rows' => 5,
 	'ng-disabled' => 'isPublished != 0',
 	));
 	?>

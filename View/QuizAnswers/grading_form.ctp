@@ -13,32 +13,35 @@
 	echo $this->element('Quizzes.scripts');
 echo $this->NetCommonsHtml->script(array(
 '/components/d3/d3.min.js',
-'/components/nvd3/nv.d3.min.js',
+'/components/nvd3/build/nv.d3.min.js',
 '/components/angular-nvd3/dist/angular-nvd3.min.js',
 '/quizzes/js/quizzes_grade.js'
 ));
-echo $this->NetCommonsHtml->css('/components/nvd3/nv.d3.css');
+echo $this->NetCommonsHtml->css('/components/nvd3/build/nv.d3.css');
 $jsCorrectRate = NetCommonsAppController::camelizeKeyRecursive($this->QuizGrading->correctRate($quiz));
 ?>
 <article id="nc-quizzes-answer-<?php echo Current::read('Frame.id'); ?>"
-         ng-controller="QuizGrade"
-         ng-init="initialize(<?php echo h(json_encode($jsCorrectRate)); ?>)">
+		 ng-controller="QuizGrade"
+		 ng-init="initialize(<?php echo h(json_encode($jsCorrectRate)); ?>)">
 
-    <?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
+	<section>
+		<?php echo $this->element('Quizzes.QuizAnswers/answer_grade_header'); ?>
+	</section>
 
-    <section>
-        <?php echo $this->element('Quizzes.QuizAnswers/answer_grade_header'); ?>
-    </section>
+	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
 
-    <?php echo $this->NetCommonsForm->create('QuizAnswer'); ?>
-    <section>
-        <?php echo $this->element('Quizzes.QuizAnswers/grade'); ?>
-    </section>
+	<?php echo $this->NetCommonsForm->create('QuizAnswer'); ?>
+	<section>
+		<?php echo $this->element('Quizzes.QuizAnswers/grade'); ?>
+	</section>
 
-    <div class="text-center">
-        <?php echo $this->element('Quizzes.QuizAnswers/grade_button'); ?>
-        <?php echo $this->Button->save(__d('quizzes', '採点する'), array('class' => 'btn btn-success btn-lg')) ?>
-    </div>
-    <?php echo $this->NetCommonsForm->end(); ?>
+	<div class="text-center">
+		<?php echo $this->element('Quizzes.QuizAnswers/grade_button'); ?>
+		<?php /* 採点する */
+		if ($hasFreeStyleQuestion == true) {
+			echo $this->Button->save(__d('quizzes', 'to grade'), array('class' => 'btn btn-primary'));
+		}?>
+	</div>
+	<?php echo $this->NetCommonsForm->end(); ?>
 
 </article>

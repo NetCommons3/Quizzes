@@ -46,7 +46,7 @@
 			<li class="list-group-item" ng-repeat="(cIndex, choice) in question.quizChoice" >
 				<div class="form-inline">
 					<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/options_after_published/choice'); ?>
-					<span class="text-info pull-right" ng-if="question.quizCorrect[0].correctSplit.indexOf(choice.choiceLabel) !== -1">
+					<span class="text-info pull-right" ng-if="question.quizCorrect[0].correct.indexOf(choice.choiceLabel) !== -1">
 						<?php echo __d('quizzes', 'correct answer'); /* 正解 */ ?>
 					</span>
 				</div>

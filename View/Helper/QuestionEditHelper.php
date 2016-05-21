@@ -23,8 +23,8 @@ class QuestionEditHelper extends AppHelper {
  * @var array
  */
 	public $helpers = array(
-		'NetCommonsForm',
-		'NetCommonsHtml',
+		'NetCommons.NetCommonsForm',
+		'NetCommons.NetCommonsHtml',
 		'Form'
 	);
 
@@ -38,7 +38,14 @@ class QuestionEditHelper extends AppHelper {
  * @return string HTML
  */
 	public function questionInput($fieldName, $title, $options, $label = '') {
-		$ret = '<div class="row form-group"><label	class="col-sm-2 control-label">' . $title;
+		if (isset($options['ng-model'])) {
+			$errorMsgModelName = $this->quizGetNgErrorModelName($options['ng-model']);
+			$ret = '<div class="row form-group" ng-class="{\'has-error\':' . $errorMsgModelName . '}">';
+		} else {
+			$ret = '<div class="row form-group">';
+		}
+
+		$ret .= '<label class="col-sm-2 control-label">' . $title;
 		if (isset($options['required']) && $options['required'] == true) {
 			$ret .= $this->_View->element('NetCommons.required');
 		}
@@ -57,7 +64,7 @@ class QuestionEditHelper extends AppHelper {
 		}
 
 		$options = Hash::merge(array('div' => false, 'label' => false), $options);
-		if ($type == 'wysiswyg') {
+		if ($type == 'wysiwyg') {
 			$ret .= $this->NetCommonsForm->wysiwyg($fieldName, $options);
 		} else {
 			$ret .= $this->NetCommonsForm->input($fieldName, $options);
@@ -66,7 +73,36 @@ class QuestionEditHelper extends AppHelper {
 		if ($type == 'checkbox') {
 			$ret .= $label . '</label></div>';
 		}
+
+		if (isset($options['ng-model'])) {
+			$ret .= $this->quizNgError($options['ng-model']);
+		}
+
 		$ret .= '</div></div>';
+		return $ret;
+	}
+/**
+ * Angularモデルに対するエラーメッセージモデル名取得
+ *
+ * @param string $ngModelName Angularモデル名
+ * @return string エラーメッセージ保持するモデル名
+ */
+	public function quizGetNgErrorModelName($ngModelName) {
+		$modelNames = explode('.', $ngModelName);
+		$errorMsgModelName = $modelNames[0] . '.errorMessages.' . $modelNames[1];
+		return $errorMsgModelName;
+	}
+/**
+ * Angularモデルに対するエラーメッセージ表示
+ *
+ * @param string $ngModelName Angularモデル名
+ * @return string エラーメッセージ表示HTML
+ */
+	public function quizNgError($ngModelName) {
+		$errorMsgModelName = $this->quizGetNgErrorModelName($ngModelName);
+		$ret = '<div class="has-error" ng-if="' . $errorMsgModelName . '">';
+		$ret .= '<div class="help-block" ng-repeat="errorMessage in ' . $errorMsgModelName . '">';
+		$ret .= '{{errorMessage}}</div></div>';
 		return $ret;
 	}
 
@@ -171,52 +207,6 @@ class QuestionEditHelper extends AppHelper {
 		if (!empty($help)) {
 			$ret .= '<span class="help-block">' . $help . '</span>';
 		}
-		return $ret;
-	}
-
-/**
- * フロー見出し作成
- *
- * @param int $current 現在の手順位置
- * @return string HTML
- */
-	public function getEditFlowChart($current) {
-		$steps = array(
-			1 => array('label' => __d('quizzes', 'Set questions'), 'action' => 'edit_question'),
-			2 => array('label' => __d('quizzes', 'Set quiz'), 'action' => 'edit')
-		);
-		$stepCount = count($steps);
-		$stepWidth = 'style="width: ' . 100 / $stepCount . '%;"';
-		$check = $steps;
-
-		$ret = '<div class="progress quiz-steps">';
-		foreach ($steps as $index => $stepContent) {
-			$badge = '<span class="badge">' . $index . '</span>';
-			if ($index == $current) {
-				$currentClass = 'progress-bar';
-				$badge = '<span class="btn-primary">' . $badge . '</span>';
-			} else {
-				$currentClass = '';
-			}
-			$ret .= '<div class="' . $currentClass . ' quiz-step-item"' . $stepWidth . '>';
-			$ret .= '<span class="quiz-step-item-title">' . $badge;
-			if ($index != $current) {
-				//FUJI
-				$routes = explode('/', str_replace('http://', '', Router::reverse($this->request, true)));
-				$routes[3] = $stepContent['action'];
-				array_shift($routes);
-				$url = $this->NetCommonsHtml->url('/' . implode('/', $routes));
-				$ret .= '<a href="' . $url . '">' . $stepContent['label'] . '</a>';
-			} else {
-				$ret .= $stepContent['label'];
-			}
-			$ret .= '</span>';
-			if (next($check)) {
-				$ret .= '<span class="glyphicon glyphicon-chevron-right"></span>';
-			}
-			$ret .= '</div>';
-		}
-		$ret .= '</div>';
 		return $ret;
 	}
 }

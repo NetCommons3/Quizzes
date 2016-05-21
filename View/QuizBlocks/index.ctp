@@ -32,19 +32,19 @@ echo $this->NetCommonsHtml->script(array(
 				<thead>
 				<tr>
 					<th>
-						<?php echo $this->Paginator->sort('Quiz.status', __d('quizs', 'Status')); ?>
+						<?php echo $this->Paginator->sort('Quiz.status', __d('quizzes', 'Status')); ?>
 					</th>
 					<th>
-						<?php echo $this->Paginator->sort('Quiz.title', __d('quizs', 'Title')); ?>
+						<?php echo $this->Paginator->sort('Quiz.title', __d('quizzes', 'Title')); ?>
 					</th>
 					<th>
 						<?php echo $this->Paginator->sort('Quiz.modified', __d('net_commons', 'Updated date')); ?>
 					</th>
 					<th>
-						<?php echo __d('quizs', 'Answer CSV'); ?>
+						<?php echo __d('quizzes', 'Answer CSV'); ?>
 					</th>
 					<th>
-						<?php echo __d('quizs', 'Templates'); ?>
+						<?php echo __d('quizzes', 'Templates'); ?>
 					</th>
 				</tr>
 				</thead>

@@ -56,6 +56,25 @@ class QuizEditController extends QuizzesAppController {
 	public $helpers = array(
 		'Workflow.Workflow',
 		'Wysiwyg.Wysiwyg',
+		'NetCommons.Wizard' => array(
+			'navibar' => array(
+				'edit_question' => array(
+					'url' => array(
+						'controller' => 'quiz_edit',
+						'action' => 'edit_question',
+					),
+					'label' => array('quizzes', 'Set questions'),
+				),
+				'edit' => array(
+					'url' => array(
+						'controller' => 'quiz_edit',
+						'action' => 'edit',
+					),
+					'label' => array('quizzes', 'Set quiz'),
+				),
+			),
+			'cancelUrl' => null
+		),
 		'Quizzes.QuestionEdit',
 		'Quizzes.QuizAnswerCorrect'
 	);
@@ -118,6 +137,27 @@ class QuizEditController extends QuizzesAppController {
 	}
 
 /**
+ * Before render callback. beforeRender is called before the view file is rendered.
+ *
+ * Overridden in subclasses.
+ *
+ * @return void
+ */
+	public function beforeRender() {
+		parent::beforeRender();
+
+		//ウィザード
+		foreach ($this->helpers['NetCommons.Wizard']['navibar'] as &$actions) {
+			$urlParam = $actions['url'];
+			$urlParam = Hash::merge($urlParam, $this->request->params['named']);
+			foreach ($this->request->params['pass'] as $passParam) {
+				$urlParam[$passParam] = null;
+			}
+			$actions['url'] = $urlParam;
+		}
+	}
+
+/**
  * edit question method
  *
  * @throws BadRequestException
@@ -129,7 +169,6 @@ class QuizEditController extends QuizzesAppController {
 			$this->throwBadRequest();
 			return false;
 		}
-
 		// Postの場合
 		if ($this->request->is('post')) {
 
@@ -139,11 +178,9 @@ class QuizEditController extends QuizzesAppController {
 			// （質問作成画面では質問データ属性全てをPOSTしているのですり替えでOK）
 			$Quiz = $this->_quiz;
 			$Quiz['Quiz'] = Hash::merge($this->_quiz['Quiz'], $postQuiz['Quiz']);
-
 			// 発行後のアンケートは質問情報は書き換えない
 			// 未発行の場合はPostデータを上書き設定して
 			if ($this->Quiz->hasPublished($Quiz) == 0) {
-				$this->log($postQuiz['QuizPage'], 'debug');
 				$Quiz['QuizPage'] = $postQuiz['QuizPage'];
 			} else {
 				// booleanの値がPOST時と同じようになるように調整
@@ -296,8 +333,6 @@ class QuizEditController extends QuizzesAppController {
 		$this->set('formOptions', array('url' => $this->_getActionUrl($this->action), 'type' => 'post'));
 		$this->set('cancelUrl', $this->_getActionUrl('cancel'));
 		$this->set('questionTypeOptions', $this->Quizzes->getQuestionTypeOptionsWithLabel());
-		$this->set('newQuestionLabel', __d('questionnaires', 'New Question'));
-		$this->set('newChoiceLabel', __d('quizzes', 'new choice'));
 		$this->set('isPublished', $isPublished);
 		$this->request->data = $Quiz;
 		$this->request->data['Frame'] = Current::read('Frame');

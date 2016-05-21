@@ -12,7 +12,7 @@
 
 <div class='form-group'>
 	<?php echo $this->DisplayNumber->select('QuizFrameSetting.display_num_per_page', array(
-	'label' => __d('Quizzes', 'Visible quiz row'),
+	'label' => __d('quizzes', 'Visible quiz row'),
 	'unit' => array(
 	'single' => __d('net_commons', '%s item'),
 	'multiple' => __d('net_commons', '%s items')
@@ -25,7 +25,6 @@
 		'label' => __d('quizzes', 'Visible row order'),
 		'type' => 'select',
 		'options' => QuizzesComponent::getSortOrders(),
-		'selected' => $quizFrameSettings['sort_type'],
 		));
 	?>
 </div>

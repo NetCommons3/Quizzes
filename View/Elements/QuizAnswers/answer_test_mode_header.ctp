@@ -9,32 +9,10 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
-<?php if ($this->Workflow->canEdit('Quiz', $quiz)) : ?>
+<?php if ($this->Workflow->canEdit('Quiz', $quiz) && $quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED) : ?>
 
-	<?php
-		$answerHeaderClass = '';
-		if ($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED) {
-			$answerHeaderClass = 'alert alert-info';
-		}
-	?>
-
-	<div class="<?php echo $answerHeaderClass; ?>">
-		<div class="pull-right">
-			<?php echo $this->Button->editLink('', array(
-			'plugin' => 'quizzes',
-			'controller' => 'quiz_edit',
-			'action' => 'edit_question',
-			'key' => $quiz['Quiz']['key'])); ?>
-		</div>
-
-		<?php if ($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED): ?>
-		<h3><?php echo __d('quizzes', 'Test Mode'); ?></h3>
-		<div class="clearfix"></div>
-		<p>
-			<?php echo __d('quizzes',
-						'This quiz is being temporarily stored . You can quiz test before performed in this page . If you want to modify or change the quiz , you will be able to edit by pressing the [ Edit question ] button in the upper-right corner .'); ?>
-		</p>
-		<?php endif; ?>
+	<div class="alert alert-info">
+		<?php echo __d('quizzes', 'This quiz is being temporarily stored . You can quiz test before performed in this page . If you want to modify or change the quiz , you will be able to edit by pressing the [ Edit question ] button in the upper-right corner .'); ?>
 	</div>
 
 <?php endif;

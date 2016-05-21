@@ -111,7 +111,6 @@ class QuizBlocksController extends QuizzesAppController {
 			'page' => 1,
 			'order' => array('modified' => 'desc'),
 			'limit' => QuizFrameSetting::QUIZ_DEFAULT_DISPLAY_NUM_PER_PAGE,
-			'direction' => 'desc',
 			'recursive' => 0,
 		);
 		$quiz = $this->paginate('Quiz');

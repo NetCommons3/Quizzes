@@ -19,7 +19,8 @@ NetCommonsApp.controller('QuizGrade',
         $scope.config = {
           chart: {
             'type': 'multiBarHorizontalChart',
-            'height': 120,
+            'height': 55,
+            'margin': {'left' : 70, 'right' : 0, 'top' : 0, 'bottom' : 0},
             'showControls': false,
             'showValues': true,
             'duration': 500,
@@ -28,9 +29,9 @@ NetCommonsApp.controller('QuizGrade',
             'xAxis': {
               'showMaxMin': false
             },
-            'yAxis': {
-              'axisLabel': '%'
-            },
+            //'yAxis': {
+            //  'axisLabel': '%'
+            //},
             'stacked': true
           }
         };

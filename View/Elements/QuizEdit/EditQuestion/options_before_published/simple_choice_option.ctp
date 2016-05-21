@@ -60,10 +60,10 @@
 						<span class="glyphicon glyphicon-remove"> </span>
 					</button>
 				</div>
-				<div class="radio pull-right quiz-edit-correct-option" ng-if="question.questionType == <?php echo QuizzesComponent::TYPE_SELECTION; ?>">
+				<div class="pull-right quiz-edit-correct-option" ng-if="question.questionType == <?php echo QuizzesComponent::TYPE_SELECTION; ?>">
 					<label>
 						<?php echo $this->NetCommonsForm->radio('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.0.correct',
-						array('{{choice.choiceLabel}}' => __d('quizzes', '正解にする')),
+						array('{{choice.choiceLabel}}' => __d('quizzes', 'To correct')), /* 正解にする */
 						array(
 						'label' => false,
 						'ng-checked' => 'choice.choiceLabel == question.quizCorrect[0].correct',
@@ -83,17 +83,22 @@
 						'hiddenField' => false
 						));
 						?>
-						<?php echo __d('quizzes', '正解にする'); ?>
+						<?php echo __d('quizzes', 'To correct'); ?>
 					</label>
 				</div>
-				<div class="form-inline">
+				<div class="form-inline" ng-class="{'has-error':choice.errorMessages.choiceLabel}">
 					<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/options_before_published/choice'); ?>
 				</div>
 			</li>
 		</ul>
+		<!--
 		<p class="text-info small pull-right">
 			<?php echo __d('quizzes', 'You can not use the character of | for choice text '); ?>
 		</p>
+		-->
+		<?php echo $this->NetCommonsForm->hidden('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.0.correctSequence',
+		array('ng-value' => '0')); ?>
+
 	</div>
 </div>
 

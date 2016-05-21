@@ -10,12 +10,11 @@
  */
 ?>
 <?php /* アンケート期間設定 */
-					echo $this->QuestionEdit->quizAttributeCheckbox('answer_timing',
-__d('quizzes', '回答期間を制限する'),
+echo $this->QuestionEdit->quizAttributeCheckbox('answer_timing',
+__d('quizzes', 'limit the answer period'), /* 回答期間を制限する */
 array(
 'ng-true-value' => '\'' . QuizzesComponent::USES_USE . '\'',
 'ng-false-value' => '\'' . QuizzesComponent::USES_NOT_USE . '\'',
-'hiddenField' => '\'' . QuizzesComponent::USES_NOT_USE . '\''
 ));
 ?>
 <div class="row" ng-show="quiz.quiz.answerTiming == '<?php echo QuizzesComponent::USES_USE; ?>'">

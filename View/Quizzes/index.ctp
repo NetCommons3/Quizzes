@@ -12,7 +12,7 @@
 echo $this->element('Quizzes.scripts');
 ?>
 
-<div id="nc-quizzes-<?php echo Current::read('Frame.id'); ?>" >
+<article id="nc-quizzes-<?php echo Current::read('Frame.id'); ?>" >
 
 	<?php echo $this->element('Quizzes.Quizzes/add_button'); ?>
 
@@ -25,7 +25,7 @@ echo $this->element('Quizzes.scripts');
 	<table class="table nc-content-list">
 		<?php foreach($quizzes as $quiz): ?>
 			<tr><td>
-				<article class="row">
+				<div class="row">
 					<div class="col-md-9 col-xs-12">
 
 						<?php echo $this->QuizStatusLabel->statusLabel($quiz);?>
@@ -49,7 +49,7 @@ echo $this->element('Quizzes.scripts');
 							<div class="clearfix"></div>
 						</div>
 					</div>
-				</article>
+				</div>
 				<?php if (in_array($quiz['Quiz']['key'], $notScoringQuizKeys)): ?>
 				<div class="col-md-12 col-xs-12 alert alert-warning alert-dismissible" role="alert">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -70,4 +70,4 @@ echo $this->element('Quizzes.scripts');
 
 	<?php echo $this->element('NetCommons.paginator'); ?>
 
-</div>
+</article>

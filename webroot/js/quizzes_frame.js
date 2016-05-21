@@ -15,7 +15,7 @@
  */
 
 NetCommonsApp.controller('QuizzesFrame',
-    function($scope, $sce, $log, $attrs, $timeout) {
+    function($scope, $filter, $sce, $log, $attrs, $timeout) {
       /**
        * Initialize
        *
@@ -47,6 +47,14 @@ NetCommonsApp.controller('QuizzesFrame',
             $scope.isDisplay[i] = false;
           }
         }
+      };
+      /**
+       * Quiz Frame Setting quiz list sort
+       *
+       * @return {void}
+       */
+      $scope.sort = function(fieldName, direction) {
+        $scope.quizzes = $filter('orderBy')($scope.quizzes, fieldName, direction);
       };
     }
 );

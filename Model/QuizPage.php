@@ -34,48 +34,7 @@ class QuizPage extends QuizzesAppModel {
  *
  * @var array
  */
-	public $validate = array(
-		'key' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				'on' => 'update', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'language_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'quiz_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'page_sequence' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-	);
+	public $validate = array();
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
@@ -85,13 +44,6 @@ class QuizPage extends QuizzesAppModel {
  * @var array
  */
 	public $belongsTo = array(
-		'Language' => array(
-			'className' => 'Language',
-			'foreignKey' => 'language_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
 		'Quiz' => array(
 			'className' => 'Quizzes.Quiz',
 			'foreignKey' => 'quiz_id',
@@ -123,19 +75,35 @@ class QuizPage extends QuizzesAppModel {
 	);
 
 /**
+ * Constructor. Binds the model's database table to the object.
+ *
+ * @param bool|int|string|array $id Set this ID for this model on startup,
+ * can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ * @see Model::__construct()
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$this->loadModels([
+			'QuizQuestion' => 'Quizzes.QuizQuestion',
+		]);
+	}
+/**
  * getDefaultPage
  * get default data of quiz page
  *
  * @return array
  */
 	public function getDefaultPage() {
-		$this->QuizQuestion = ClassRegistry::init('Quizzes.QuizQuestion', true);
-
 		$page = array(
 			'page_title' => __d('quizzes', 'First Page'),
 			'page_sequence' => 0,
 			'key' => '',
-			'route_number' => 0,
+			'is_page_description' => QuizzesComponent::USES_NOT_USE,
+			'page_description' => '',
 		);
 		$page['QuizQuestion'][0] = $this->QuizQuestion->getDefaultQuestion();
 
@@ -150,7 +118,6 @@ class QuizPage extends QuizzesAppModel {
  * @return void
  */
 	public function setPageToQuiz(&$quiz) {
-		$this->QuizQuestion = ClassRegistry::init('Quizzes.QuizQuestion', true);
 		// ページデータが小テストデータの中にない状態でここが呼ばれている場合、
 		if (!isset($quiz['QuizPage'])) {
 			$pages = $this->find('all', array(
@@ -169,6 +136,60 @@ class QuizPage extends QuizzesAppModel {
 			}
 			$quiz['Quiz']['page_count']++;
 		}
+	}
+/**
+ * Called during validation operations, before validation. Please note that custom
+ * validation rules can be defined in $validate.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if validate operation should continue, false to abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @see Model::save()
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
+	public function beforeValidate($options = array()) {
+		$pageIndex = $options['pageIndex'];
+		// Pageモデルは繰り返し判定が行われる可能性高いのでvalidateルールは最初に初期化
+		// mergeはしません
+		$this->validate = array(
+			'page_sequence' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					//'message' => 'Your custom message here',
+					//'allowEmpty' => false,
+					//'required' => false,
+				),
+				'comparison' => array(
+					'rule' => array('comparison', '==', $pageIndex),
+					'message' => __d('quizzes', 'page sequence is illegal.')
+				),
+			),
+		);
+		// validates時にはまだquestionnaire_idの設定ができないのでチェックしないことにする
+		// questionnaire_idの設定は上位のQuestionnaireクラスで責任を持って行われるものとする
+
+		parent::beforeValidate($options);
+
+		// 付属の質問以下のvalidate
+		if (! isset($this->data['QuizQuestion'][0])) {
+			$this->validationErrors['page_pickup_error'][] =
+				__d('quizzes', 'please set at least one question.');
+		} else {
+			$validationErrors = array();
+			foreach ($this->data['QuizQuestion'] as $qIndex => $question) {
+				// 質問データバリデータ
+				$this->QuizQuestion->create();
+				$this->QuizQuestion->set($question);
+				$options['questionIndex'] = $qIndex;
+
+				if (! $this->QuizQuestion->validates($options)) {
+					$validationErrors['QuizQuestion'][$qIndex] =
+						$this->QuizQuestion->validationErrors;
+				}
+			}
+			$this->validationErrors += $validationErrors;
+		}
+		return true;
 	}
 
 /**

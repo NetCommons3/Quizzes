@@ -11,7 +11,7 @@
 ?>
 <?php echo $this->NetCommonsForm->label('', __d('quizzes', 'Word to the correct answer')); /* 正解とする単語 */?>
 <div class="well">
-    <span ng-repeat="correctWord in correct.correctSplit">
+    <span ng-repeat="correctWord in correct.correct">
         {{correctWord}},
         &nbsp;
     </span>

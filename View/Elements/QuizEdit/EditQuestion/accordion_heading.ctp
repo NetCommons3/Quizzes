@@ -12,7 +12,7 @@
 
 <div class="pull-right" ng-if="isPublished == 0">
 	<div class="btn-group" uib-dropdown dropdown-append-to-body>
-		<button type="button" class="btn btn-default" uib-dropdown-toggle >
+		<button type="button" class="btn btn-default" uib-dropdown-toggle ng-click="deter($event)">
 			<?php echo __d('quizzes', 'copy to another page'); ?>
 			<span class="caret"></span>
 		</button>
