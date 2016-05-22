@@ -44,7 +44,6 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 		echo $this->NetCommonsForm->hidden('Quiz.export_key');
 	?>
 		<div class="panel-body">
-
 			<label class="h2"><?php echo __d('quizzes', 'Setting of format'); /* '形式の設定' */ ?></label>
 			<div class="row">
 				<div class="form-group col-xs-11 col-xs-offset-1">

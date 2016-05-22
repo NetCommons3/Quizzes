@@ -313,7 +313,6 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			} else {
 				$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
 			}
-			$this->log($data, 'debug');
 			if (! $this->save($data, false, array(
 				'answer_status',
 				'summary_score',

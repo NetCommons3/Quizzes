@@ -155,7 +155,6 @@ class QuizAnswer extends QuizzesAppModel {
 			),
 			'recursive' => -1,
 		));
-		$this->log($ret, 'debug');
 		// 未採点があるうちは
 		if ($ret > 0) {
 			return null;
@@ -177,7 +176,6 @@ class QuizAnswer extends QuizzesAppModel {
 		if (! $ret) {
 			return 0;
 		}
-		$this->log($ret, 'debug');
 		return $ret[0]['total_score'];
 	}
 
@@ -267,7 +265,6 @@ class QuizAnswer extends QuizzesAppModel {
 			if ($isCorrect == QuizzesComponent::STATUS_GRADE_PASS) {
 				$answer['QuizAnswer']['score'] = $question['allotment'];
 			}
-			$this->log($answer, 'debug');
 			if (is_array($answer['QuizAnswer']['answer_correct_status'])) {
 				$answer['QuizAnswer']['answer_correct_status'] = implode(
 					QuizzesComponent::ANSWER_DELIMITER,

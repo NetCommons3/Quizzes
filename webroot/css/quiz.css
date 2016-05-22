@@ -25,9 +25,6 @@
 .quiz-select-box li {
     padding:0px 0.5em
 }
-.quiz-supplemental-item {
-    margin-left:3em;
-}
 /*--小テスト編集画面のページ追加タブスタイル--*/
 .quiz-add-page-tab {
     display: block;

@@ -181,9 +181,6 @@ class QuizPage extends QuizzesAppModel {
 				$this->QuizQuestion->create();
 				$this->QuizQuestion->set($question);
 				$options['questionIndex'] = $qIndex;
-
-				$this->log($question, 'debug');
-
 				if (! $this->QuizQuestion->validates($options)) {
 					$validationErrors['QuizQuestion'][$qIndex] =
 						$this->QuizQuestion->validationErrors;
