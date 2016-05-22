@@ -52,5 +52,7 @@ class QuizMailSettingsController extends MailSettingsController {
 			array('mail_content_receivable', 'mail_answer_receivable');
 		$this->MailSettings->typeKeys =
 			array(MailSettingFixedPhrase::DEFAULT_TYPE, MailSettingFixedPhrase::ANSWER_TYPE);
+
+		$this->backUrl = NetCommonsUrl::backToPageUrl(true);
 	}
 }

@@ -24,6 +24,7 @@ class QuizGradingHelper extends AppHelper {
  */
 	public $helpers = array(
 		'NetCommons.NetCommonsForm',
+		'NetCommons.TitleIcon',
 		'Form',
 		'Quizzes.QuizAnswerCorrect'
 	);
@@ -47,15 +48,16 @@ class QuizGradingHelper extends AppHelper {
 		if ($answer) {
 			$answer = $answer[0];
 		}
+		$summary = $answers['QuizAnswerSummary'];
 		$ret = $this->getScoreLabel($question, $answer);
 		$ret .= $this->getQuestionLabel($serialIndex, $question, $answer);
 		$ret .= $question['question_value'];
-		$ret .= '<dl class="dl-horizontal">';
+		$ret .= '<dl class="quiz-grading-data">';
 		$ret .= $this->getAnswer($question, $answer);
 		if ($quiz['Quiz']['is_correct_show'] == true) {
 			$ret .= $this->QuizAnswerCorrect->getCorrect($question, $answer);
 		}
-		$ret .= $this->getToGrade($quiz, $pageIndex, $questionIndex, $question, $answer);
+		$ret .= $this->getToGrade($quiz, $summary, $pageIndex, $questionIndex, $question, $answer);
 		if ($quiz['Quiz']['is_total_show'] == true) {
 			$ret .= $this->getCorrectTotal($question);
 		}
@@ -73,12 +75,12 @@ class QuizGradingHelper extends AppHelper {
 		$ret = '<label class="pull-right text-muted">';
 		if ($answer['correct_status'] != QuizzesComponent::STATUS_GRADE_YET) {
 			$ret .= sprintf(
-				__d('quizzes', '(%3d点 / 配点%3d点)'),
+				__d('quizzes', '(%3d / %3d)'),	// '(%3d点 / 配点%3d点)'
 				$answer['score'],
 				$question['allotment']);
 		} else {
 			$ret .= sprintf(
-				__d('quizzes', '(未採点 / 配点%3d点)'),
+				__d('quizzes', '(Ungraded / %3d)'),	// (未採点 / 配点%3d点)
 				$question['allotment']
 			);
 		}
@@ -94,48 +96,52 @@ class QuizGradingHelper extends AppHelper {
  * @return string 解答の文字列
  */
 	public function getAnswer($question, $answer) {
-		$ret = '<dt>' . __d('quizzes', 'あなたの解答') . '</dt>';
+		$ret = '<dt>' . __d('quizzes', 'your score') . '</dt>';	// あなたの解答
 		$ret .= '<dd>';
-		$this->_setupAnswer($question, $answer);
-		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_SELECTION) {
-			$ret .= implode(',', $answer['answer_value']);
-		} elseif ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
+		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
 			foreach ($answer['answer_value'] as $index => $ans) {
-				$ret .= sprintf('(%d) %s <br />', $index + 1, $ans);
+				$ret .= sprintf('%s (%d) %s <br />',
+					$this->_getMark($answer['answer_correct_status'][$index]), $index + 1, $ans);
 			}
 		} else {
-			$ret .= $answer['answer_value'];
+			$yourAns = '';
+			foreach ($answer['answer_value'] as $index => $ans) {
+				$yourAns .= sprintf(' %s %s /',
+					$this->_getMark($answer['answer_correct_status'][$index]), $ans);
+			}
+			$ret .= trim($yourAns, '/');
+
 		}
 		$ret .= '</dd>';
 		return $ret;
 	}
 /**
- * 回答データのセットアップ
+ * 正答状態マーク取得
  *
- * @param array $question 問題
- * @param array &$answer 回答
- * @return array 複数回答の場合、回答データを配列にして返す
+ * @param int $status 正答状態
+ * @return string 正解・不正解マーク
  */
-	protected function _setupAnswer($question, &$answer) {
-		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_SELECTION ||
-			$question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
-			$answer['answer_value'] = explode(
-				QuizzesComponent::ANSWER_DELIMITER,
-				$answer['answer_value']
-			);
+	protected function _getMark($status) {
+		if ($status == QuizzesComponent::STATUS_GRADE_FAIL) {
+			return '<span class="label label-warning">' . __d('quizzes', 'miss') . '</span>';
 		}
+		if ($status == QuizzesComponent::STATUS_GRADE_PASS) {
+			return '<span class="label label-success">' . __d('quizzes', 'clear') . '</span>';
+		}
+		return '';
 	}
 /**
  * 採点用
  *
  * @param array $quiz 小テスト
+ * @param array $summary 回答サマリ
  * @param int $pageIndex ページインデックス
  * @param int $questionIndex 質問インデックス
  * @param array $question 問題
  * @param array $answer 回答
  * @return string 採点用input群文字列
  */
-	public function getToGrade($quiz, $pageIndex, $questionIndex, $question, $answer) {
+	public function getToGrade($quiz, $summary, $pageIndex, $questionIndex, $question, $answer) {
 		if ($question['question_type'] != QuizzesComponent::TYPE_TEXT_AREA) {
 			return '';
 		}
@@ -143,13 +149,14 @@ class QuizGradingHelper extends AppHelper {
 			return '';
 		}
 		$fieldNameBase = 'QuizAnswer.' . $answer['id'] . '.';
-		$ret = '<dt>採点</dt><dd><div class="form-inline"><div class="form-group">';
+		$ret = '<dt>' . __d('quizzes', 'Graded') . '</dt>';
+		$ret .= '<dd><div class="form-inline"><div class="form-group">';
 		$ret .= $this->Form->input($fieldNameBase . 'correct_status', array(
 			'type' => 'radio',
 			'options' => array(
-				QuizzesComponent::STATUS_GRADE_YET => __d('quizzes', '未採点'),
-				QuizzesComponent::STATUS_GRADE_PASS => __d('quizzes', '正解'),
-				QuizzesComponent::STATUS_GRADE_FAIL => __d('quizzes', '不正解'),
+				QuizzesComponent::STATUS_GRADE_YET => __d('quizzes', 'Ungraded'), // 未採点
+				QuizzesComponent::STATUS_GRADE_PASS => __d('quizzes', 'Correct'), // 正解
+				QuizzesComponent::STATUS_GRADE_FAIL => __d('quizzes', 'Wrong'), // 不正解
 			),
 			'div' => false,
 			'legend' => false,
@@ -162,14 +169,14 @@ class QuizGradingHelper extends AppHelper {
 		$ret .= '&nbsp;&nbsp;';
 		$ret .= $this->Form->input($fieldNameBase . 'score', array(
 			'div' => 'form-group',
-			'label' => __d('quizzes', '点数'),
+			'label' => __d('quizzes', 'points'), // 点数
 			'class' => 'form-control',
 			'type' => 'number',
 			'max' => $question['allotment'],
 			'min' => 0
 		));
 		$ret .= $this->Form->hidden($fieldNameBase . 'id', array('value' => $answer['id']));
-		$ret .= sprintf(__d('quizzes', ' / %d 点'), $question['allotment']);
+		$ret .= sprintf(__d('quizzes', ' / %d '), $question['allotment']); //  / %d 点
 		$ret .= '</div></div></dd>';
 		return $ret;
 	}
@@ -181,7 +188,7 @@ class QuizGradingHelper extends AppHelper {
  */
 	public function getCorrectTotal($question) {
 		$questionId = $question['id'];
-		$ret = '<dt>' . __d('quizzes', '正答比率') . '</dt>';
+		$ret = '<dt>' . __d('quizzes', 'Correct answer ratio') . '</dt>'; // 正答比率
 		$ret .= '<dd>';
 		$ret .= '<nvd3 options="config"';
 		$ret .= ' data=' . "'" . 'data["' . $questionId . '"]' . "'></nvd3>";
@@ -198,7 +205,7 @@ class QuizGradingHelper extends AppHelper {
  */
 	public function getQuestionLabel($questionIndex, $question, $answer) {
 		$ret = '<label class="control-label">';
-		$ret .= sprintf(__d('quizzes', '問題%2d：'), $questionIndex + 1);
+		$ret .= sprintf(__d('quizzes', 'Question %2d:'), $questionIndex + 1); // 問題%2d：
 		$ret .= $this->getGradingLabel($answer);
 		$ret .= '</label>';
 		return $ret;
@@ -212,17 +219,17 @@ class QuizGradingHelper extends AppHelper {
 	public function getGradingLabel($answer) {
 		if (! isset($answer['correct_status'])) {
 			$class = 'default';
-			$label = __d('quizzes', '未回答');
+			$label = __d('quizzes', 'Unanswered'); // 未回答
 		}
 		if ($answer['correct_status'] == QuizzesComponent::STATUS_GRADE_YET) {
 			$class = 'danger';
-			$label = __d('quizzes', '未採点');
+			$label = __d('quizzes', 'Ungraded'); // 未採点
 		} elseif ($answer['correct_status'] == QuizzesComponent::STATUS_GRADE_FAIL) {
 			$class = 'warning';
-			$label = __d('quizzes', '不正解');
+			$label = __d('quizzes', 'Wrong'); // 不正解
 		} else {
 			$class = 'success';
-			$label = __d('quizzes', '正解');
+			$label = __d('quizzes', 'Correct'); // 正解
 		}
 		$ret = sprintf('<span class="label label-%s">%s</span>', $class, $label);
 		return $ret;
@@ -234,19 +241,22 @@ class QuizGradingHelper extends AppHelper {
  * @return array グラフ用正答比率データ配列
  */
 	public function correctRate($quiz) {
+		if ($quiz['Quiz']['is_total_show'] == QuizzesComponent::USES_NOT_USE) {
+			return array();
+		}
 		$correctRate = array();
 		foreach ($quiz['QuizPage'] as $page) {
 			foreach ($page['QuizQuestion'] as $question) {
 				$correctRate[$question['id']] = [
-					['key' => __d('quizzes', '未採点・未回答'),
+					['key' => __d('quizzes', 'Ungraded, Unanswered'), // 未採点・未回答
 						'color' => '#777777',
 						'values' => [['value' => $question['rest_percentage']]]
 					],
-					['key' => __d('quizzes', '正解'),
+					['key' => __d('quizzes', 'Correct'), // 正解
 						'color' => '#5cb85c',
 						'values' => [['value' => $question['correct_percentage']]]
 					],
-					['key' => __d('quizzes', '不正解'),
+					['key' => __d('quizzes', 'Wrong'), // 不正解
 						'color' => '#f0ad4e',
 						'values' => [['value' => $question['wrong_percentage']]]
 					],
@@ -264,25 +274,27 @@ class QuizGradingHelper extends AppHelper {
  * @return string header描画HTML
  */
 	public function getGradeHeader($quiz, $gradePass, $summary) {
-		$ret = '';
 		$headerClass = '';
+		$textClass = 'text-info';
 		if ($gradePass == QuizzesComponent::STATUS_GRADE_YET) {
-			$headerClass = 'well';
+			$headerClass = 'well well-sm';
 		} elseif ($gradePass == QuizzesComponent::STATUS_GRADE_PASS) {
 			$headerClass = 'alert-success';
+			$textClass = 'text-success';
 		} elseif ($gradePass == QuizzesComponent::STATUS_GRADE_FAIL) {
 			$headerClass = 'alert-danger';
+			$textClass = 'text-danger';
 		}
-		$ret = '<div class="alert ' . $headerClass . '">';
-		$ret .= $this->_View->element('Quizzes.QuizAnswers/answer_header');
-		$ret .= '<div class="h2">';
+		$ret = '<div class="alert ' . $headerClass . ' h1">';
+		$ret .= '<small><span class="' . $textClass . '">';
 		if ($gradePass == QuizzesComponent::STATUS_GRADE_PASS) {
 			$ret .= $this->TitleIcon->titleIcon('/net_commons/img/title_icon/10_051_pass.svg');
 		}
 		$ret .= $this->_getScoreSummary($quiz, $summary);
+		$ret .= '<br />';
 		$ret .= $this->_getElapseTimeSummary($quiz, $summary);
 
-		$ret .= '</div></div>';
+		$ret .= '</span></small></div>';
 		return $ret;
 	}
 /**
@@ -293,7 +305,10 @@ class QuizGradingHelper extends AppHelper {
  * @return string header描画HTML
  */
 	protected function _getScoreSummary($quiz, $summary) {
-		$ret = sprintf(__d('quizzes', '得点%d点'), $summary['QuizAnswerSummary']['summary_score']);
+		$ret = sprintf(
+			__d('quizzes', 'Score %d'), // 得点%d点
+			$summary['QuizAnswerSummary']['summary_score']
+		);
 		if ($summary['QuizAnswerSummary']['is_grade_finished'] == false) {
 			$notScoring = Hash::extract(
 				$summary,
@@ -309,7 +324,11 @@ class QuizGradingHelper extends AppHelper {
 					$notScorePoint += $question['allotment'];
 				}
 			}
-			$ret .= sprintf(__d('quizzes', ' +未採点分が%d点あります'), $notScorePoint);
+			// + 未採点分が%d点あります
+			$ret .= sprintf(
+				__d('quizzes', ' + There are ungraded question %d points.'),
+				$notScorePoint
+			);
 		}
 		return $ret;
 	}
@@ -323,16 +342,17 @@ class QuizGradingHelper extends AppHelper {
 	protected function _getElapseTimeSummary($quiz, $summary) {
 		$elapsedSec = $summary['QuizAnswerSummary']['elapsed_second'];
 		$elapsedMin = $elapsedSec / 60;
-		$ret = '<div class="h3">';
-		$ret .= sprintf(__d('quizzes', '解答にかかった時間：%d分'), $elapsedMin);
+		$ret = sprintf(
+			__d('quizzes', 'Elapsed : %d min.'), // 解答にかかった時間：%d分
+			$elapsedMin
+		);
 		if ($quiz['Quiz']['estimated_time'] > 0 && $quiz['Quiz']['estimated_time'] * 60 < $elapsedSec) {
 			$ret .= '<span class="text-danger">';
 			$ret .= sprintf(
-				__d('quizzes', '  %d分オーバーです'),
+				__d('quizzes', '  Overtime %d min.'), //   %d分オーバーです
 				($elapsedSec - $quiz['Quiz']['estimated_time'] * 60) / 60);
 			$ret .= '</span>';
 		}
-		$ret .= '</div>';
 		return $ret;
 	}
 

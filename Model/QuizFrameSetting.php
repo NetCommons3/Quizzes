@@ -25,59 +25,66 @@ class QuizFrameSetting extends QuizzesAppModel {
 	const	QUIZ_DEFAULT_DISPLAY_NUM_PER_PAGE = 10;
 
 /**
- * display_sort_type. new arrivals
- *
- * @var string
- */
-	const DISPLAY_SORT_TYPE_NEW_ARRIVALS = '0';
-	const DISPLAY_SORT_TYPE_RESPONSE_TIME_DESC = '1';
-	const DISPLAY_SORT_TYPE_SURVEY_STATUS_ORDER_ASC = '2';
-	const DISPLAY_SORT_TYPE_BY_TITLE_ASC = '3';
-
-/**
- * display_sort_types list
- *
- * @var array
- */
-	static public $displaySortTypesList = array(
-		self::DISPLAY_SORT_TYPE_NEW_ARRIVALS,
-		self::DISPLAY_SORT_TYPE_RESPONSE_TIME_DESC,
-		self::DISPLAY_SORT_TYPE_SURVEY_STATUS_ORDER_ASC,
-		self::DISPLAY_SORT_TYPE_BY_TITLE_ASC
-	);
-
-/**
  * Validation rules
  *
  * @var array
  */
-	public $validate = array(
-		'frame_key' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-	);
+	public $validate = array();
 
 /**
- * getQuizFrameSettingConditions 指定されたframe_keyの設定要件をSQL検索用の配列で取り出す
+ * Called during validation operations, before validation. Please note that custom
+ * validation rules can be defined in $validate.
  *
- * @param string $frameKey frame key
- * @return array ... displayNum sortField sortDirection
+ * @param array $options Options passed from Model::save().
+ * @return bool True if validate operation should continue, false to abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @see Model::save()
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
-	public function getQuizFrameSettingConditions($frameKey) {
-		list(, $limit, $sort, $dir) = $this->getQuizFrameSetting($frameKey);
-		return array(
-			'offset' => 0,
-			'limit' => $limit,
-			'order' => array('Quiz.' . $sort . ' ' . $dir)
-		);
+	public function beforeValidate($options = array()) {
+		$this->validate = Hash::merge($this->validate, array(
+			'frame_key' => array(
+				'notBlank' => array(
+					'rule' => array('notBlank'),
+					//'message' => 'Your custom message here',
+					'allowEmpty' => false,
+					//'required' => false,
+					//'last' => false, // Stop validation after this rule
+					//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				),
+			),
+			'display_type' => array(
+				'inList' => array(
+					'rule' => array('inList', array(
+						QuizzesComponent::DISPLAY_TYPE_SINGLE,
+						QuizzesComponent::DISPLAY_TYPE_LIST
+					)),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'display_num_per_page' => array(
+				'number' => array(
+					'rule' => array('numeric'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+				'inList' => array(
+					'rule' => array('inList', array(1, 5, 10, 20, 50, 100)),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'sort_type' => array(
+				'inList' => array(
+					'rule' => array('inList', array_keys(QuizzesComponent::getSortOrders())),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+		));
+
+		parent::beforeValidate($options);
+
+		return true;
 	}
+
 /**
  * getQuizFrameSetting 指定されたframe_keyの設定要件を取り出す
  *
@@ -99,19 +106,7 @@ class QuizFrameSetting extends QuizzesAppModel {
 		$setting = $frameSetting['QuizFrameSetting'];
 		$displayType = $setting['display_type'];
 		$displayNum = $setting['display_num_per_page'];
-		if ($setting['sort_type'] == QuizzesComponent::QUIZ_SORT_MODIFIED) {
-			$sort = 'modified';
-			$dir = 'DESC';
-		} elseif ($setting['sort_type'] == QuizzesComponent::QUIZ_SORT_CREATED) {
-			$sort = 'created';
-			$dir = 'ASC';
-		} elseif ($setting['sort_type'] == QuizzesComponent::QUIZ_SORT_TITLE) {
-			$sort = 'title';
-			$dir = 'ASC';
-		} elseif ($setting['sort_type'] == QuizzesComponent::QUIZ_SORT_END) {
-			$sort = 'publish_end';
-			$dir = 'ASC';
-		}
+		list($sort, $dir) = explode(' ', $setting['sort_type']);
 		return array($displayType, $displayNum, $sort, $dir);
 	}
 /**
@@ -123,34 +118,14 @@ class QuizFrameSetting extends QuizzesAppModel {
 	public function getDefaultFrameSetting() {
 		$frame = array(
 			'QuizFrameSetting' => array(
-				'id' => '',
 				'display_type' => QuizzesComponent::DISPLAY_TYPE_LIST,
 				'display_num_per_page' => self::QUIZ_DEFAULT_DISPLAY_NUM_PER_PAGE,
-				'sort_type' => self::DISPLAY_SORT_TYPE_NEW_ARRIVALS,
+				'sort_type' => 'Questionnaire.modified DESC',
 			)
 		);
 		return $frame;
 	}
 
-/**
- * prepareFrameSetting
- *
- * @param string $frameKey frame key
- * @return mix
- * @throws Exception
- * @throws InternalErrorException
- */
-	public function prepareFrameSetting($frameKey) {
-		$frameSetting = $this->getDefaultFrameSetting();
-		$this->saveFrameSettings($frameSetting);
-		$ret = $this->find('first', array(
-			'conditions' => array(
-				'frame_key' => $frameKey
-			),
-			'recursive' => -1
-		));
-		return $ret;
-	}
 /**
  * saveFrameSettings
  *
@@ -160,12 +135,17 @@ class QuizFrameSetting extends QuizzesAppModel {
  */
 	public function saveFrameSettings($data) {
 		$this->loadModels([
+			'Quiz' => 'Quizzes.Quiz',
 			'QuizFrameDisplayQuiz' => 'Quizzes.QuizFrameDisplayQuiz',
 		]);
 
 		//トランザクションBegin
 		$this->begin();
 		try {
+			// 現在の確認
+			$quizCount = $this->Quiz->find('count', array(
+				'conditions' => $this->Quiz->getBaseCondition()
+			));
 			// フレーム設定のバリデート
 			$this->create();
 			$this->set($data);
@@ -173,11 +153,14 @@ class QuizFrameSetting extends QuizzesAppModel {
 				return false;
 			}
 
-			// フレームに表示するアンケート一覧設定のバリデート
-			// 一覧表示タイプと単独表示タイプ
-			if (isset($data['QuizFrameDisplayQuizzes'])) {
+			// 存在する場合は
+			if ($quizCount > 0) {
+				// フレームに表示するアンケート一覧設定のバリデート
+				// 一覧表示タイプと単独表示タイプ
 				$ret = $this->QuizFrameDisplayQuiz->validateFrameDisplayQuiz($data);
 				if ($ret === false) {
+					$this->validationErrors['QuizFrameDisplayQuiz'] =
+						$this->QuizFrameDisplayQuiz->validationErrors;
 					return false;
 				}
 			}
@@ -188,7 +171,7 @@ class QuizFrameSetting extends QuizzesAppModel {
 
 			// フレームに表示するアンケート一覧設定の登録
 			// 一覧表示タイプと単独表示タイプ
-			if (isset($data['QuizFrameDisplayQuizzes'])) {
+			if ($quizCount > 0) {
 				$ret = $this->QuizFrameDisplayQuiz->saveFrameDisplayQuiz($data);
 				if ($ret === false) {
 					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));

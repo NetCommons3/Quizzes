@@ -20,11 +20,20 @@ App::uses('QuizzesAppModel', 'Quizzes.Model');
 class QuizAnswerSummary extends QuizzesAppModel {
 
 /**
- * Use database config
+ * use behaviors
  *
- * @var string
+ * @var array
  */
-	public $useDbConfig = 'master';
+	public $actsAs = array(
+		// 自動でメールキューの登録, 削除。ワークフロー利用時はWorkflow.Workflowより下に記述する
+		'Mails.MailQueue' => array(
+			'embedTags' => array(
+				'X-SUBJECT' => 'Quiz.title',
+			),
+			'keyField' => 'id',
+		),
+		'Mails.MailQueueDelete',
+	);
 
 /**
  * Validation rules
@@ -183,7 +192,9 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * @throws InternalErrorException
  */
 	public function saveStartSummary($quiz, $ids) {
-		$id = false;
+		// 完了時以外はメールBehaviorを外す
+		$this->Behaviors->unload('Mails.MailQueue');
+
 		$this->begin();
 
 		try {
@@ -226,7 +237,9 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * @throws InternalErrorException
  */
 	public function saveAnswerEndSummary($summaryId) {
-		$ret = true;
+		// 完了時以外はメールBehaviorを外す
+		$this->Behaviors->unload('Mails.MailQueue');
+
 		$data['id'] = $summaryId;
 		$data['answer_status'] = QuizzesComponent::ACTION_BEFORE_ACT;
 		$this->begin();
@@ -263,6 +276,17 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			if (! $summary) {
 				return false;
 			}
+			// メールのembed のURL設定を行っておく
+			$url = NetCommonsUrl::actionUrl(array(
+				'controller' => 'quiz_answers',
+				'action' => 'grading',
+				Current::read('Block.id'),
+				'key' => $quiz['Quiz']['key'],
+				'frame_id' => Current::read('Frame.id'),
+				$summary['QuizAnswerSummary']['answer_number'],
+			));
+			$this->setAddEmbedTagValue('X-URL', $url);
+
 			$score = $this->QuizAnswer->getScore($summaryId);
 
 			$data['id'] = $summaryId;

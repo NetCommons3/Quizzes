@@ -30,7 +30,13 @@ class Quiz extends QuizzesAppModel {
 		'Workflow.Workflow',
 		'Workflow.WorkflowComment',
 		'AuthorizationKeys.AuthorizationKey',
-		//FUJI		'Questionnaires.QuestionnaireValidate',
+		// 自動でメールキューの登録, 削除。ワークフロー利用時はWorkflow.Workflowより下に記述する
+		'Mails.MailQueue' => array(
+			'embedTags' => array(
+				'X-SUBJECT' => 'Questionnaire.title',
+			),
+		),
+		'Mails.MailQueueDelete',
 	);
 
 /**
@@ -49,13 +55,6 @@ class Quiz extends QuizzesAppModel {
  * @var array
  */
 	public $belongsTo = array(
-		'Language' => array(
-			'className' => 'Language',
-			'foreignKey' => 'language_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
 		'Block' => array(
 			'className' => 'Block',
 			'foreignKey' => 'block_id',
@@ -74,10 +73,10 @@ class Quiz extends QuizzesAppModel {
 		'QuizPage' => array(
 			'className' => 'Quizzes.QuizPage',
 			'foreignKey' => 'quiz_id',
-			'dependent' => false,
+			'dependent' => true,
 			'conditions' => '',
 			'fields' => '',
-			'order' => '',
+			'order' => array('page_sequence ASC'),
 			'limit' => '',
 			'offset' => '',
 			'exclusive' => '',
@@ -119,19 +118,173 @@ class Quiz extends QuizzesAppModel {
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 	public function beforeValidate($options = array()) {
+		// ウィザード画面中はstatusチェックをしないでほしいので
+		// ここに来る前にWorkflowBehaviorでつけられたstatus-validateを削除しておく
 		$this->validate = Hash::merge($this->validate, array(
-			'language_id' => array(
+			'block_id' => array(
 				'numeric' => array(
 					'rule' => array('numeric'),
-					//'message' => 'Your custom message here',
-					//'allowEmpty' => false,
-					//'required' => false,
-					//'last' => false, // Stop validation after this rule
-					//'on' => 'create', // Limit validation to 'create' or 'update' operations
+					'message' => __d('net_commons', 'Invalid request.'),
+					// Limit validation to 'create' or 'update' operations 新規の時はブロックIDがなかったりするから
+					'on' => 'update',
+				)
+			),
+			'title' => array( // タイトル
+				'rule' => 'notBlank',
+				'message' => sprintf(__d('net_commons', 'Please input %s.'), __d('quizzes', 'Title')),
+				'required' => true,
+				'allowEmpty' => false,
+				'required' => true,
+			),
+			'passing_grade' => array( // 合格点
+				'numeric' => array(
+					'rule' => array('numeric'),
+					'allowEmpty' => true,
+					//'message' => __d('net_commons', 'Invalid request.'),
+				)
+			),
+			'estimated_time' => array( // 時間の目安（分）
+				'numeric' => array(
+					'rule' => array('numeric'),
+					'allowEmpty' => true,
+					//'message' => __d('net_commons', 'Invalid request.'),
+				)
+			),
+			'answer_timing' => array(
+				'answerTimingCheck' => array(
+					'rule' => array(
+						'inList', array(
+							QuizzesComponent::USES_USE, QuizzesComponent::USES_NOT_USE
+						)),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'is_no_member_allow' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'is_key_pass_use' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'is_repeat_allow' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
+			'is_image_authentication' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
 				),
 			),
 		));
+		$this->_setAnswerTimingValidation();
+		$this->_setKeyPhraseValidation();
+		$this->_setImageAuthValidation();
+
+		parent::beforeValidate($options);
+
+		// 最低でも１ページは存在しないとエラー
+		if (! isset($this->data['QuizPage'][0])) {
+			$this->validationErrors['pickup_error'] = __d('quizzes', 'please set at least one page.');
+		} else {
+			// ページデータが存在する場合
+			// 配下のページについてバリデート
+			$validationErrors = array();
+			$maxPageIndex = count($this->data['QuizPage']);
+			$options['maxPageIndex'] = $maxPageIndex;
+			foreach ($this->data['QuizPage'] as $pageIndex => $page) {
+				// それぞれのページのフィールド確認
+				$this->QuizPage->create();
+				$this->QuizPage->set($page);
+				// ページシーケンス番号の正当性を確認するため、現在の配列インデックスを渡す
+				$options['pageIndex'] = $pageIndex;
+				if (!$this->QuizPage->validates($options)) {
+					$validationErrors['QuizPage'][$pageIndex] = $this->QuizPage->validationErrors;
+				}
+			}
+			$this->validationErrors += $validationErrors;
+		}
+		return true;
 	}
+
+/**
+ * _setAnswerTimingValidation
+ *
+ * 回答期間に制限を与える設定の場合、
+ * 回答期間にまつわるバリデーションを設定する
+ *
+ * @return void
+ */
+	protected function _setAnswerTimingValidation() {
+		if ($this->data['Quiz']['answer_timing'] != QuizzesComponent::USES_USE) {
+			return;
+		}
+		$this->validate['answer_start_period'] = array(
+			'rule' => array('datetime', 'ymd'),
+			'required' => true,
+		);
+		$this->validate['answer_end_period'] = array(
+			'checkDateTime' => array(
+				'rule' => array('datetime', 'ymd'),
+				'required' => true,
+			),
+			'checkDateComp' => array(
+				'rule' => array('comparison', '>=', $this->data['Quiz']['answer_start_period']),
+				'message' => __d('quizzes', 'start period must be smaller than end period')
+			)
+		);
+	}
+/**
+ * _setKeyPhraseValidation
+ *
+ * 認証キーを与える設定の場合、
+ * 認証キーにまつわるバリデーションを設定する
+ *
+ * @return void
+ */
+	protected function _setKeyPhraseValidation() {
+		if (! $this->data['Quiz']['is_key_pass_use']) {
+			return;
+		}
+		$this->validate['is_image_authentication'] = array(
+			'rule' => array('inList', array(QuizzesComponent::USES_NOT_USE, false)),
+			'message' =>
+				__d('quizzes',
+					'Authentication key setting , image authentication , either only one can not be selected.')
+		);
+		if (! Validation::notBlank($this->data['AuthorizationKey']['authorization_key'])) {
+			$this->validationErrors['is_key_pass_use'][] =
+				__d('quizzes',
+					'Please input key phrase.');
+		}
+	}
+/**
+ * _setImageAuthValidation
+ *
+ * 画像認証を与える設定の場合、
+ * 画像認証にまつわるバリデーションを設定する
+ *
+ * @return void
+ */
+	protected function _setImageAuthValidation() {
+		if (! $this->data['Quiz']['is_image_authentication']) {
+			return;
+		}
+		$this->validate['is_key_pass_use'] = array(
+			'rule' => array('inList', array(QuizzesComponent::USES_NOT_USE, false)),
+			'message' =>
+				__d('quizzes',
+					'Authentication key setting , image authentication , either only one can not be selected.')
+		);
+	}
+
 /**
  * Called before each save operation, after validation. Return a non-true result
  * to halt the save.
@@ -143,11 +296,8 @@ class Quiz extends QuizzesAppModel {
  */
 	public function beforeSave($options = array()) {
 		$this->data['perfect_score'] = 0;
-		foreach ($this->data['QuizPage'] as $page) {
-			foreach ($page['QuizQuestion'] as $question) {
-				$this->data['perfect_score'] = $question['allotment'];
-			}
-		}
+		$allotments = Hash::extract($this->data['QuizPage'], '{n}.QuizQuestion.{n}.allotment');
+		$this->data['perfect_score'] = array_sum($allotments);
 		return true;
 	}
 /**
@@ -159,9 +309,6 @@ class Quiz extends QuizzesAppModel {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function afterFind($results, $primary = false) {
-		$this->QuizPage = ClassRegistry::init('Quizzes.QuizPage', true);
-		$this->QuizAnswerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary', true);
-
 		foreach ($results as &$val) {
 			// この場合はcount
 			if (! isset($val['Quiz']['id'])) {
@@ -199,28 +346,6 @@ class Quiz extends QuizzesAppModel {
 		}
 		return $results;
 	}
-/**
- * getPeriodStatus
- * get period status now and specified time
- *
- * @param bool $check flag data
- * @param string $startTime start time
- * @param string $endTime end time
- * @return int
- */
-	public function getPeriodStatus($check, $startTime, $endTime) {
-		$ret = QuizzesComponent::QUIZ_PERIOD_STAT_IN;
-		if ($check == QuizzesComponent::USES_USE) {
-			$nowTime = strtotime((new NetCommonsTime())->getNowDatetime());
-			if ($nowTime < strtotime($startTime)) {
-				$ret = QuizzesComponent::QUIZ_PERIOD_STAT_BEFORE;
-			}
-			if ($nowTime > strtotime($endTime)) {
-				$ret = QuizzesComponent::QUIZ_PERIOD_STAT_END;
-			}
-		}
-		return $ret;
-	}
 
 /**
  * After frame save hook
@@ -233,16 +358,14 @@ class Quiz extends QuizzesAppModel {
  * @throws InternalErrorException
  */
 	public function afterFrameSave($data) {
-		// すでに結びついている場合は何もしないでよい
-		if (!empty($data['Frame']['block_id'])) {
-			return $data;
-		}
-		$frame = $data['Frame'];
+		$frame['Frame'] = $data['Frame'];
 
 		$this->begin();
 
-		try{
-			$this->_saveBlock($frame);
+		try {
+			$this->QuizSetting->saveBlock($frame);
+			// 設定情報も
+			$this->QuizSetting->saveSetting();
 			$this->commit();
 		} catch (Exception $ex) {
 			//トランザクションRollback
@@ -251,46 +374,7 @@ class Quiz extends QuizzesAppModel {
 			CakeLog::error($ex);
 			throw $ex;
 		}
-		// ルームに存在するブロックを探す
-		$block = $this->Block->find('first', array(
-			'conditions' => array(
-				'Block.room_id' => $frame['room_id'],
-				'Block.plugin_key' => $frame['plugin_key'],
-			)
-		));
-		if (! $block) {
-			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-		}
 		return $data;
-	}
-
-/**
- * getQuizzesList
- * get quizzes by specified block id and specified user id limited number
- *
- * @param array $conditions find condition
- * @param array $options 検索オプション
- * @return array
- */
-	public function getQuizzesList($conditions, $options = array()) {
-		// 絞込条件
-		$baseConditions = $this->getBaseCondition();
-		$conditions = Hash::merge($baseConditions, $conditions);
-
-		// 取得オプション
-		$this->QuizFrameSetting = ClassRegistry::init('Quizzes.QuizFrameSetting', true);
-		$defaultOptions = $this->QuizFrameSetting->getQuizFrameSettingConditions(
-			Current::read('Frame.key')
-		);
-		$options = Hash::merge($defaultOptions, $options);
-		$this->recursive = -1;
-		$list = $this->find('all',
-			Hash::merge(
-				array('conditions' => $conditions),
-				$options
-			)
-		);
-		return $list;
 	}
 
 /**
@@ -303,10 +387,7 @@ class Quiz extends QuizzesAppModel {
 		$conditions = $this->getWorkflowConditions(array(
 			'block_id' => Current::read('Block.id'),
 		));
-
-		if ($addConditions) {
-			$conditions = array_merge($conditions, $addConditions);
-		}
+		$conditions = array_merge($conditions, $addConditions);
 		return $conditions;
 	}
 
@@ -375,24 +456,22 @@ class Quiz extends QuizzesAppModel {
 	}
 
 /**
- * hasPublished method
+ * clearQuizId 小テストデータからＩＤのみをクリアする
  *
- * @param array $quiz quiz data
- * @return int
+ * @param array &$quiz アンケートデータ
+ * @return void
  */
-	public function hasPublished($quiz) {
-		if (isset($quiz['Quiz']['key'])) {
-			$isPublished = $this->find('count', array(
-				'recursive' => -1,
-				'conditions' => array(
-					'is_active' => true,
-					'key' => $quiz['Quiz']['key']
-				)
-			));
-		} else {
-			$isPublished = 0;
+	public function clearQuizId(&$quiz) {
+		foreach ($quiz as $qKey => $q) {
+			if (is_array($q)) {
+				$this->clearQuizId($quiz[$qKey]);
+			} elseif (preg_match('/^id$/', $qKey) ||
+				preg_match('/^key$/', $qKey) ||
+				preg_match('/^created(.*?)/', $qKey) ||
+				preg_match('/^modified(.*?)/', $qKey)) {
+				unset($quiz[$qKey]);
+			}
 		}
-		return $isPublished;
 	}
 
 /**
@@ -404,17 +483,16 @@ class Quiz extends QuizzesAppModel {
  * @return bool
  */
 	public function saveQuiz(&$quiz) {
-		$this->loadModels([
-			'QuizPage' => 'Quizzes.QuizPage',
-			'QuizFrameDisplayQuiz' => 'Quizzes.QuizFrameDisplayQuiz',
-			'QuizAnswerSummary' => 'Quizzes.QuizAnswerSummary',
-		]);
+		// 設定画面を表示する前にこのルームのブロックがあるか確認
+		// 万が一、まだ存在しない場合には作成しておく
+		// afterFrameSaveが呼ばれず、また最初に設定画面が開かれもしなかったような状況の想定
+		$frame['Frame'] = Current::read('Frame');
+		$this->afterFrameSave($frame);
 
 		//トランザクションBegin
 		$this->begin();
 
 		try {
-			$this->_saveBlock(Current::read('Frame'));
 			$quiz['Quiz']['block_id'] = Current::read('Frame.block_id');
 			$status = $quiz['Quiz']['status'];
 			$this->create();
@@ -460,64 +538,71 @@ class Quiz extends QuizzesAppModel {
 	}
 
 /**
- * save block
+ * saveExportKey
+ * update export key
  *
- * afterFrameSaveやsaveQuestionnaireから呼び出される
- *
- * @param array $frame frame data
- * @return bool
+ * @param int $quizId id of quiz
+ * @param string $exportKey exported key ( finger print)
  * @throws InternalErrorException
+ * @return bool
  */
-	protected function _saveBlock($frame) {
-		// ルームに存在するブロックを探す
-		$block = $this->Block->find('first', array(
-			'conditions' => array(
-				'Block.room_id' => $frame['room_id'],
-				'Block.plugin_key' => $frame['plugin_key'],
-				'Block.language_id' => $frame['language_id'],
-			)
-		));
-		// まだない場合
-		if (empty($block)) {
-			// 作成する
-			$block = $this->Block->save(array(
-				'room_id' => $frame['room_id'],
-				'language_id' => $frame['language_id'],
-				'plugin_key' => $frame['plugin_key'],
-			));
-			if (! $block) {
+	public function saveExportKey($quizId, $exportKey) {
+		$this->begin();
+		try {
+			$this->id = $quizId;
+			$this->Behaviors->unload('Mails.MailQueue');
+			if (! $this->saveField('export_key', $exportKey)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
-			Current::$current['Block'] = $block['Block'];
+			$this->commit();
+		} catch (Exception $ex) {
+			//トランザクションRollback
+			$this->rollback();
+			//エラー出力
+			CakeLog::error($ex);
+			throw $ex;
 		}
-
-		$frame['block_id'] = $block['Block']['id'];
-		if (! $this->Frame->save($frame)) {
-			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-		}
-		Current::$current['Frame']['block_id'] = $block['Block']['id'];
-
-		$blockSetting = $this->QuizSetting->create();
-		$blockSetting['QuizSetting']['block_key'] = $block['Block']['key'];
-		$this->QuizSetting->saveQuizSetting($blockSetting);
 		return true;
 	}
 /**
- * clearQuizId 小テストデータからＩＤのみをクリアする
+ * deleteQuiz
+ * Delete the quiz data set of specified ID
  *
- * @param array &$quiz アンケートデータ
- * @return void
+ * @param array $data post data
+ * @throws InternalErrorException
+ * @return bool
  */
-	public function clearQuizId(&$quiz) {
-		foreach ($quiz as $qKey => $q) {
-			if (is_array($q)) {
-				$this->clearQuizId($quiz[$qKey]);
-			} elseif (preg_match('/^id$/', $qKey) ||
-				preg_match('/^key$/', $qKey) ||
-				preg_match('/^created(.*?)/', $qKey) ||
-				preg_match('/^modified(.*?)/', $qKey)) {
-				unset($quiz[$qKey]);
+	public function deleteQuiz($data) {
+		$this->begin();
+		try {
+			// 小テスト削除
+			if (! $this->deleteAll(array(
+				'Quiz.key' => $data['Quiz']['key']), true, true)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
+
+			//コメントの削除
+			$this->deleteCommentsByContentKey($data['Quiz']['key']);
+
+			// 表示設定削除
+			if (! $this->QuizFrameDisplayQuiz->deleteAll(array(
+				'quiz_key' => $data['Quiz']['key']), true, false)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+			// アンケート回答削除
+			if (! $this->QuizAnswerSummary->deleteAll(array(
+				'quiz_key' => $data['Quiz']['key']), true, false)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+			$this->commit();
+		} catch (Exception $ex) {
+			//トランザクションRollback
+			$this->rollback();
+			//エラー出力
+			CakeLog::error($ex);
+			throw $ex;
 		}
+
+		return true;
 	}
 }

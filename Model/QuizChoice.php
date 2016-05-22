@@ -34,56 +34,6 @@ class QuizChoice extends QuizzesAppModel {
  * @var array
  */
 	public $validate = array(
-		'key' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				'on' => 'update', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'language_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'choice_sequence' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'choice_count' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'quiz_question_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -94,13 +44,6 @@ class QuizChoice extends QuizzesAppModel {
  * @var array
  */
 	public $belongsTo = array(
-		'Language' => array(
-			'className' => 'Language',
-			'foreignKey' => 'language_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
 		'QuizQuestion' => array(
 			'className' => 'Quizzes.QuizQuestion',
 			'foreignKey' => 'quiz_question_id',
@@ -111,6 +54,47 @@ class QuizChoice extends QuizzesAppModel {
 	);
 
 /**
+ * Called during validation operations, before validation. Please note that custom
+ * validation rules can be defined in $validate.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if validate operation should continue, false to abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @see Model::save()
+ */
+	public function beforeValidate($options = array()) {
+		$choiceIndex = $options['choiceIndex'];
+		// Choiceモデルは繰り返し判定が行われる可能性高いのでvalidateルールは最初に初期化
+		// mergeはしません
+		$this->validate = array(
+			'choice_label' => array(
+				'notBlank' => array(
+					'rule' => array('notBlank'),
+					'message' => __d('quizzes', 'Please input choice text.'),
+				),
+				'choiceLabel' => array(
+					'rule' => array('custom', '/^(?!.*\#\|\|\|\|\|\|\#).*$/'),
+					'message' =>
+						__d('quizzes', 'You can not use the string of #||||||# for choice text '),
+				),
+			),
+			'choice_sequence' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+				),
+				'comparison' => array(
+					'rule' => array('comparison', '==', $choiceIndex),
+					'message' => __d('quizzes', 'choice sequence is illegal.')
+				),
+			),
+		);
+		// validates時にはまだquestionnaire_question_idの設定ができないのでチェックしないことにする
+		// questionnaire_question_idの設定は上位のQuestionnaireQuestionクラスで責任を持って行われるものとする
+
+		return parent::beforeValidate($options);
+	}
+
+/**
  * getDefaultChoice
  * get default data of quiz choice
  *
@@ -118,8 +102,18 @@ class QuizChoice extends QuizzesAppModel {
  */
 	public function getDefaultChoice() {
 		return	array(
-			'choice_sequence' => 0,
-			'choice_label' => __d('quizzes', 'new choice') . '1',
+			array(
+				'choice_sequence' => 0,
+				'choice_label' => __d('quizzes', 'New Choice') . '1',
+			),
+			array(
+				'choice_sequence' => 1,
+				'choice_label' => __d('quizzes', 'New Choice') . '2',
+			),
+			array(
+				'choice_sequence' => 2,
+				'choice_label' => __d('quizzes', 'New Choice') . '3',
+			),
 		);
 	}
 

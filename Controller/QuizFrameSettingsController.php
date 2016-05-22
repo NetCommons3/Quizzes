@@ -85,22 +85,29 @@ class QuizFrameSettingsController extends QuizzesAppController {
 				$this->NetCommons->setFlashNotification(__d('net_commons', 'Successfully saved.'), array(
 					'class' => 'success',
 				));
-				$this->redirect(NetCommonsUrl::backToPageUrl());
+				$this->redirect(NetCommonsUrl::backToPageUrl(true));
 				return;
 			}
 			$this->NetCommons->handleValidationError($this->QuizFrameSetting->validationErrors);
+		} else {
+			$frame = $this->QuizFrameSetting->find('first', array(
+				'conditions' => array(
+					'frame_key' => Current::read('Frame.key'),
+				),
+				'order' => 'QuizFrameSetting.id DESC'
+			));
+			if (!$frame) {
+				$frame = $this->QuizFrameSetting->getDefaultFrameSetting();
+			}
+			$this->request->data['QuizFrameSetting'] = $frame['QuizFrameSetting'];
+			$this->request->data['Frame'] = Current::read('Frame');
+			$this->request->data['Block'] = Current::read('Block');
 		}
 
-		$conditions = array(
-			'block_id' => Current::read('Block.id'),
-			'is_latest' => true,
-		);
-		$this->paginate = array(
+		$quizzes = $this->Quiz->find('all', array(
 			'fields' => array('Quiz.*', 'QuizFrameDisplayQuiz.*'),
-			'conditions' => $conditions,
-			'page' => 1,
+			'conditions' => $this->Quiz->getBaseCondition(),
 			'order' => array('Quiz.created' => 'DESC'),
-			'limit' => 1000,
 			'recursive' => -1,
 			'joins' => array(
 				array(
@@ -113,23 +120,7 @@ class QuizFrameSettingsController extends QuizzesAppController {
 					),
 				)
 			)
-		);
-		$quizzes = $this->paginate('Quiz');
-
-		$frame = $this->QuizFrameSetting->find('first', array(
-			'conditions' => array(
-				'frame_key' => Current::read('Frame.key'),
-			),
-			'order' => 'QuizFrameSetting.id DESC'
 		));
-		if (!$frame) {
-			$frame = $this->QuizFrameSetting->getDefaultFrameSetting();
-		}
-
 		$this->set('quizzes', $quizzes);
-		$this->set('quizFrameSettings', $frame['QuizFrameSetting']);
-		$this->request->data['QuizFrameSetting'] = $frame['QuizFrameSetting'];
-		$this->request->data['Frame'] = Current::read('Frame');
-		$this->request->data['Block'] = Current::read('Block');
 	}
 }

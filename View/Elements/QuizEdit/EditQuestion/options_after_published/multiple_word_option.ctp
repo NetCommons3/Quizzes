@@ -10,7 +10,7 @@
  */
 ?>
 <div class="row">
-	<div class="col-sm-12">
+	<div class="col-xs-12">
 		<label class="checkbox-inline">
 			<?php echo $this->NetCommonsForm->checkbox('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.is_order_fixed',
 			array(
@@ -25,10 +25,8 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-lg-12" ng-repeat="(correctIndex, correct) in question.quizCorrect" >
-		<div class="form-inline well">
-			<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/options_after_published/word'); ?>
-		</div>
+	<div class="col-xs-12" ng-repeat="(correctIndex, correct) in question.quizCorrect" >
+		<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/options_after_published/word', array('number' => '{{correctIndex + 1}}')); ?>
 	</div>
 </div>
 <?php echo $this->element('Quizzes.QuizEdit/EditQuestion/commentary');

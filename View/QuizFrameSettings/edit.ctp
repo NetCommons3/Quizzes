@@ -13,7 +13,7 @@ echo $this->element('Quizzes.scripts');
 echo $this->NetCommonsHtml->script(array(
 '/quizzes/js/quizzes_frame.js',
 ));
-$jsQuizFrameSettings = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($quizFrameSettings));
+$jsQuizFrameSettings = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->request->data['QuizFrameSetting']));
 $jsQuizzes = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($quizzes));
 ?>
 

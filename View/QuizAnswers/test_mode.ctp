@@ -13,9 +13,9 @@ echo $this->element('Quizzes.scripts');
 ?>
 <article id="nc-quizzes-answer-<?php Current::read('Frame.id'); ?>">
 
-	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
-
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
+
+	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
 
 	<?php echo $this->NetCommonsForm->create('QuizAnswer'); ?>
 
@@ -23,7 +23,7 @@ echo $this->element('Quizzes.scripts');
 	<?php echo $this->NetCommonsForm->hidden('Block.id'); ?>
 
 	<div class="row">
-		<div class="col-sm-12">
+		<div class="col-xs-12">
 			<h3><?php echo __d('quizzes', 'Quiz answer period'); ?></h3>
 			<?php if ($quiz['Quiz']['answer_timing'] == QuizzesComponent::USES_USE): ?>
 			<?php echo date('Y/m/d H:i', strtotime($quiz['Quiz']['answer_start_period'])); ?>
@@ -36,7 +36,7 @@ echo $this->element('Quizzes.scripts');
 	</div>
 
 	<div class="row">
-		<div class="col-sm-12">
+		<div class="col-xs-12">
 			<h3><?php echo __d('quizzes', 'Quiz method'); ?></h3>
 			<ul>
 				<li>
@@ -73,11 +73,11 @@ echo $this->element('Quizzes.scripts');
 					<?php echo __d('quizzes', 'do not forgive the repetition of the answer'); ?>
 					<?php endif; ?>
 				</li>
-				<li>
-					<?php if ($quiz['Quiz']['is_repeat_until_passing'] == QuizzesComponent::USES_USE): ?>
-					<?php echo __d('quizzes', 'forgive the repetition of the answer until passing'); ?>
-					<?php endif; ?>
-				</li>
+				<?php if ($quiz['Quiz']['is_repeat_until_passing'] == QuizzesComponent::USES_USE): ?>
+					<li>
+						<?php echo __d('quizzes', 'forgive the repetition of the answer until passing'); ?>
+					</li>
+				<?php endif; ?>
 
 				<li>
 					<?php if ($quiz['Quiz']['is_page_random'] == QuizzesComponent::USES_USE): ?>
@@ -100,22 +100,6 @@ echo $this->element('Quizzes.scripts');
 					<?php echo __d('quizzes', 'Percentage of correct answers are displayed on the scoring screen'); ?>
 					<?php else: ?>
 					<?php echo __d('quizzes', 'Percentage of correct answers are not displayed'); ?>
-					<?php endif; ?>
-				</li>
-
-				<li>
-					<?php if ($quiz['Quiz']['is_answer_mail_send'] == QuizzesComponent::USES_USE): ?>
-					<?php echo __d('quizzes', 'Deliver e-mail when submitted'); ?>
-					<?php else: ?>
-					<?php echo __d('quizzes', 'do not deliver e-mail when submitted'); ?>
-					<?php endif; ?>
-				</li>
-
-				<li>
-					<?php if ($quiz['Quiz']['is_open_mail_send'] == QuizzesComponent::USES_USE): ?>
-					<?php echo __d('quizzes', 'Deliver e-mail when started'); ?>
-					<?php else: ?>
-					<?php echo __d('quizzes', 'do not deliver e-mail when started'); ?>
 					<?php endif; ?>
 				</li>
 			</ul>

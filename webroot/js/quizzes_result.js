@@ -47,8 +47,7 @@ NetCommonsApp.controller('QuizResult',
       };
     });
 NetCommonsApp.controller('QuizResultView',
-    function($scope, $window, $sce, $timeout, $log,
-             NetCommonsBase, NetCommonsFlash) {
+    function($scope, $window, $sce, $timeout, $log) {
       $scope.initialize = function(scoreHistory) {
         $scope.opt = {
           chart: {

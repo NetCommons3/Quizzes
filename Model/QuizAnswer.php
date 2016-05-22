@@ -30,38 +30,7 @@ class QuizAnswer extends QuizzesAppModel {
  *
  * @var array
  */
-	public $validate = array(
-		'score' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'quiz_answer_summary_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'quiz_question_key' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-	);
+	public $validate = array();
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
@@ -79,6 +48,75 @@ class QuizAnswer extends QuizzesAppModel {
 			'order' => ''
 		)
 	);
+
+/**
+ * Called during validation operations, before validation. Please note that custom
+ * validation rules can be defined in $validate.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if validate operation should continue, false to abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @see Model::save()
+ */
+	public function beforeValidate($options = array()) {
+		// Choiceモデルは繰り返し判定が行われる可能性高いのでvalidateルールは最初に初期化
+		// mergeはしません
+		$this->validate = array(
+			'score' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					//'message' => 'Your custom message here',
+					//'allowEmpty' => false,
+					//'required' => false,
+					//'last' => false, // Stop validation after this rule
+					//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				),
+			),
+			'quiz_answer_summary_id' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					//'message' => 'Your custom message here',
+					//'allowEmpty' => false,
+					//'required' => false,
+					//'last' => false, // Stop validation after this rule
+					//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				),
+			),
+			'quiz_question_key' => array(
+				'notBlank' => array(
+					'rule' => array('notBlank'),
+					//'message' => 'Your custom message here',
+					//'allowEmpty' => false,
+					//'required' => false,
+					//'last' => false, // Stop validation after this rule
+					//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				),
+			),
+		);
+
+		return parent::beforeValidate($options);
+	}
+
+/**
+ * AfterFind Callback function
+ *
+ * @param array $results found data records
+ * @param bool $primary indicates whether or not the current model was the model that the query originated on or whether or not this model was queried as an association
+ * @return mixed
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function afterFind($results, $primary = false) {
+		foreach ($results as &$val) {
+			if (! isset($val[$this->alias])) {
+				continue;
+			}
+			$val[$this->alias]['answer_value'] =
+				explode(QuizzesComponent::ANSWER_DELIMITER, $val[$this->alias]['answer_value']);
+			$val[$this->alias]['answer_correct_status'] =
+				explode(QuizzesComponent::ANSWER_DELIMITER, $val[$this->alias]['answer_correct_status']);
+		}
+		return $results;
+	}
 
 /**
  * 回答したデータのうち、未採点の回答がある小テストキーを返す
@@ -213,23 +251,36 @@ class QuizAnswer extends QuizzesAppModel {
 			if (! $question) {
 				continue;
 			}
-			if ($question[0]['question_type'] == QuizzesComponent::TYPE_TEXT_AREA) {
+			$question = $question[0];
+			if ($question['question_type'] == QuizzesComponent::TYPE_TEXT_AREA) {
 				// 長文は採点不可
 				continue;
 			}
 			// その回答データが正解か判定し
 			$isCorrect = $this->_scoreAnswer(
-				$question[0]['question_type'],
-				$answer,
-				$question[0]['QuizCorrect']
+				$question['question_type'],
+				$question['is_order_fixed'],
+				$answer, $question['QuizCorrect']
 			);
 			// 回答データを更新する
 			$answer['QuizAnswer']['correct_status'] = $isCorrect;
 			if ($isCorrect == QuizzesComponent::STATUS_GRADE_PASS) {
-				$answer['QuizAnswer']['score'] = $question[0]['allotment'];
+				$answer['QuizAnswer']['score'] = $question['allotment'];
 			}
+			$this->log($answer, 'debug');
+			if (is_array($answer['QuizAnswer']['answer_correct_status'])) {
+				$answer['QuizAnswer']['answer_correct_status'] = implode(
+					QuizzesComponent::ANSWER_DELIMITER,
+					$answer['QuizAnswer']['answer_correct_status']
+				);
+			}
+
 			$this->clear();
-			$this->save($answer);
+			$this->save($answer, false, array(
+				'answer_correct_status',
+				'correct_status',
+				'score')
+			);
 		}
 		// 最後にサマリ情報を更新する
 		return true;
@@ -239,11 +290,12 @@ class QuizAnswer extends QuizzesAppModel {
  * 回答採点
  *
  * @param int $type 質問タイプ
- * @param array $answer 回答データ
+ * @param bool $isOrderFixed 順番固定か否か
+ * @param array &$answer 回答データ
  * @param array $correct 正解データ
  * @return int
  */
-	protected function _scoreAnswer($type, $answer, $correct) {
+	protected function _scoreAnswer($type, $isOrderFixed, &$answer, $correct) {
 		if ($type == QuizzesComponent::TYPE_SELECTION) {
 			$ret = $this->__scoreSingleChoice($answer, $correct);
 		} elseif ($type == QuizzesComponent::TYPE_MULTIPLE_SELECTION) {
@@ -251,20 +303,47 @@ class QuizAnswer extends QuizzesAppModel {
 		} elseif ($type == QuizzesComponent::TYPE_WORD) {
 			$ret = $this->__scoreWord($answer, $correct);
 		} else {
-			$ret = $this->__scoreMultipleWord($answer, $correct);
+			if ($isOrderFixed) {
+				$ret = $this->__scoreMultipleWord($answer, $correct);
+			} else {
+				$ret = $this->__scoreMultipleWordWithoutOrder($answer, $correct);
+			}
 		}
 		return $ret;
+	}
+/**
+ * 解答ごとの正答状態設定
+ *
+ * @param array &$answer 回答データ
+ * @param array $correct 正解データ
+ * @return int
+ */
+	private function __setAnswerCorrectStatus(&$answer, $correct) {
+		foreach ($answer['answer_value'] as $index => $ans) {
+			if (in_array($ans, $correct['correct'])) {
+				$answer['answer_correct_status'][$index] = QuizzesComponent::STATUS_GRADE_PASS;
+			} else {
+				$answer['answer_correct_status'][$index] = QuizzesComponent::STATUS_GRADE_FAIL;
+			}
+		}
 	}
 
 /**
  * 択一回答採点
  *
- * @param array $answer 回答データ
+ * @param array &$answer 回答データ
  * @param array $correct 正解データ
  * @return int
  */
-	private function __scoreSingleChoice($answer, $correct) {
-		if ($answer['QuizAnswer']['answer_value'] == $correct[0]['correct']) {
+	private function __scoreSingleChoice(&$answer, $correct) {
+		// answerも配列で来る
+		// correctも配列でくる
+
+		// 解答それぞれの正答状態設定
+		$this->__setAnswerCorrectStatus($answer['QuizAnswer'], $correct[0]);
+
+		// この問題に対しての正答状態
+		if ($answer['QuizAnswer']['answer_value'][0] == $correct[0]['correct'][0]) {
 			return QuizzesComponent::STATUS_GRADE_PASS;
 		}
 		return QuizzesComponent::STATUS_GRADE_FAIL;
@@ -273,12 +352,22 @@ class QuizAnswer extends QuizzesAppModel {
 /**
  * 複数選択回答採点
  *
- * @param array $answer 回答データ
+ * @param array &$answer 回答データ
  * @param array $correct 正解データ
  * @return int
  */
-	private function __scoreMultipleChoice($answer, $correct) {
-		if ($answer['QuizAnswer']['answer_value'] == $correct[0]['correct']) {
+	private function __scoreMultipleChoice(&$answer, $correct) {
+		// answerも配列で来る
+		// correctも配列でくる
+		// 解答それぞれの正答状態設定
+		$this->__setAnswerCorrectStatus($answer['QuizAnswer'], $correct[0]);
+
+		// この問題に対しての正答状態
+		$correctArr = $correct[0]['correct'];
+		$answerArr = $answer['QuizAnswer']['answer_value'];
+		sort($answerArr);
+		sort($correctArr);
+		if (Hash::contains($correctArr, $answerArr)) {
 			return QuizzesComponent::STATUS_GRADE_PASS;
 		}
 		return QuizzesComponent::STATUS_GRADE_FAIL;
@@ -287,13 +376,16 @@ class QuizAnswer extends QuizzesAppModel {
 /**
  * 単語回答採点
  *
- * @param array $answer 回答データ
+ * @param array &$answer 回答データ
  * @param array $correct 正解データ
  * @return int
  */
-	private function __scoreWord($answer, $correct) {
-		$corrects = explode(QuizzesComponent::ANSWER_DELIMITER, $correct[0]['correct']);
-		if (in_array($answer['QuizAnswer']['answer_value'], $corrects)) {
+	private function __scoreWord(&$answer, $correct) {
+		// 解答それぞれの正答状態設定
+		$this->__setAnswerCorrectStatus($answer['QuizAnswer'], $correct[0]);
+
+		$corrects = $correct[0]['correct'];
+		if (in_array($answer['QuizAnswer']['answer_value'][0], $corrects)) {
 			return QuizzesComponent::STATUS_GRADE_PASS;
 		}
 		return QuizzesComponent::STATUS_GRADE_FAIL;
@@ -302,21 +394,62 @@ class QuizAnswer extends QuizzesAppModel {
 /**
  * 単語複数回答採点
  *
- * @param array $answer 回答データ
+ * @param array &$answer 回答データ
  * @param array $correct 正解データ
  * @return int
  */
-	private function __scoreMultipleWord($answer, $correct) {
-		$answers = explode(QuizzesComponent::ANSWER_DELIMITER, $answer['QuizAnswer']['answer_value']);
-		foreach ($answers as $index => $ans) {
-			$corrects = explode(QuizzesComponent::ANSWER_DELIMITER, $correct[$index]['correct']);
+	private function __scoreMultipleWord(&$answer, $correct) {
+		$ret = QuizzesComponent::STATUS_GRADE_PASS;
+		$answerArr = $answer['QuizAnswer']['answer_value'];
+		foreach ($answerArr as $index => $ans) {
+
+			$corrects = $correct[$index]['correct'];
+
 			if (! in_array($ans, $corrects)) {
-				return QuizzesComponent::STATUS_GRADE_FAIL;
+
+				$ret = QuizzesComponent::STATUS_GRADE_FAIL;
+
+				$answer['QuizAnswer']['answer_correct_status'][$index] =
+					QuizzesComponent::STATUS_GRADE_FAIL;
+			} else {
+				$answer['QuizAnswer']['answer_correct_status'][$index] =
+					QuizzesComponent::STATUS_GRADE_PASS;
 			}
 		}
-		return QuizzesComponent::STATUS_GRADE_PASS;
+		return $ret;
 	}
 
+/**
+ * 順番を問わないときの単語複数回答採点
+ *
+ * @param array &$answer 回答データ
+ * @param array $corrects 正解データ
+ * @return int
+ */
+	private function __scoreMultipleWordWithoutOrder(&$answer, $corrects) {
+		$answer['QuizAnswer']['answer_correct_status'] = array_fill(
+			0,
+			count($answer['QuizAnswer']['answer_value']),
+			QuizzesComponent::STATUS_GRADE_FAIL
+		);
+		foreach ($answer['QuizAnswer']['answer_value'] as $aIdx => $ans) {
+			foreach ($corrects as $cIdx => $correct) {
+				if (in_array($ans, $correct['correct'])) {
+
+					$answer['QuizAnswer']['answer_correct_status'][$aIdx] =
+						QuizzesComponent::STATUS_GRADE_PASS;
+
+					array_splice($corrects, $cIdx, 1);
+
+					break;
+				}
+			}
+		}
+		if (count($corrects) == 0) {
+			return QuizzesComponent::STATUS_GRADE_PASS;
+		}
+		return QuizzesComponent::STATUS_GRADE_FAIL;
+	}
 /**
  * getProgressiveAnswerOfThisSummary
  *
@@ -334,16 +467,8 @@ class QuizAnswer extends QuizzesAppModel {
 			),
 			'recursive' => 0
 		));
-		if (!empty($answers)) {
-			foreach ($answers as $ans) {
-				if (strpos($ans['QuizAnswer']['answer_value'], QuizzesComponent::ANSWER_DELIMITER)) {
-					$ans['QuizAnswer']['answer_value'] = explode(
-						QuizzesComponent::ANSWER_DELIMITER,
-						$ans['QuizAnswer']['answer_value']
-					);
-				}
-				$answers[$ans['QuizAnswer']['quiz_question_key']][] = $ans['QuizAnswer'];
-			}
+		if (! $answers) {
+			return false;
 		}
 		return $answers;
 	}

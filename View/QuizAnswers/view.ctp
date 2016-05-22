@@ -13,9 +13,9 @@
 
 <article id="nc-quizzes-answer-<?php echo Current::read('Frame.id'); ?>">
 
-	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
-
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
+
+	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
 
 	<?php if ($quizPage['page_sequence'] > 0): ?>
 		<?php $progress = round((($quizPage['page_sequence']) / $quiz['Quiz']['page_count']) * 100); ?>
@@ -38,7 +38,7 @@
 		echo $this->NetCommonsForm->hidden('QuizAnswerSummary.id');
 	?>
 
-	<div class="lead">
+	<div>
 		<?php echo $quizPage['page_description']; ?>
 	</div>
 
@@ -49,11 +49,19 @@
 							<?php endif ?>">
 
 		<label class="pull-right text-muted">
-			<?php echo sprintf(__d('quizzes', '(配点%3d点)'), $question['allotment']); ?>
+			<?php /* (配点%3d点) */
+			echo sprintf(
+			__d('quizzes', '(Allotment %3d)'),
+			$question['allotment']
+			); ?>
 		</label>
 
 		<label class="control-label">
-			<?php echo sprintf(__d('quizzes', '問題%2d：'), $question['serial_number'] + 1); ?>
+			<?php /* 問題%2d：*/
+			echo sprintf(
+			__d('quizzes', 'Question %2d :'),
+			$question['serial_number'] + 1
+			); ?>
 		</label>
 
 		<p >

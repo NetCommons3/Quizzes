@@ -9,4 +9,6 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
-<?php echo $this->QuizGrading->getGradeHeader($quiz, $gradePass, $summary);
+<?php
+echo $this->element('Quizzes.QuizAnswers/answer_header');
+echo $this->QuizGrading->getGradeHeader($quiz, $gradePass, $summary);

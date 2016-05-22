@@ -10,19 +10,18 @@
  */
 ?>
 <div class="row">
-	<div class="col-sm-12">
+	<div class="col-xs-12">
 <hr />
 		<div class="nc-wysiwyg-alert">
 			<?php
 			/* 解説 */
-			echo $this->NetCommonsForm->input('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.commentary',
-			array('type' => 'wysiswyg',
+			/* 解説（正解とセットで表示されます）*/
+			echo $this->NetCommonsForm->wysiwyg('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.commentary',
+			array(
 			'id' => false,
 			'div' => false,
-			'label' => __d('quizzes', '解説（正解とセットで表示されます）'),
+			'label' => __d('quizzes', 'Commentary ( will be displayed in the correct answer and set )'),
 			'ng-model' => 'question.commentary',
-			'ui-tinymce' => 'tinymce.options',
-			'rows' => 5,
 			));
 			?>
 		</div>

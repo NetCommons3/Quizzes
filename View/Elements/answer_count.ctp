@@ -11,6 +11,6 @@
 ?>
 <?php if (isset($ownAnsweredCounts[$quiz['Quiz']['key']])): ?>
     <span class="quiz-passing-text">
-    <?php echo sprintf(__d('quizzes', '回数：%d回 '), $ownAnsweredCounts[$quiz['Quiz']['key']]); ?>
+    <?php echo sprintf(__d('quizzes', 'Number: %d'), $ownAnsweredCounts[$quiz['Quiz']['key']]); ?>
     </span>
 <?php endif;

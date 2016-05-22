@@ -119,6 +119,7 @@ class QuizAnswersController extends QuizzesAppController {
 				return;
 			}
 		}
+		$this->AuthorizationKey->contentId = $this->__quiz['Quiz']['id'];
 	}
 
 /**
@@ -169,35 +170,56 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->set('blockId', Current::read('Block.id'));
 		$this->set('quiz', $quiz);
 		$this->set('quizPage', $quiz['QuizPage'][0]);
+
 		// POSTチェック
 		if ($this->request->is('post')) {
 
-			// FUJI 本当はここで画像認証とかのチェックもあるんだよー
-			// いまは何もしてないけど
+			// ガードチェック：デフォルトはOKとしておく
+			$chkFlg = true;
+
+			// 認証キーが使用されることになって入る場合
+			if ($quiz['Quiz']['is_key_pass_use'] == QuizzesComponent::USES_USE) {
+				if (! $this->AuthorizationKey->check()) {
+					$chkFlg = false;
+				}
+			}
+			// 画像認証が使用されることになって入る場合
+			if ($quiz['Quiz']['is_image_authentication'] == QuizzesComponent::USES_USE) {
+				if (! $this->VisualCaptcha->check()) {
+					$chkFlg = false;
+				}
+			}
 
 			// OKだったら
+			if ($chkFlg == true) {
+				// スタートしたことをセッションに記載
+				$this->QuizzesAnswerStart->saveStartQuizOfThisUser($quizKey);
 
-			// スタートしたことをセッションに記載
-			$this->QuizzesAnswerStart->saveStartQuizOfThisUser($quizKey);
+				// 回答サマリレコードを作成
+				$summaryId = $this->QuizAnswerSummary->saveStartSummary(
+					$quiz,
+					$this->QuizzesOwnAnswer->getAnsweredSummaryIds()
+				);
 
-			// 回答サマリレコードを作成
-			$summaryId = $this->QuizAnswerSummary->saveStartSummary(
-				$quiz,
-				$this->QuizzesOwnAnswer->getAnsweredSummaryIds()
-			);
+				// 回答サマリIDをセッションに記録
+				$this->QuizzesOwnAnswerQuiz->saveProgressiveSummaryOfThisUser($quizKey, $summaryId);
 
-			// 回答サマリIDをセッションに記録
-			$this->QuizzesOwnAnswerQuiz->saveProgressiveSummaryOfThisUser($quizKey, $summaryId);
+				// ページランダム表示対応
+				$this->QuizzesShuffle->shufflePage($quiz);
+				// 選択肢ランダム表示対応
+				$this->QuizzesShuffle->shuffleChoice($quiz);
 
-			// ページランダム表示対応
-			$this->QuizzesShuffle->shufflePage($quiz);
-			// 選択肢ランダム表示対応
-			$this->QuizzesShuffle->shuffleChoice($quiz);
-
-			$this->setAction('view');
+				$url = NetCommonsUrl::actionUrl(array(
+					'controller' => 'quiz_answers',
+					'action' => 'view',
+					Current::read('Block.id'),
+					$quizKey,
+					'frame_id' => Current::read('Frame.id'),
+				));
+				$this->redirect($url);
+			}
 		}
 	}
-
 /**
  * view method
  * Display the question of the questionnaire , to accept the answer input
@@ -210,10 +232,7 @@ class QuizAnswersController extends QuizzesAppController {
 
 		// スタート画面を表示して、時間スタートしてるか
 		// してなかったらスタート画面へ
-		if (! $this->QuizzesAnswerStart->checkStartedQuizKeys($quizKey)) {
-			$this->setAction('start');
-			return;
-		}
+		$this->_gardQuiz($quizKey);
 
 		$summary = $this->QuizzesOwnAnswerQuiz->getProgressiveSummaryOfThisUser($quizKey);
 		if (empty($summary)) {
@@ -253,9 +272,8 @@ class QuizAnswersController extends QuizzesAppController {
 			}
 		} else {
 			$setAnswers = $this->QuizAnswer->getProgressiveAnswerOfThisSummary($summary);
-			$this->request->data['QuizAnswer'] = $setAnswers;
+			$this->request->data['QuizAnswer'] = $this->_setAnswerToView($setAnswers);
 		}
-
 		// 質問情報をView変数にセット
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
@@ -265,13 +283,15 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->set('quizPage', $quiz['QuizPage'][$nextPageSeq]);
 		$this->NetCommons->handleValidationError($this->QuizAnswer->validationErrors);
 	}
-
 /**
  * confirm method
  *
  * @return void
  */
 	public function confirm() {
+		$quizKey = $this->_getQuizKey($this->__quiz);
+		$this->_gardQuiz($quizKey);
+
 		// 回答中サマリレコード取得
 		$summary = $this->QuizzesOwnAnswerQuiz->getProgressiveSummaryOfThisUser(
 			$this->_getQuizKey($this->__quiz));
@@ -287,7 +307,6 @@ class QuizAnswersController extends QuizzesAppController {
 
 		// POSTチェック
 		if ($this->request->is('post')) {
-			$quizKey = $this->_getQuizKey($this->__quiz);
 			// 回答を確定して採点
 			$this->QuizAnswer->saveConfirmAnswer($this->__quiz, $summary);
 			// サマリ状態を完了に変える
@@ -314,9 +333,9 @@ class QuizAnswersController extends QuizzesAppController {
 				'controller' => 'quiz_answers',
 				'action' => 'grading',
 				Current::read('Block.id'),
-				$this->_getQuizKey($this->__quiz), // ここは今SaveしたサマリのIDに変える
+				$this->_getQuizKey($this->__quiz),
 				'frame_id' => Current::read('Frame.id'),
-				$newSummary['id']
+				$newSummary['id'] // SaveしたサマリのID
 			));
 			$this->redirect($url);
 		}
@@ -329,7 +348,7 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
 		$this->set('quiz', $this->__quiz);
-		$this->request->data['QuizAnswer'] = $setAnswers;
+		$this->request->data['QuizAnswer'] = $this->_setAnswerToView($setAnswers);
 		$this->set('answers', $setAnswers);
 	}
 
@@ -377,6 +396,7 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->set('summary', $summary);
 		$this->set('passQuizKeys', $this->QuizzesPassQuiz->getPassQuizKeys());
 		$this->set('gradePass', $gradePass);
+		$this->set('hasFreeStyleQuestion', $this->_hasFreeStyleQuestion($quiz));
 		$this->set('isMineAnswer', $isMineAnswer);
 		$this->request->data['QuizAnswer'] = Hash::combine($summary['QuizAnswer'], '{n}.id', '{n}');
 		$this->NetCommons->handleValidationError($this->QuizAnswerGrade->validationErrors);
@@ -396,18 +416,68 @@ class QuizAnswersController extends QuizzesAppController {
 	}
 
 /**
- * _getActionUrl method
+ * _gardQuiz method
  *
- * @param string $method 遷移先アクション名
+ * @param string $quizKey 小テストキー
  * @return void
  */
-	protected function _getActionUrl($method) {
-		return NetCommonsUrl::actionUrl(array(
-			'controller' => Inflector::underscore($this->name),
-			'action' => $method,
-			Current::read('Block.id'),
-			$this->_getQuizKey($this->__quiz),
-			'frame_id' => Current::read('Frame.id'),
-		));
+	protected function _gardQuiz($quizKey) {
+		if (! $this->QuizzesAnswerStart->checkStartedQuizKeys($quizKey)) {
+			$url = NetCommonsUrl::actionUrl(array(
+				'controller' => 'quiz_answers',
+				'action' => 'start',
+				Current::read('Block.id'),
+				$quizKey,
+				'frame_id' => Current::read('Frame.id'),
+			));
+			$this->redirect($url);
+			return;
+		}
 	}
+/**
+ * _setAnswerToView method
+ *
+ * 内部処理の都合上、解答のデータは配列として保持している
+ * しかし、択一選択、単語回答のときは答えが単純な文字列でないと画面に再描画できないので
+ * 画面表示前に配列から文字列に修正する
+ *
+ * @param array $answers 回答データ
+ * @return array
+ */
+	protected function _setAnswerToView($answers) {
+		if (! $answers) {
+			return false;
+		}
+		$ret = array();
+		foreach ($answers as $ans) {
+			$qKey = $ans['QuizAnswer']['quiz_question_key'];
+			$question = Hash::extract($this->__quiz, 'QuizPage.{n}.QuizQuestion.{n}[key=' . $qKey . ']');
+			if (! QuizzesComponent::isMultipleAnswerType($question[0]['question_type'])) {
+				if (is_array($ans['QuizAnswer']['answer_value'])) {
+					$ans['QuizAnswer']['answer_value'] = $ans['QuizAnswer']['answer_value'][0];
+				}
+			}
+			$ret[$qKey][] = $ans['QuizAnswer'];
+		}
+		return $ret;
+	}
+/**
+ * _hasFreeStyleQuestion
+ *
+ * 採点する記述式問題を持っているテストなのか
+ *
+ * @param array $quiz 小テスト
+ * @return bool
+ */
+	protected function _hasFreeStyleQuestion($quiz) {
+		$ret = Hash::extract(
+			$quiz['QuizPage'],
+			'{n}.QuizQuestion.{n}[question_type=' . QuizzesComponent::TYPE_TEXT_AREA . ']'
+		);
+		if ($ret) {
+			return true;
+		}
+		return false;
+	}
+
 }

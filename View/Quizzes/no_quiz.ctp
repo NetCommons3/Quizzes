@@ -8,33 +8,29 @@
  * @license http://www.netcommons.org/license.txt NetCommons License
  * @copyright Copyright 2014, NetCommons Project
  */
-/* FUJI echo $this->element('Quizzes.scripts');*/
+
+echo $this->element('Quizzes.scripts');
 ?>
 
+<article id="nc-quizzes-<?php echo Current::read('Frame.id'); ?>" >
 
-<div ng-controller="Questionnaires">
+	<?php echo $this->element('Quizzes.Quizzes/add_button'); ?>
 
-	<article>
+	<div class="pull-left">
+		<?php echo $this->element('Quizzes.Quizzes/answer_status'); ?>
+	</div>
 
-		<?php echo $this->element('Quizzes.Quizzes/add_button'); ?>
+	<div class="clearfix"></div>
 
-		<div class="pull-left">
-			<?php echo $this->element('Quizzes.Quizzes/answer_status'); ?>
-		</div>
+	<p>
+		<?php echo __d('quizzes', 'no quiz'); ?>
+	</p>
 
-		<div class="clearfix"></div>
-
+	<?php if (Current::permission('content_creatable')) : ?>
 		<p>
-			<?php echo __d('quizzes', 'no quiz'); ?>
+			<?php echo __d('quizzes', 'Please create new quiz by pressing the "+" button.'); ?>
 		</p>
+	<?php endif ?>
 
-		<?php if (Current::permission('content_creatable')) : ?>
-			<p>
-				<?php echo __d('quizzes', 'Please create new quiz by pressing the "+" button.'); ?>
-			</p>
-		<?php endif ?>
-
-	</article>
-
-</div>
+</article>
 

@@ -83,6 +83,7 @@ class QuizzesSchema extends CakeSchema {
 	public $quiz_answers = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'answer_value' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '回答した文字列を設定する\\n選択肢、択一の場合は、選択肢のid値:ラベルを入れる\\n\\n複数選択肢\\nこれらの場合は、(id値):(ラベル)を|つなぎで並べる。\\n', 'charset' => 'utf8'),
+		'answer_correct_status' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'correct_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:未採点 1:正解 2:不正解'),
 		'score' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
 		'quiz_answer_summary_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
@@ -197,7 +198,7 @@ class QuizzesSchema extends CakeSchema {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'display_type' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => '0:単一表示(default)|1:リスト表示'),
 		'display_num_per_page' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 3, 'unsigned' => false, 'comment' => 'リスト表示の場合、１ページ当たりに表示するアンケート件数'),
-		'sort_type' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => '表示並び順 0:新着順 1:回答期間順（降順） 2:ステータス順（昇順） 3:タイトル順（昇順）'),
+		'sort_type' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'frame_key' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),

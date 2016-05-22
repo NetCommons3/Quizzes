@@ -9,25 +9,40 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
-<div class="form-inline">
-	<div>
-		<input class="form-control" type="text" ng-model="correct.newWordCorrect" ng-change="change()"/>
-		<button type="button" class="btn btn-default btn-sm" ng-click="addCorrectWord($event, pageIndex, qIndex, correctIndex, correct.newWordCorrect)">
-			<span class=""><?php echo __d('quizzes', 'Add Correct') ?></span>
-		</button>
-	</div>
-
-	<div>
-		<span ng-repeat="correctWord in correct.correctSplit" >
-			<span class="label label-default btn" ng-click="removeCorrectWord(event, pageIndex, qIndex, correctIndex, correctWord)">
+<div class="panel panel-default">
+	<div class="panel-body">
+		<?php if (isset($number)): ?>
+		<label>(<?php echo $number; ?>)</label>
+		<?php endif; ?>
+		<span class="" ng-repeat="correctWord in correct.correct" >
+			<span class="btn btn-default btn-sm"
+				  ng-click="removeCorrectWord(event, pageIndex, qIndex, correctIndex, correctWord)">
 				{{correctWord}}
 				&nbsp;
 				<span class="glyphicon glyphicon-remove"><span class="sr-only">Remove this correct</span> </span>
 			</span>
 			&nbsp;
+			<?php echo $this->NetCommonsForm->hidden('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.{{correctIndex}}.correct.',
+			array('ng-value' => 'correctWord')); ?>
+		</span>
+		<span class="help-block" ng-if="correct.correct.length == 0">
+			<?php echo __d('quizzes', 'The correct answer is not yet . Please set the word .'); ?>
 		</span>
 	</div>
-	<?php echo
-	$this->NetCommonsForm->hidden('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.{{correctIndex}}.correct', array(
-	'ng-value' => 'correct.correct')); ?>
+</div>
+<?php
+echo $this->NetCommonsForm->hidden('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.{{correctIndex}}.correctSequence',
+	array('ng-value' => '{{correctIndex}}'));
+?>
+
+<div class="form-horizontal">
+	<div class="quiz-edit-add-word-area">
+		<?php echo $this->NetCommonsForm->label('', __d('quizzes', 'Correct word')); ?>
+		<input class="form-control" type="text" ng-model="correct.newWordCorrect" ng-change="change()"/>
+		<button
+				type="button" class="btn btn-default btn-sm"
+				ng-click="addCorrectWord($event, pageIndex, qIndex, correctIndex, correct.newWordCorrect)">
+			<span class=""><?php echo __d('net_commons', 'Add') ?></span>
+		</button>
+	</div>
 </div>

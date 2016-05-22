@@ -95,7 +95,7 @@ class QuizBlockRolePermissionsController extends QuizzesAppController {
 				$this->NetCommons->setFlashNotification(__d('net_commons', 'Successfully saved.'), array(
 					'class' => 'success',
 				));
-				$this->redirect(NetCommonsUrl::backToIndexUrl('default_setting_action'));
+				$this->redirect(NetCommonsUrl::backToPageUrl(true));
 				return;
 			}
 			$this->NetCommons->handleValidationError($this->QuizSetting->validationErrors);

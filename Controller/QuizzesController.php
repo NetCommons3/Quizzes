@@ -168,7 +168,14 @@ class QuizzesController extends QuizzesAppController {
 		}
 
 		// 過去データ 取り出し
-		$pastQuizzes = $this->Quiz->getQuizzesList(array(), array('limit' => 1000));
+		$pastQuizzes = $this->Quiz->find('all',
+			array(
+				'conditions' => $this->Quiz->getBaseCondition(),
+				'offset' => 0,
+				'limit' => 1000,
+				'recursive' => -1,
+				'order' => array('Quiz.modified DESC'),
+			));
 		$this->set('pastQuizzes', $pastQuizzes);
 
 		// NetCommonsお約束：投稿のデータはrequest dataに設定する

@@ -9,9 +9,14 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
-<?php echo $this->NetCommonsForm->label('', __d('quizzes', 'Word to the correct answer')); /* 正解とする単語 */?>
+<?php
+echo $this->NetCommonsForm->label('', __d('quizzes', 'Word to the correct answer')); /* 正解とする単語 */
+?>
 <div class="well">
-    <span ng-repeat="correctWord in correct.correctSplit">
+    <?php if (isset($number)): ?>
+    <label>(<?php echo $number; ?>)</label>
+    <?php endif; ?>
+    <span ng-repeat="correctWord in correct.correct">
         {{correctWord}},
         &nbsp;
     </span>

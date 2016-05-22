@@ -9,6 +9,8 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
-<?php echo __d('quizzes', '記述式の場合、正解の設定はありません。'); ?>
-        <br />
+<?php /* 記述式の場合、正解の設定はありません。 */
+echo __d('quizzes', 'In the free style of the case , you will not be able to set the correct answer .');
+?>
+<br />
 <?php echo $this->element('Quizzes.QuizEdit/EditQuestion/commentary');

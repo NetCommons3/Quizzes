@@ -39,20 +39,21 @@ class QuizAnswerCorrectHelper extends AppHelper {
 		if ($question['question_type'] == QuizzesComponent::TYPE_TEXT_AREA) {
 			return '';
 		}
-		$ret = '<dt>' . __d('quizzes', 'Correct answer') . '</dt>';
-		$ret .= '<dd>';
+		$ret = '<dt class="quiz-grading-correct bg-success">';
+		$ret .= __d('quizzes', 'Correct answer') . '</dt>';
+		$ret .= '<dd class="quiz-grading-correct bg-success">';
 		$ret .= $this->_getCorrect($question['question_type'], $question['QuizCorrect']);
 		$ret .= '</dd>';
 		if (! empty($question['commentary'])) {
-			$ret .= '<dt>' . __d('quizzes', 'Commentary') . '</dt>';
-			$ret .= '<dd>' . $question['commentary'] . '</dd>';
+			$ret .= '<dt class="quiz-grading-correct bg-success">' . __d('quizzes', 'Commentary') . '</dt>';
+			$ret .= '<dd class="quiz-grading-correct bg-success">' . $question['commentary'] . '</dd>';
 		}
 		return $ret;
 	}
 /**
  * 正解表示
  *
- * @param int $type 問題タイプ
+ * @param int $type 問題種別
  * @param array $corrects 正解
  * @return string 正解の文字列
  */
@@ -75,7 +76,7 @@ class QuizAnswerCorrectHelper extends AppHelper {
  * @return string 正解の文字列
  */
 	protected function _getSingleSelectCorrect($correct) {
-		return $correct['correct'];
+		return $correct['correct'][0];
 	}
 /**
  * 複数選択正解表示
@@ -84,7 +85,7 @@ class QuizAnswerCorrectHelper extends AppHelper {
  * @return string 正解の文字列
  */
 	protected function _getMultipleSelectCorrect($correct) {
-		return implode(',', explode(QuizzesComponent::ANSWER_DELIMITER, $correct['correct']));
+		return implode(',', $correct['correct']);
 	}
 /**
  * 単語正解表示
@@ -93,12 +94,12 @@ class QuizAnswerCorrectHelper extends AppHelper {
  * @return string 正解の文字列
  */
 	protected function _getWordCorrect($correct) {
-		$words = explode(QuizzesComponent::ANSWER_DELIMITER, $correct['correct']);
+		$words = $correct['correct'];
 
 		$ret = array_shift($words);
-		if (! empty($words)) {
+		if (! empty($words) && count($words) > 0) {
 			$ret .= ' <button type="button" class="btn btn-default btn-sm" ';
-			$ret .= 'popover-placement="right" popover="';
+			$ret .= 'popover-placement="right" uib-popover="';
 			foreach ($words as $word) {
 				$ret .= $word . ',';
 			}

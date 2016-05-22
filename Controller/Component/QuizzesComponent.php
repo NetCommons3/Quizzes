@@ -172,8 +172,7 @@ class QuizzesComponent extends Component {
  *
  * @var string
  */
-	const ANSWER_DELIMITER = '|';
-	const ANSWER_VALUE_DELIMITER = ':';
+	const ANSWER_DELIMITER = '#||||||#';
 
 /**
  * quiz period stat
@@ -183,16 +182,6 @@ class QuizzesComponent extends Component {
 	const QUIZ_PERIOD_STAT_IN = 1;
 	const QUIZ_PERIOD_STAT_BEFORE = 2;
 	const QUIZ_PERIOD_STAT_END = 3;
-
-/**
- * quiz sort type
- *
- * @var integer
- */
-	const QUIZ_SORT_MODIFIED = 0;
-	const QUIZ_SORT_CREATED = 1;
-	const QUIZ_SORT_TITLE = 2;
-	const QUIZ_SORT_END = 3;
 
 /**
  * quiz template exoprt file name
@@ -205,30 +194,16 @@ class QuizzesComponent extends Component {
 	const QUIZ_FINGER_PRINT_FILENAME = 'finger_print.txt';
 
 /**
- * getDisplayNumberOptions
- *
- * @return array
- */
-	public static function getDisplayNumberOptions() {
-		return array(
-			5 => 5 . __d('quizzes', 'item'),
-			10 => 10 . __d('quizzes', 'item'),
-			20 => 20 . __d('quizzes', 'item'),
-			50 => 50 . __d('quizzes', 'item'),
-		);
-	}
-
-/**
  * getSortOrders
  *
  * @return array
  */
 	public static function getSortOrders() {
 		return array(
-			self::QUIZ_SORT_MODIFIED => __d('quizzes', 'New Modified'),
-			self::QUIZ_SORT_CREATED => __d('quizzes', 'Registration order'),
-			self::QUIZ_SORT_TITLE => __d('quizzes', 'Title'),
-			self::QUIZ_SORT_END => __d('quizzes', 'End period'),
+			'Quiz.modified DESC' => __d('quizzes', 'New Modified'),
+			'Quiz.created ASC' => __d('quizzes', 'Registration order'),
+			'Quiz.title ASC' => __d('quizzes', 'Title'),
+			'Quiz.answer_end_period ASC' => __d('quizzes', 'End period'),
 		);
 	}
 
@@ -243,7 +218,7 @@ class QuizzesComponent extends Component {
 			self::TYPE_MULTIPLE_SELECTION => __d('quizzes', 'Multiple choice'),
 			self::TYPE_WORD => __d('quizzes', 'Word'),
 			self::TYPE_MULTIPLE_WORD => __d('quizzes', 'Multiple word'),
-			self::TYPE_TEXT_AREA => __d('quizzes', 'Multiple text'),
+			self::TYPE_TEXT_AREA => __d('quizzes', 'Free style'),
 		);
 	}
 
@@ -285,8 +260,22 @@ class QuizzesComponent extends Component {
  * @return bool
  */
 	public static function isMultipleWordType($type) {
-		// マトリクス選択タイプであるか
 		if ($type == self::TYPE_WORD) {
+			return true;
+		}
+		if ($type == self::TYPE_MULTIPLE_WORD) {
+			return true;
+		}
+		return false;
+	}
+/**
+ * isMultipleAnswerType
+ *
+ * @param int $type quiz type
+ * @return bool
+ */
+	public static function isMultipleAnswerType($type) {
+		if ($type == self::TYPE_MULTIPLE_SELECTION) {
 			return true;
 		}
 		if ($type == self::TYPE_MULTIPLE_WORD) {

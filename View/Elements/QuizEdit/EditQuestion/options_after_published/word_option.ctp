@@ -9,7 +9,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?><div class="row">
-    <div class="col-lg-12" ng-repeat="(correctIndex, correct) in question.quizCorrect" >
+    <div class="col-xs-12" ng-repeat="(correctIndex, correct) in question.quizCorrect" >
         <?php echo $this->element('Quizzes.QuizEdit/EditQuestion/options_after_published/word'); ?>
     </div>
 </div>

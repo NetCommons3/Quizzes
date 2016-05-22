@@ -1,7 +1,3 @@
-/*--小テスト一覧画面セレクトボックス---*/
-.quiz-list-select {
-    margin: 1em!important;
-}
 /*--時間目安、合格点などサブ説明のテキスト表示---*/
 .quiz-passing-text {
     margin-right:1.5em;
@@ -29,19 +25,8 @@
 .quiz-select-box li {
     padding:0px 0.5em
 }
-/*--小テスト編集画面のform-group枠への追加スタイル---*/
-.quiz-group { margin-top:0.5em ;margin-bottom:1.5em;margin-left: 2em;
-}
 .quiz-supplemental-item {
     margin-left:3em;
-}
-/*--小テスト編集画面の小テストタイトルスタイル---*/
-.quiz-setting-ttl {
-    padding: 10px 20px 0px;
-}
-.quiz-setting-ttl-help {
-    padding-bottom:1em;
-    padding-left: 2em;
 }
 /*--小テスト編集画面のページ追加タブスタイル--*/
 .quiz-add-page-tab {
@@ -50,9 +35,18 @@
     float: left;
 }
 /*--小テスト編集画面の質問アコーディオンスタイル---*/
+/*--アンケート編集画面の質問アコーディオンスタイル---*/
+#nc-quizzes-question-edit .panel-title {
+    margin:0px;
+}
 .quiz-accordion-header-title {
     line-height:2em;
     padding-left:0.5em;
+    font-size:16px;
+}
+/*--小テスト編集画面の編集不可になった質問文---*/
+.quiz-edit-disabled-well {
+    margin-bottom:0px;
 }
 /*--小テスト編集画面の選択肢リスト---*/
 .quiz-edit-choice-list-group {
@@ -62,21 +56,33 @@
 .quiz-edit-correct-option {
     margin-right:15px;
 }
-/*
- * 編集画面ステップメニュー
- */
-.quiz-steps {
-    height:auto;
+.quiz-edit-correct-option .control-label {
+    padding-top:0px;
 }
-.quiz-step-item {
-    float: left;
-    height: 100%;
-    padding: 6px 1em 3px 0px;
-    text-align: center;
-    font-size: 12px;
+.quiz-edit-multiple-word-area {
+    padding-top:0.5em;
+    padding-bottom:1em;
 }
-.quiz-step-item .glyphicon {
-    float:right;
+.quiz-edit-add-word-area {
+    margin-top:0.3em;
 }
+/*-- 採点画面 --*/
+dl.quiz-grading-data dt{
+    padding:0.2em 1em 0em;
+    border-radius: 4px 4px 0 0;
+}
+dl.quiz-grading-data dd {
+    padding:0em 1em 0.5em;
+    border-radius: 0 0 4px 4px;
+}
+/*-- 成績データ表 --*/
 .quiz-result-table {}
 .quiz-result-table th {text-align:center;}
+
+/*
+ * 縦スクロールバー付き
+ */
+.quiz-list-wrapper {
+    max-height:200px;
+    overflow-y: scroll;
+}

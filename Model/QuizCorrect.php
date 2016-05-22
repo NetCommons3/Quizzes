@@ -34,56 +34,6 @@ class QuizCorrect extends QuizzesAppModel {
  * @var array
  */
 	public $validate = array(
-		'key' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				'on' => 'update', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'language_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'correct_sequence' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'correct' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'update', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'quiz_question_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
 	);
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -109,6 +59,75 @@ class QuizCorrect extends QuizzesAppModel {
 			'order' => ''
 		)
 	);
+
+/**
+ * Called during validation operations, before validation. Please note that custom
+ * validation rules can be defined in $validate.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if validate operation should continue, false to abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @see Model::save()
+ */
+	public function beforeValidate($options = array()) {
+		// Choiceモデルは繰り返し判定が行われる可能性高いのでvalidateルールは最初に初期化
+		// mergeはしません
+		$this->validate = array(
+			//'correct_sequence' => array(
+			//	'numeric' => array(
+			//		'rule' => array('numeric'),
+			//		'message' => __d('net_commons', 'Invalid request.'),
+			//	),
+			//),
+			'correct' => array(
+				'notBlank' => array(
+					'rule' => array('notBlank'),
+					// 正解は必ず設定してください。
+					'message' => __d('quizzes', 'Please set correct answer.'),
+				),
+			),
+		);
+		// validates時にはまだquestionnaire_question_idの設定ができないのでチェックしないことにする
+		// questionnaire_question_idの設定は上位のQuestionnaireQuestionクラスで責任を持って行われるものとする
+		if (is_array($this->data['QuizCorrect']['correct'])) {
+			$this->data['QuizCorrect']['correct'] =
+				implode(QuizzesComponent::ANSWER_DELIMITER, $this->data['QuizCorrect']['correct']);
+		}
+
+		return parent::beforeValidate($options);
+	}
+/**
+ * AfterFind Callback function
+ *
+ * @param array $results found data records
+ * @param bool $primary indicates whether or not the current model was the model that the query originated on or whether or not this model was queried as an association
+ * @return mixed
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function afterFind($results, $primary = false) {
+		foreach ($results as &$val) {
+			$val[$this->alias]['correct'] =
+				explode(QuizzesComponent::ANSWER_DELIMITER, $val[$this->alias]['correct']);
+		}
+		return $results;
+	}
+
+/**
+ * getDefaultCorrect
+ * get default data of quiz correct
+ * このデフォルト値は択一選択がデフォルトであることが前提である
+ *
+ * @return array
+ * @see QuizChoice::getDefaultChoice()
+ */
+	public function getDefaultCorrect() {
+		return	array(
+			array(
+				'correct_sequence' => 0,
+				'correct' => array(__d('quizzes', 'New Choice') . '1'),
+			)
+		);
+	}
 
 /**
  * saveQuizCorrect

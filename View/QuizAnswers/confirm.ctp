@@ -13,12 +13,12 @@
 
 <article id="nc-quizzes-confirm">
 
-	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
-
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
 
+	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
+
 	<p>
-		<?php echo __d('questionnaires', 'Please confirm your answers.'); ?>
+		<?php echo __d('quizzes', 'Please confirm your answers.'); ?>
 	</p>
 
 	<?php echo $this->NetCommonsForm->create('QuizAnswer'); ?>
@@ -33,11 +33,11 @@
 				<div class="well form-control-static">
 					<div class="form-group">
 					<label class="pull-right text-muted">
-						<?php echo sprintf(__d('quizzes', '(配点%3d点)'), $question['allotment']); ?>
+						<?php echo sprintf(__d('quizzes', '(Allotment %3d)'), $question['allotment']); ?>
 					</label>
 
 					<label class="control-label">
-						<?php echo sprintf(__d('quizzes', '問題%2d：'), $question['serial_number'] + 1); ?>
+						<?php echo sprintf(__d('quizzes', 'Question %2d :'), $question['serial_number'] + 1); ?>
 					</label>
 
 					<p >
@@ -59,7 +59,7 @@
 																	$quiz['Quiz']['key'],
 																	'frame_id' => Current::read('Frame.id'))); ?>">
 			<span class="glyphicon glyphicon-chevron-left"></span>
-			<?php echo __d('questionnaires', 'Start over'); ?>
+			<?php echo __d('quizzes', 'Start over'); ?>
 		</a>
 
 		<?php echo $this->NetCommonsForm->button(
