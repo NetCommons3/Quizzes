@@ -103,7 +103,7 @@ class QuizzesMailSettingRecords extends MailsMigration {
 回答者:{X-USER}
 回答日時:{X-TO_DATE}
 
-回答結果を参照・採点するには下記のリンクをクリックして下さい。
+回答結果を参照・採点するには下記のリンクをクリックしてください。
 {X-URL}',
 			),
 		));
