@@ -15,6 +15,7 @@ echo $this->NetCommonsHtml->script(array(
 '/components/d3/d3.min.js',
 '/components/nvd3/build/nv.d3.min.js',
 '/components/angular-nvd3/dist/angular-nvd3.min.js',
+'/quizzes/js/quizzes_messages_constant.js',
 '/quizzes/js/quizzes_result.js'
 ));
 echo $this->NetCommonsHtml->css('/components/nvd3/build/nv.d3.css');
@@ -27,9 +28,9 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 	<?php echo $this->element('Quizzes.QuizResult/overall_performance'); ?>
 
 	<section>
-		<h3>
+		<h2>
 			<?php echo __d('quizzes', 'Score distribution'); /* 得点分布 */ ?>
-		</h3>
+		</h2>
 		<nvd3 options="opt" data="data"></nvd3>
 	</section>
 
@@ -63,69 +64,48 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 					'keyName' => 'within_time_status')); ?>
 			</div>
 		</div>
-		<h3>
+		<h2>
 			<?php echo __d('quizzes', 'Examinee list'); /* 受験者一覧 */ ?>
-		</h3>
-		<table class="table quiz-result-table">
-			<tr>
-				<th>
-					<?php echo $this->Paginator->sort('User.handlename', __d('quizzes', 'Answer\'s')); /* 解答者名 */ ?>
-				</th>
-				<th>
-					<?php echo $this->Paginator->sort('QuizAnswerSummary.answer_number', __d('quizzes', 'Number')); /* 回数 */ ?>
-				</th>
-				<th>合格</th>
-				<th>時間内</th>
-				<th>
-					<?php echo $this->Paginator->sort('QuizAnswerSummary.summary_score', __d('quizzes', 'Last score')); /* 直近の得点 */ ?>
-				</th>
-				<th>偏差値</th>
-				<th>
-					<?php echo $this->Paginator->sort('Statistics.avg_elapsed_second', __d('quizzes', 'Average time')); /* 平均時間 */ ?>
-				</th>
-				<th>
-					<?php echo $this->Paginator->sort('Statistics.max_score', __d('quizzes', 'Highscore')); /* 最高点 */ ?>
-				</th>
-				<th>
-					<?php echo $this->Paginator->sort('Statistics.min_score', __d('quizzes', 'Lowscore')); /* 最低点 */ ?>
-				</th>
-				<th>
-					<?php echo __d('quizzes', 'Graded'); /* 採点 */ ?>
-				</th>
-			</tr>
-			<?php foreach ($summaryList as $summary): ?>
-				<tr class="<?php echo $this->QuizResult->getPassClass($quiz, $summary); ?>">
-					<td>
-						<?php echo $this->QuizResult->getHandleNameLink($quiz, $summary); ?>
-					</td>
-					<td class="text-right"><?php echo h($summary['QuizAnswerSummary']['answer_number']); ?></td>
-					<td class="text-center">
-						<?php echo $this->QuizResult->getPassing($quiz, $summary); ?>
-					</td>
-					<td class="text-center">
-						<?php echo $this->QuizResult->getWithinTime($quiz, $summary); ?>
-					</td>
-					<td class="text-right">
-						<?php echo $this->QuizResult->getScore($summary); ?>
-					</td>
-					<td class="text-right">
-						<?php echo $this->QuizResult->getStdScore($general, $summary); ?>
-					</td>
-					<td class="text-right">
-						<?php echo $this->QuizResult->getAvgElapsed($quiz, $summary); ?>
-					</td>
-					<td class="text-right">
-						<?php echo h($summary['Statistics']['max_score']); ?>
-					</td>
-					<td class="text-right">
-						<?php echo h($summary['Statistics']['min_score']); ?>
-					</td>
-					<td class="text-center">
-						<?php echo $this->QuizResult->getNotScoring($quiz, $summary); ?>
-					</td>
-				</tr>
-			<?php endforeach; ?>
-		</table>
+		</h2>
+		<div class="clearfix"></div>
+		<?php echo $this->TableList->startTable(); ?>
+		<tr>
+			<?php echo $this->TableList->tableHeader('User.handlename', __d('quizzes', 'Answer\'s'), array('type' => 'handle', 'sort' => true));/* 解答者名 */ ?>
+			<?php echo $this->TableList->tableHeader('QuizAnswerSummary.answer_number', __d('quizzes', 'Number'), array('type' => 'numeric', 'sort' => true));/* 回数 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Pass'), array('type' => 'center'));/* 合格 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'In time'), array('type' => 'center'));/* 時間内 */ ?>
+			<?php echo $this->TableList->tableHeader('QuizAnswerSummary.summary_score', __d('quizzes', 'Last score'), array('type' => 'numeric', 'sort' => true));/* 直近の得点 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Deviation'), array('type' => 'numeric'));/* 偏差値 */ ?>
+			<?php echo $this->TableList->tableHeader('Statistics.avg_elapsed_second', __d('quizzes', 'Average time'), array('type' => 'numeric', 'sort' => true));/* 平均時間 */ ?>
+			<?php echo $this->TableList->tableHeader('Statistics.max_score', __d('quizzes', 'Highscore'), array('type' => 'numeric', 'sort' => true));/* 最高点 */ ?>
+			<?php echo $this->TableList->tableHeader('Statistics.min_score', __d('quizzes', 'Lowscore'), array('type' => 'numeric', 'sort' => true));/* 最低点 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Graded'), array('type' => 'center'));/* 採点 */ ?>
+		</tr>
+		<?php foreach ($summaryList as $summary): ?>
+		<tr class="<?php echo $this->QuizResult->getPassClass($quiz, $summary); ?>">
+			<?php echo $this->TableList->tableData('', $this->QuizResult->getHandleNameLink($quiz, $summary),
+				array('type' => 'text', 'escape' => false)); ?>
+			<?php echo $this->TableList->tableData('', $summary['QuizAnswerSummary']['answer_number'],
+				array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $this->QuizResult->getPassing($quiz, $summary),
+				array('type' => 'center', 'escape' => false)); ?>
+			<?php echo $this->TableList->tableData('', $this->QuizResult->getWithinTime($quiz, $summary),
+				array('type' => 'center', 'escape' => false)); ?>
+			<?php echo $this->TableList->tableData('', $this->QuizResult->getScore($summary),
+				array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $this->QuizResult->getStdScore($general, $summary),
+				array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $this->QuizResult->getAvgElapsed($quiz, $summary),
+				array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $summary['Statistics']['max_score'],
+				array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $summary['Statistics']['min_score'],
+				array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $this->QuizResult->getNotScoring($quiz, $summary),
+				array('type' => 'center', 'escape' => false)); ?>
+		</tr>
+		<?php endforeach; ?>
+		<?php echo $this->TableList->endTable(); ?>
 		<span class="help-block">
 			<?php echo
 			__d('quizzes', '! not logged answer in has been treated as a solution of the only all once because it is impossible to history management .'); /* ※未ログインでの回答は履歴管理が不可能なため全て１度だけの解答として扱われています。 */?>
@@ -136,7 +116,7 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 	</section>
 
 	<div class="text-center">
-		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to the quiz top'), array('icon' => 'remove', 'iconSize' => 'lg')); ?>
+		<?php echo $this->BackTo->indexLinkButton(__d('quizzes', 'Back to the quiz top')); ?>
 	</div>
 
 </article>

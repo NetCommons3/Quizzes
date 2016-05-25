@@ -40,7 +40,8 @@ class QuizzesPassQuizComponent extends Component {
 
 		$this->__passQuizKeys = array();
 
-		if (empty(Current::read('User.id'))) {
+		$userId = Current::read('User.id');
+		if (empty($userId)) {
 			$session = $this->_Collection->load('Session');
 			$blockId = Current::read('Block.id');
 			$passQuizKeys = $session->read('Quizzes.passQuizKeys.' . $blockId);
@@ -93,7 +94,8 @@ class QuizzesPassQuizComponent extends Component {
 		// 回答済み小テスト配列に追加
 		$this->__passQuizKeys[] = $quizKey;
 		// ログイン状態の人の場合はこれ以上の処理は不要
-		if (! empty(Current::read('User.id'))) {
+		$userId = Current::read('User.id');
+		if (! empty($userId)) {
 			return;
 		}
 		// 未ログインの人の場合はセッションに書いておく

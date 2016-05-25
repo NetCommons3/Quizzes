@@ -45,6 +45,7 @@ class QuizResultController extends QuizzesAppController {
 		'Quizzes.QuizzesOwnAnswerQuiz',	// 回答済み小テスト管理
 		'Quizzes.QuizzesOwnAnswer',		// 回答ID管理
 		'Quizzes.QuizzesPassQuiz',		// 合格小テスト管理
+		'Paginator',
 	);
 
 /**
@@ -55,6 +56,7 @@ class QuizResultController extends QuizzesAppController {
 		'NetCommons.Date',
 		'NetCommons.DisplayNumber',
 		'NetCommons.TitleIcon',
+		'NetCommons.TableList',
 		'Workflow.Workflow',
 		'Quizzes.QuizResult'
 	];
@@ -111,14 +113,31 @@ class QuizResultController extends QuizzesAppController {
 		// 得点分布データ取得
 		$general = $this->QuizResult->getAllResult();
 
-		$this->paginate = array(
-			'page' => 1,
-			'order' => array('User.handlename' => 'asc'),
-			'limit' => 10,
+		$options = $this->QuizResult->getPaginateOptions();
+		$this->Paginator->settings = array_merge(
+			$this->Paginator->settings,
+			array(
+				'page' => 1,
+				'limit' => 10,
+				'order' => array('User.handlename' => 'DESC'),
+			),
+			$options
 		);
-		$this->QuizResult->setPaginateOrder($this->_getOrder());
-		$conditions = $this->_getFilter();
-		$summaryList = $this->paginate('QuizResult', $conditions);
+		//$this->QuizResult->setPaginateOrder($this->_getOrder());
+		$filter = $this->_getFilter();
+		$summaryList = $this->paginate(
+			'QuizResult',
+			$filter,
+			array(
+				'User.handlename',
+				'QuizAnswerSummary.id',
+				'QuizAnswerSummary.answer_number',
+				'QuizAnswerSummary.summary_score',
+				'Statistics.avg_elapsed_second',
+				'Statistics.max_score',
+				'Statistics.min_score',
+			)
+		);
 
 		$this->set('quiz', $quiz);
 		$this->set('general', $general);

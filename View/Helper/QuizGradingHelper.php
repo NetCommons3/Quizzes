@@ -101,13 +101,13 @@ class QuizGradingHelper extends AppHelper {
 		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
 			foreach ($answer['answer_value'] as $index => $ans) {
 				$ret .= sprintf('%s (%d) %s <br />',
-					$this->_getMark($answer['answer_correct_status'][$index]), $index + 1, $ans);
+					$this->_getMark($answer, $index), $index + 1, $ans);
 			}
 		} else {
 			$yourAns = '';
 			foreach ($answer['answer_value'] as $index => $ans) {
 				$yourAns .= sprintf(' %s %s /',
-					$this->_getMark($answer['answer_correct_status'][$index]), $ans);
+					$this->_getMark($answer, $index), $ans);
 			}
 			$ret .= trim($yourAns, '/');
 
@@ -118,10 +118,15 @@ class QuizGradingHelper extends AppHelper {
 /**
  * 正答状態マーク取得
  *
- * @param int $status 正答状態
+ * @param array $answer 回答
+ * @param int $index 回答のインデックス
  * @return string 正解・不正解マーク
  */
-	protected function _getMark($status) {
+	protected function _getMark($answer, $index) {
+		if (! isset($answer['answer_correct_status'][$index])) {
+			return '<span class="label label-warning">' . __d('quizzes', 'miss') . '</span>';
+		}
+		$status = $answer['answer_correct_status'][$index];
 		if ($status == QuizzesComponent::STATUS_GRADE_FAIL) {
 			return '<span class="label label-warning">' . __d('quizzes', 'miss') . '</span>';
 		}

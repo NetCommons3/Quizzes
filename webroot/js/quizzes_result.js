@@ -13,7 +13,7 @@ NetCommonsApp.requires.push('nvd3');
  * @param {function($scope)} Controller
  */
 NetCommonsApp.controller('QuizResult',
-    function($scope, $window, $sce, $timeout, $log) {
+    function($scope, $window, $sce, $timeout, $log, quizzesMessages) {
       $scope.initialize = function(scoreDistribution) {
         $scope.opt = {
           chart: {
@@ -26,17 +26,17 @@ NetCommonsApp.controller('QuizResult',
             x: function(d) {return d.label;},
             y: function(d) {return d.value;},
             'xAxis': {
-              'axisLabel': '得点',
+              'axisLabel': quizzesMessages.resultScoreLabel,
               'showMaxMin': false
             },
             'yAxis': {
-              'axisLabel': '人数'
+              'axisLabel': quizzesMessages.resultPersonsLabel
             }
           }
         };
         $scope.data = [
           {
-            'key': '得点',
+            'key': quizzesMessages.resultPersonsLabel,
             'color': '#777'
           }
         ];
@@ -47,7 +47,7 @@ NetCommonsApp.controller('QuizResult',
       };
     });
 NetCommonsApp.controller('QuizResultView',
-    function($scope, $window, $sce, $timeout, $log) {
+    function($scope, $window, $sce, $timeout, $log, quizzesMessages) {
       $scope.initialize = function(scoreHistory) {
         $scope.opt = {
           chart: {
@@ -60,21 +60,21 @@ NetCommonsApp.controller('QuizResultView',
             x: function(d) {return d.answerNumber;},
             y: function(d) {return d.summaryScore;},
             'xAxis': {
-              'axisLabel': '回数',
+              'axisLabel': quizzesMessages.resultNumberLabel,
               'showMaxMin': false
             },
             'yAxis': {
-              'axisLabel': '得点'
-            },
-            'title': {
-              'enable': true,
-              'text': 'あなたのこれまでの成績履歴'
+              'axisLabel': quizzesMessages.resultScoreLabel
             }
+            //'title': {
+            //  'enable': true,
+            //  'text': 'あなたのこれまでの成績履歴'
+            //}
           }
         };
         $scope.data = [
           {
-            'key': 'あなたのこれまでの成績履歴',
+            'key': quizzesMessages.resultScoreLabel,
             'color': '#777'
           }
         ];

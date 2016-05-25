@@ -30,6 +30,13 @@ class QuizResult extends QuizzesAppModel {
 	public $alias = 'QuizAnswerSummary';
 
 /**
+ * 得点分布表の分割数
+ *
+ * @var const
+ */
+	const DISTRIBUTION_NUMBER = '10';
+
+/**
  * 総合統計用サマリID配列
  *
  * @var array
@@ -49,13 +56,6 @@ class QuizResult extends QuizzesAppModel {
  * @var array
  */
 	protected $_quiz = null;
-
-/**
- * ページネーション用ソート上家
- *
- * @var array
- */
-	protected $_orderForPaginate = null;
 
 /**
  * belongsTo associations
@@ -181,18 +181,28 @@ class QuizResult extends QuizzesAppModel {
 		// 合計点計算
 		$allotments = array_sum(Hash::extract($quiz, 'QuizPage.{n}.QuizQuestion.{n}.allotment'));
 		// 10等分
-		$baseScore = $allotments / 10;
+		$baseScore = $allotments / self::DISTRIBUTION_NUMBER;
 		// 検索条件
 		$baseCondition = $this->getCondition();
-		for ($i = 0; $i < 10; $i++) {
+		for ($i = 0; $i < self::DISTRIBUTION_NUMBER; $i++) {
 			$rangeLow = $baseScore * ($i);
 			$rangeHigh = $baseScore * ($i + 1);
 			$dispersion[$i]['label'] = sprintf('%d - %d', round($rangeLow), round($rangeHigh));
 			// それぞれの範囲の人数を取得
-			$condition = Hash::merge(
-				$baseCondition,
-				array('summary_score BETWEEN ? AND ?' => array($rangeLow, $rangeHigh))
-			);
+			if ($i == self::DISTRIBUTION_NUMBER - 1) {
+				$condition = Hash::merge(
+					$baseCondition,
+					array('summary_score BETWEEN ? AND ?' => array($rangeLow, $rangeHigh))
+				);
+			} else {
+				$condition = Hash::merge(
+					$baseCondition,
+					array(
+						'summary_score >= ' . $rangeLow,
+						'summary_score < ' . $rangeHigh
+					)
+				);
+			}
 			$number = $this->QuizAnswerSummary->find('all', array(
 				'fields' => array(
 					'COUNT(*) AS number',
@@ -211,6 +221,7 @@ class QuizResult extends QuizzesAppModel {
 /**
  * getCondition
  * 成績情報検索のための基本条件
+ * UserIdがある場合は、最新のサマリIDのものを。非会員の場合は回答は一回限り扱いだから必ず含める
  *
  * @return array
  */
@@ -225,83 +236,23 @@ class QuizResult extends QuizzesAppModel {
 		);
 	}
 /**
- * getSummaryListCondition
- * 成績一覧情報検索のための基本条件
+ * paginateのためのSettingOption取り出し
  *
- * @return array
+ * @return array paginateのSetting
  */
-	public function getSummaryListCondition() {
-		return array(
-			'quiz_key' => $this->_quiz['Quiz']['key'],
-			'OR' => array(
-				'QuizAnswerSummary.id' => $this->_userSummaryIds,
-			)
-		);
-	}
-/**
- * setPaginateOrder
- * ソート条件設定
- *
- * @param array $order ソート条件
- * @return void
- */
-	public function setPaginateOrder($order) {
-		$this->_orderForPaginate = $order;
-	}
-/**
- * オーバーライドされた paginate メソッド
- *
- * @param array $conditions 条件配列
- * @param array $fields 検索フィールド
- * @param array $order ソート指定
- * @param int $limit 取得数
- * @param int $page ページ数
- * @param int $recursive 再帰ネスト数
- * @param array $extra 追加情報
- * @return array レコード
- */
-	public function paginate(
-		$conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
-		$recursive = 0;
-		$fields = array('QuizAnswerSummary.*', 'User.*', 'Statistics.*');
-		$joins = $this->_getJoins();
-		$conditions = Hash::merge(array(
-			'QuizAnswerSummary.quiz_key' => $this->_quiz['Quiz']['key'],
-			'OR' => array(
-				'QuizAnswerSummary.id' => $this->_latestSummaryIds,
-				'QuizAnswerSummary.user_id' => null,
-			),
-		), $conditions);
-		$order = $this->_orderForPaginate;
-		return $this->find(
-			'all',
-			compact('conditions', 'fields', 'joins', 'order', 'limit', 'page', 'recursive')
-		);
-	}
-/**
- * オーバーライドされた paginateCount メソッド
- *
- * @param array $conditions 条件配列
- * @param int $recursive 再帰ネスト数
- * @param array $extra 追加情報
- * @return int レコード数
- */
-	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
-		$this->recursive = $recursive;
-		$conditions = array(
-			'QuizAnswerSummary.quiz_key' => $this->_quiz['Quiz']['key'],
-			'OR' => array(
-				'QuizAnswerSummary.id' => $this->_latestSummaryIds,
-				'QuizAnswerSummary.user_id' => null,
-			),
-		);
-		$results = $this->find('count', array(
+	public function getPaginateOptions() {
+		$opt = array(
 			'fields' => array('QuizAnswerSummary.*', 'User.*', 'Statistics.*'),
 			'joins' => $this->_getJoins(),
-			'conditions' => $conditions,
-			'recursive' => $recursive,
-		));
-		return count($results);
+			'conditions' => array(
+				'QuizAnswerSummary.quiz_key' => $this->_quiz['Quiz']['key'],
+				'OR' => array(
+					'QuizAnswerSummary.id' => $this->_latestSummaryIds,
+					'QuizAnswerSummary.user_id' => null,
+				)
+			),
+		);
+		return $opt;
 	}
 /**
  * サブクエリJoinテーブル配列
@@ -329,6 +280,7 @@ class QuizResult extends QuizzesAppModel {
  * @return string サブクエリ文字列
  */
 	protected function _getSubQuery($quizKey) {
+		$query = '';
 		$db = $this->QuizAnswerSummary->getDataSource();
 		$subQuery = $db->buildStatement(array(
 			'fields' => array(
@@ -352,6 +304,29 @@ class QuizResult extends QuizzesAppModel {
 		),
 			$this->QuizAnswerSummary
 		);
-		return $subQuery;
+		$query = $subQuery;
+		$query .= ' UNION ';
+		$subQuery = $db->buildStatement(array(
+			'fields' => array(
+				'MAX(id) AS id',
+				'MAX(passing_status) as passing_status',
+				'MAX(within_time_status) as within_time_status',
+				'AVG(elapsed_second) as avg_elapsed_second',
+				'MAX(summary_score) as max_score',
+				'MIN(summary_score) as min_score',
+				'MIN(passing_status) as not_scoring',
+			),
+			'table' => $db->fullTableName($this->QuizAnswerSummary),
+			'alias' => 'Statistics',
+			'group' => array('id'),
+			'conditions' => array(
+				'Statistics.quiz_key' => $quizKey,
+				'Statistics.user_id' => null,
+			),
+		),
+			$this->QuizAnswerSummary
+		);
+		$query .= $subQuery;
+		return $query;
 	}
 }

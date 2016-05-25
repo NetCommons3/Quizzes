@@ -48,7 +48,8 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		$summary = false;
 		$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
 		// 未ログインの人の場合はセッションにある回答中データを参照する
-		if (empty(Current::read('User.id'))) {
+		$userId = Current::read('User.id');
+		if (empty($userId)) {
 			$session = $this->_Collection->load('Session');
 			$summaryId = $session->read('Quizzes.progressiveSummary.' . $quizKey);
 			if ($summaryId) {
@@ -129,7 +130,8 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		$this->__ownAnsweredKeys = array();
 		$this->__ownAnsweredCounts = array();
 
-		if (empty(Current::read('User.id'))) {
+		$userId = Current::read('User.id');
+		if (empty($userId)) {
 			$session = $this->_Collection->load('Session');
 			$blockId = Current::read('Block.id');
 			$ownAnsweredKeys = $session->read('Quizzes.ownAnsweredQuizKeys.' . $blockId);
@@ -217,7 +219,8 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 			$this->__ownAnsweredCounts[$quizKey] = 1;
 		}
 		// ログイン状態の人の場合はこれ以上の処理は不要
-		if (! empty(Current::read('User.id'))) {
+		$userId = Current::read('User.id');
+		if (! empty($userId)) {
 			return;
 		}
 		// 未ログインの人の場合はセッションに書いておく

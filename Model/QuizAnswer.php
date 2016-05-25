@@ -142,12 +142,14 @@ class QuizAnswer extends QuizzesAppModel {
 	}
 
 /**
- * 指定された回答データの未採点または合計点数を返す
+ * 指定された回答データの未採点数と採点済み点数を返す
  *
+ * @param array $quiz 小テストデータ
  * @param int $summaryId サマリID
- * @return int
+ * @return array 未採点の点数と採点済みの得点数
  */
-	public function getScore($summaryId) {
+	public function getScore($quiz, $summaryId) {
+		/*
 		$ret = $this->find('count', array(
 			'conditions' => array(
 				'QuizAnswer.correct_status' => QuizzesComponent::STATUS_GRADE_YET,
@@ -177,6 +179,52 @@ class QuizAnswer extends QuizzesAppModel {
 			return 0;
 		}
 		return $ret[0]['total_score'];
+		*/
+		$ret = array('ungraded' => 0, 'graded' => 0);
+
+		$questionIds = Hash::extract($quiz, 'QuizPage.{n}.QuizQuestion.{n}.id');
+
+		$ungrade = $this->find('first', array(
+			'fields' => array('SUM(QuizQuestion.allotment) AS total_score'),
+			'conditions' => array(
+				'QuizAnswer.correct_status' => QuizzesComponent::STATUS_GRADE_YET,
+				'quiz_answer_summary_id' => $summaryId
+			),
+			'joins' => array(
+				array(
+					'table' => 'quiz_questions',
+					'alias' => 'QuizQuestion',
+					'type' => 'LEFT',
+					'conditions' => array(
+						'QuizAnswer.quiz_question_key = QuizQuestion.key',
+						'QuizQuestion.id' => $questionIds,
+					),
+				),
+			),
+			'group' => array('quiz_answer_summary_id'),
+			'recursive' => -1,
+		));
+		$this->log($ungrade, 'debug');
+		if ($ungrade) {
+			$ret['ungraded'] = $ungrade[0]['total_score'];
+		}
+
+		$grade = $this->find('first', array(
+			'fields' => array('SUM(score) AS total_score'),
+			'conditions' => array(
+				'NOT' => array(
+					'correct_status' => QuizzesComponent::STATUS_GRADE_YET,
+				),
+				'quiz_answer_summary_id' => $summaryId
+			),
+			'group' => array('quiz_answer_summary_id'),
+			'recursive' => -1,
+		));
+		if ($grade) {
+			$ret['graded'] = $grade[0]['total_score'];
+		}
+		$this->log($ret, 'debug');
+		return $ret;
 	}
 
 /**

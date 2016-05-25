@@ -752,6 +752,8 @@ msgstr ""
 #: View/QuizResult/view.ctp:63
 msgid "Score"
 msgstr ""
+msgid "Persons"
+msgstr ""
 
 #: View/QuizResult/index.ctp:51;59
 #: View/QuizResult/view.ctp:59
@@ -854,4 +856,7 @@ msgid "miss"
 msgstr ""
 
 msgid "clear"
+msgstr ""
+
+msgid "Not Scoring"
 msgstr ""

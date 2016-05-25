@@ -188,7 +188,7 @@ class QuizResultHelper extends AppHelper {
 			$value = $summary['QuizAnswerSummary']['passing_status'];
 		}
 		if ($value == QuizzesComponent::STATUS_GRADE_YET) {
-			return '<span class="label label-danger">未採点あり</span>';
+			return '<span class="label label-danger">' . __d('quizzes', 'Not Scoring') . '</span>';
 		}
 		return '';
 	}

@@ -14,41 +14,35 @@
 		<?php /* ※繰り返し受験を認めている場合は、データは全て直近の回答をもとに算出しています。*/
 		echo __d('quizzes', 'If you allow repeat examination , data is based on the last answer .'); ?>
 	</span>
-	<h3>
+	<h2>
 		<?php /* 全体成績 */
 		echo __d('quizzes', 'Overall performance');
 		?>
-	</h3>
-	<table class="table quiz-result-table">
+	</h2>
+	<div class="clearfix"></div>
+	<?php echo $this->TableList->startTable(); ?>
 		<tr>
-			<th><?php echo __d('quizzes', 'sum of  examinees'); /* 総受験者数 */ ?></th>
-			<th><?php echo __d('quizzes', 'average time'); /* 平均所要時間 */ ?></th>
-			<th><?php echo __d('quizzes', 'Average'); /* 平均点 */ ?></th>
-			<th><?php echo __d('quizzes', 'Highscore'); /* 最高点 */ ?></th>
-			<th><?php echo __d('quizzes', 'Lowscore'); /* 最低点 */ ?></th>
-			<th><?php echo __d('quizzes', 'Dispersion'); /* 分散 */ ?></th>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'sum of  examinees'), array('type' => 'numeric'));/* 総受験者数 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'average time'), array('type' => 'numeric'));/* 平均所要時間 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Average'), array('type' => 'numeric'));/* 平均点 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Highscore'), array('type' => 'numeric'));/* 最高点 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Lowscore'), array('type' => 'numeric'));/* 最低点 */ ?>
+			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Dispersion'), array('type' => 'numeric'));/* 分散 */ ?>
 		</tr>
-		<tr>
-			<td class="text-right"><?php echo $general['general']['number_pepole']; ?></td>
-			<td class="text-right">
-				<?php if ($general['general']['avg_time'] < 60): ?>
-					<?php
-					echo sprintf(
-						__d('quizzes', '%d sec'), /* %d秒 */
-						$general['general']['avg_time']
-					); ?>
-				<?php else: ?>
-					<?php
-					echo sprintf(
-					__d('quizzes', '%d min'), /* %d分 */
-					$general['general']['avg_time'] / 60
-					); ?>
-				<?php endif; ?>
-			</td>
-			<td class="text-right"><?php echo $general['general']['avg_score']; ?></td>
-			<td class="text-right"><?php echo $general['general']['max_score']; ?></td>
-			<td class="text-right"><?php echo $general['general']['min_score']; ?></td>
-			<td class="text-right"><?php echo $general['general']['samp_score']; ?></td>
-		</tr>
-	</table>
+		<?php echo $this->TableList->startTableRow(); ?>
+			<?php echo $this->TableList->tableData('', $general['general']['number_pepole'], array('type' => 'numeric'));/* 総受験者数 */ ?>
+			<?php if ($general['general']['avg_time'] < 60) {
+				$avgTime = sprintf(__d('quizzes', '%d sec'), /* %d秒 */
+						$general['general']['avg_time']);
+									} else {
+				$avgTime = sprintf(__d('quizzes', '%d min'), /* %d分 */
+					$general['general']['avg_time'] / 60);
+			}
+			echo $this->TableList->tableData('', $avgTime, array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $general['general']['avg_score'], array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $general['general']['max_score'], array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $general['general']['min_score'], array('type' => 'numeric')); ?>
+			<?php echo $this->TableList->tableData('', $general['general']['samp_score'], array('type' => 'numeric')); ?>
+		<?php echo $this->TableList->endTableRow(); ?>
+	<?php echo $this->TableList->endTable(); ?>
 </section>

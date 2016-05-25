@@ -22,9 +22,20 @@
 			<small>
 				<dl class="quiz-editor-dl">
 					<dt><?php echo __d('quizzes', 'Author'); ?></dt>
-					<dd><?php echo $quiz['TrackableCreator']['handlename']; ?></dd>
+					<dd>
+						<?php echo $this->NetCommonsHtml->handleLink(
+						$quiz,
+						array('avatar' => false),
+						array(),
+						'TrackableCreator'); ?>
+					</dd>
 					<dt><?php echo __d('quizzes', 'Modified by'); ?></dt>
-					<dd><?php echo $quiz['TrackableUpdater']['handlename']; ?>
+					<dd>
+						<?php echo $this->NetCommonsHtml->handleLink(
+						$quiz,
+						array('avatar' => false),
+						array(),
+						'TrackableUpdater'); ?>
 						(<?php echo $this->Date->dateFormat($quiz['Quiz']['modified']); ?>)
 					</dd>
 				</dl>

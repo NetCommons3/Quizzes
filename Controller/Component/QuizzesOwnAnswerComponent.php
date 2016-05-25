@@ -40,7 +40,8 @@ class QuizzesOwnAnswerComponent extends Component {
 
 		$this->__answeredSummaryIds = array();
 
-		if (empty(Current::read('User.id'))) {
+		$userId = Current::read('User.id');
+		if (empty($userId)) {
 			$session = $this->_Collection->load('Session');
 			$blockId = Current::read('Block.id');
 			$answerSummaryIds = $session->read('Quizzes.answeredSummaryIds.' . $blockId);
@@ -101,7 +102,8 @@ class QuizzesOwnAnswerComponent extends Component {
 		// 回答済み小テスト配列に追加
 		$this->__answeredSummaryIds[] = $id;
 		// ログイン状態の人の場合はこれ以上の処理は不要
-		if (! empty(Current::read('User.id'))) {
+		$userId = Current::read('User.id');
+		if (! empty($userId)) {
 			return;
 		}
 		// 未ログインの人の場合はセッションに書いておく

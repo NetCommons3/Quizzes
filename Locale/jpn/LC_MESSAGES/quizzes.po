@@ -745,6 +745,8 @@ msgstr "絞り込み："
 #: View/QuizResult/index.ctp:50 View/QuizResult/view.ctp:63
 msgid "Score"
 msgstr "得点"
+msgid "Persons"
+msgstr "人数"
 
 #: View/QuizResult/index.ctp:51;59 View/QuizResult/view.ctp:59
 msgid "Pass"
@@ -784,7 +786,7 @@ msgstr "採点"
 
 #: View/QuizResult/index.ctp:131
 msgid "! not logged answer in has been treated as a solution of the only all once because it is impossible to history management ."
-msgstr "※未ログイン の回答は履歴管理が不可能なため全て１度だけの解答として扱われています。"
+msgstr "※非会員の回答は履歴管理が不可能なため全て１度だけの解答として扱われています。"
 
 #: View/QuizResult/index.ctp:139 View/QuizResult/view.ctp:120
 msgid "Back to the quiz top"
@@ -843,3 +845,6 @@ msgstr "Ｘ"
 
 msgid "clear"
 msgstr "◯"
+
+msgid "Not Scoring"
+msgstr "未採点あり"

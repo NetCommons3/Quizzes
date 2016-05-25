@@ -200,7 +200,10 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		try {
 			$netCommonsTime = new NetCommonsTime();
 			$nowTime = $netCommonsTime->getNowDatetime();
-			$count = $this->getCountMyAnswerSummary($quiz['Quiz']['key'], $ids);
+			$count = 0;
+			if (Current::read('User.id')) {
+				$count = $this->getCountMyAnswerSummary($quiz['Quiz']['key'], $ids);
+			}
 			$data = array(
 				'answer_status' => QuizzesComponent::ACTION_NOT_ACT,
 				'answer_number' => $count + 1,
@@ -287,18 +290,18 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			));
 			$this->setAddEmbedTagValue('X-URL', $url);
 
-			$score = $this->QuizAnswer->getScore($summaryId);
+			$score = $this->QuizAnswer->getScore($quiz, $summaryId);
 
 			$data['id'] = $summaryId;
 			$data['answer_status'] = QuizzesComponent::ACTION_ACT;
 			$data['answer_finish_time'] = $nowTime;
 			$data['elapsed_second'] =
 				strtotime($nowTime) - strtotime($summary[$this->alias]['answer_start_time']);
+			$data['summary_score'] = $score['graded'];
 
-			if (!is_null($score)) {
+			if ($score['ungraded'] == 0) {
 				$data['is_grade_finished'] = true;
-				$data['summary_score'] = $score;
-				if ($quiz['Quiz']['passing_grade'] > 0 && $score >= $quiz['Quiz']['passing_grade']) {
+				if ($quiz['Quiz']['passing_grade'] > 0 && $score['graded'] >= $quiz['Quiz']['passing_grade']) {
 					$data['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
 				} else {
 					$data['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;

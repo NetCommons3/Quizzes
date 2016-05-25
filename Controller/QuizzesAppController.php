@@ -97,7 +97,8 @@ class QuizzesAppController extends AppController {
 
 		// 会員以外には許していないのに未ログイン
 		if ($quiz['Quiz']['is_no_member_allow'] == QuizzesComponent::PERMISSION_NOT_PERMIT) {
-			if (empty(Current::read('User.id'))) {
+			$userId = Current::read('User.id');
+			if (empty($userId)) {
 				return false;
 			}
 		}

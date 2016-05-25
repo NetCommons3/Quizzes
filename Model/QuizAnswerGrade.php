@@ -97,15 +97,15 @@ class QuizAnswerGrade extends QuizzesAppModel {
 			}
 		}
 		// 未採点があるときはnullが返ってきます
-		$score = $this->QuizAnswer->getScore($summaryId);
+		$score = $this->QuizAnswer->getScore($quiz, $summaryId);
 
 		$summaryData = array();
 		$summaryData['id'] = $summaryId;
+		$summaryData['summary_score'] = $score['graded'];
 		// 採点完了
-		if (! is_null($score)) {
-			$summaryData['summary_score'] = $score;
+		if ($score['ungraded'] == 0) {
 			$summaryData['is_grade_finished'] = true;
-			if ($quiz['Quiz']['passing_grade'] > 0 && $score >= $quiz['Quiz']['passing_grade']) {
+			if ($quiz['Quiz']['passing_grade'] > 0 && $score['graded'] >= $quiz['Quiz']['passing_grade']) {
 				$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
 			} else {
 				$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
