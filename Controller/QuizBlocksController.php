@@ -96,11 +96,6 @@ class QuizBlocksController extends QuizzesAppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->deny('index');
-		// 設定画面を表示する前にこのルームのアンケートブロックがあるか確認
-		// 万が一、まだ存在しない場合には作成しておく
-		// afterFrameSaveが呼ばれないような状況の想定
-		$frame['Frame'] = Current::read('Frame');
-		$this->Quiz->afterFrameSave($frame);
 	}
 
 /**

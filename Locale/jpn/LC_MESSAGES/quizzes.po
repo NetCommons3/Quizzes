@@ -848,3 +848,6 @@ msgstr "◯"
 
 msgid "Not Scoring"
 msgstr "未採点あり"
+
+msgid "please set at least one correct."
+msgstr "少なくとも１つは正解を設定してください。"

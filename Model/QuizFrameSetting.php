@@ -100,7 +100,7 @@ class QuizFrameSetting extends QuizzesAppModel {
 		));
 
 		if (!$frameSetting) {
-			$frameSetting = $this->prepareFrameSetting($frameKey);
+			$frameSetting = $this->getDefaultFrameSetting($frameKey);
 		}
 
 		$setting = $frameSetting['QuizFrameSetting'];

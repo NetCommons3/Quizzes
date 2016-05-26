@@ -860,3 +860,6 @@ msgstr ""
 
 msgid "Not Scoring"
 msgstr ""
+
+msgid "please set at least one correct."
+msgstr ""
