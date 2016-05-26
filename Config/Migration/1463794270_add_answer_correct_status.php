@@ -37,9 +37,6 @@ class AddAnswerCorrectStatus extends CakeMigration {
 				'quiz_answers' => array(
 					'answer_correct_status' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8', 'after' => 'answer_value'),
 				),
-				'quiz_choices' => array(
-					'choice_count' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'after' => 'choice_label'),
-				),
 			),
 			'alter_field' => array(
 				'quiz_frame_settings' => array(
@@ -52,7 +49,6 @@ class AddAnswerCorrectStatus extends CakeMigration {
 			),
 			'drop_field' => array(
 				'quiz_answers' => array('answer_correct_status'),
-				'quiz_choices' => array('choice_count'),
 			),
 			'alter_field' => array(
 				'quiz_frame_settings' => array(
