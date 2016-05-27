@@ -53,10 +53,12 @@ NetCommonsApp.controller('QuizResultView',
           chart: {
             'type': 'lineChart',
             'height': 250,
+            'defined': function(d, i) { return d.isGradeFinished; },
             'showControls': false,
+            'showLegend': false,
             'showValues': true,
             'duration': 500,
-            'margin' : {top: 100, right: 80, bottom: 50, left: 80},
+            'margin' : {top: 10, right: 80, bottom: 50, left: 80},
             x: function(d) {return d.answerNumber;},
             y: function(d) {return d.summaryScore;},
             'xAxis': {

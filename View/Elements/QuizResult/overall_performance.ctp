@@ -37,7 +37,7 @@
 									} else {
 				$avgTime = sprintf(__d('quizzes', '%d min'), /* %d分 */
 					$general['general']['avg_time'] / 60);
-			}
+									}
 			echo $this->TableList->tableData('', $avgTime, array('type' => 'numeric')); ?>
 			<?php echo $this->TableList->tableData('', $general['general']['avg_score'], array('type' => 'numeric')); ?>
 			<?php echo $this->TableList->tableData('', $general['general']['max_score'], array('type' => 'numeric')); ?>

@@ -166,11 +166,18 @@ class QuizResultController extends QuizzesAppController {
 				$this->setAction('throwBadRequest');
 			}
 			$userId = $summary['QuizAnswerSummary']['user_id'];
+			// ハンドル名取得
+			if (isset($summary['User']['handlename'])) {
+				$handleName = $summary['User']['handlename'];
+			} else {
+				$handleName = Current::read('User.handlename');
+			}
 		} else {
 			// サマリの指定がないということは
 			// テスト一覧からいきなり結果を見ようとしているということ
 			// つまり編集権限はなくって、自分のデータを見たい人ということ
 			$userId = Current::read('User.id');
+			$handleName = __d('quizzes', 'Guest');
 		}
 
 		if (! $canEdit && $summaryId) {
@@ -186,28 +193,14 @@ class QuizResultController extends QuizzesAppController {
 		$general = $this->QuizResult->getAllResult();
 
 		// 得点推移データ取得
-
 		// そのサマリIDに該当する人物のサマリ履歴を取得する
-		//
+		$scoreHistory = $this->_getScoreHistory($quiz, $summaryId);
+
 		if ($userId) {
 			$conditions = array(
 				'quiz_key' => $quiz['Quiz']['key'],
-				'user_id' => $userId
+				'user_id' => $userId,
 			);
-
-			if (isset($summary['User']['handlename'])) {
-				$handleName = $summary['User']['handlename'];
-			} else {
-				$handleName = Current::read('User.handlename');
-			}
-
-			$scoreHistory = $this->QuizAnswerSummary->find('all', array(
-				'fields' => array('answer_number', 'summary_score'),
-				'conditions' => $conditions,
-				'recursive' => -1,
-				'order' => array('answer_number' => 'ASC')
-			));
-			$scoreHistory = Hash::extract($scoreHistory, '{n}.QuizAnswerSummary');
 		} else {
 			// FUJI
 			// 未ログイン者もしかして、自分のを見てるんだったら回答済みリストで取り出した方がよいか
@@ -215,8 +208,6 @@ class QuizResultController extends QuizzesAppController {
 				'quiz_key' => $quiz['Quiz']['key'],
 				'id' => $summaryId
 			);
-			$handleName = __d('quizzes', 'Guest');
-			$scoreHistory = null;
 		}
 		$this->paginate = array(
 			'conditions' => $conditions,
@@ -236,11 +227,50 @@ class QuizResultController extends QuizzesAppController {
 
 /**
  * no_more_result method
+ *
  * 条件によって回答できないアンケートにアクセスしたときに表示
  *
  * @return void
  */
 	public function no_more_result() {
+	}
+
+/**
+ * _getScoreHistory
+ *
+ * 得点履歴取得
+ *
+ * @param array $quiz 小テストデータ
+ * @param int $summaryId サマリID
+ * @return void
+ */
+	protected function _getScoreHistory($quiz, $summaryId) {
+		$userId = Current::read('User.id');
+		if ($userId) {
+			$conditions = array(
+				'quiz_key' => $quiz['Quiz']['key'],
+				//'is_grade_finished' => true,
+				'user_id' => $userId,
+			);
+
+			$scoreHistory = $this->QuizAnswerSummary->find('all', array(
+				'fields' => array('answer_number', 'summary_score', 'is_grade_finished'),
+				'conditions' => $conditions,
+				'recursive' => -1,
+				'order' => array('answer_number' => 'ASC')
+			));
+		} else {
+			// FUJI
+			// 未ログイン者もしかして、自分のを見てるんだったら回答済みリストで取り出した方がよいか
+			$conditions = array(
+				'quiz_key' => $quiz['Quiz']['key'],
+				//'is_grade_finished' => true,
+				'id' => $summaryId
+			);
+			$scoreHistory = null;
+		}
+		$scoreHistory = Hash::extract($scoreHistory, '{n}.QuizAnswerSummary');
+		return $scoreHistory;
 	}
 
 /**
