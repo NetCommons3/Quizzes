@@ -851,3 +851,13 @@ msgstr "未採点あり"
 
 msgid "please set at least one correct."
 msgstr "少なくとも１つは正解を設定してください。"
+
+#: /Controller/QuizBlocksController.php
+msgid "Designation of the quiz does not exist."
+msgstr "指定のアンケートデータは存在しません。"
+msgid "Setting of password is required always to download answers."
+msgstr "解答データをダウンロードする場合は必ず圧縮パスワードの設定が必要です。"
+msgid "download error"
+msgstr "ダウンロードエラー"
+msgid "export error"
+msgstr "エクスポートエラー"

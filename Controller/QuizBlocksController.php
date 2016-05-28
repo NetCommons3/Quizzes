@@ -46,7 +46,7 @@ class QuizBlocksController extends QuizzesAppController {
 		'Quizzes.Quiz',
 		'Quizzes.QuizFrameSetting',
 		'Quizzes.QuizAnswerSummary',
-		//'Quizzes.QuizAnswerSummaryCsv',
+		'Quizzes.QuizAnswerSummaryCsv',
 		'Blocks.Block',
 		//'Quizzes.QuizExport',
 	);
@@ -134,27 +134,20 @@ class QuizBlocksController extends QuizzesAppController {
 		// NetCommonsお約束：コンテンツ操作のためのURLには対象のコンテンツキーが必ず含まれている
 		// まずは、そのキーを取り出す
 		// アンケートキー
-		/*
 		$quizKey = $this->_getQuizKeyFromPass();
 		// キー情報をもとにデータを取り出す
 		$quiz = $this->QuizAnswerSummaryCsv->getQuizForAnswerCsv($quizKey);
 		if (! $quiz) {
-			$this->setAction('throwBadRequest');
+			$this->_setFlashMessageAndRedirect(
+				__d('quizzes', 'Designation of the quiz does not exist.'));
 			return;
 		}
 		// 圧縮用パスワードキーを求める
 		if (! empty($this->request->data['AuthorizationKey']['authorization_key'])) {
 			$zipPassword = $this->request->data['AuthorizationKey']['authorization_key'];
 		} else {
-			$this->NetCommons->setFlashNotification(
-				__d('quizzes', 'Setting of password is required always to download answers.'),
-				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL)
-			);
-			$this->redirect(NetCommonsUrl::actionUrl(array(
-				'controller' => 'quiz_blocks',
-				'action' => 'index',
-				'frame_id' => Current::read('Frame.id')))
-			);
+			$this->_setFlashMessageAndRedirect(
+				__d('quizzes', 'Setting of password is required always to download answers.'));
 			return;
 		}
 
@@ -164,13 +157,12 @@ class QuizBlocksController extends QuizzesAppController {
 				'folder' => $tmpFolder->path
 			));
 			// 回答データを一気に全部取得するのは、データ爆発の可能性があるので
-			// QUESTIONNAIRE_CSV_UNIT_NUMBER分に制限して取得する
+			// QUIZ_CSV_UNIT_NUMBER分に制限して取得する
 			$offset = 0;
 			do {
 				$datas = $this->QuizAnswerSummaryCsv->getAnswerSummaryCsv(
 					$quiz,
-					self::QUIZ_CSV_UNIT_NUMBER, $offset
-				);
+					self::QUIZ_CSV_UNIT_NUMBER, $offset);
 				// CSV形式で書きこみ
 				foreach ($datas as $data) {
 					$csvFile->add($data);
@@ -182,15 +174,7 @@ class QuizBlocksController extends QuizzesAppController {
 
 		} catch (Exception $e) {
 			// NetCommonsお約束:エラーメッセージのFlash表示
-			$this->NetCommons->setFlashNotification(
-				__d('quizzes', 'download error'),
-				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL)
-			);
-			$this->redirect(NetCommonsUrl::actionUrl(array(
-				'controller' => 'quiz_blocks',
-				'action' => 'index',
-				'frame_id' => Current::read('Frame.id')))
-			);
+			$this->_setFlashMessageAndRedirect(__d('quizzes', 'download error'));
 			return;
 		}
 		// Downloadの時はviewを使用しない
@@ -200,7 +184,6 @@ class QuizBlocksController extends QuizzesAppController {
 		$downloadFileName = $quiz['Quiz']['title'] . '.csv';
 		// 出力
 		return $csvFile->zipDownload(rawurlencode($zipFileName), $downloadFileName, $zipPassword);
-		*/
 	}
 
 /**
@@ -265,4 +248,25 @@ class QuizBlocksController extends QuizzesAppController {
 		return $zipWrapperFile->download(rawurlencode($exportFileName));
 		*/
 	}
+
+/**
+ * _setFlashMessageAndRedirect
+ *
+ * @param string $message flash error message
+ *
+ * @return void
+ */
+	protected function _setFlashMessageAndRedirect($message) {
+		$this->NetCommons->setFlashNotification(
+			$message,
+			array(
+				'interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL
+			));
+		$this->redirect(NetCommonsUrl::actionUrl(array(
+			'controller' => 'quiz_blocks',
+			'action' => 'index',
+			'frame_id' => Current::read('Frame.id')
+		)));
+	}
+
 }

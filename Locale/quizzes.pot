@@ -863,3 +863,13 @@ msgstr ""
 
 msgid "please set at least one correct."
 msgstr ""
+
+#: /Controller/QuizBlocksController.php
+msgid "Designation of the quiz does not exist."
+msgstr ""
+msgid "Setting of password is required always to download answers."
+msgstr ""
+msgid "download error"
+msgstr ""
+msgid "export error"
+msgstr ""
