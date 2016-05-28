@@ -13,16 +13,16 @@
 	<div class="checkbox">
 		<label>
 			<?php /* 問題ページの先頭に文章を入れる */
-			echo $this->NetCommonsForm->input('QuizPage.{{pageIndex}}.is_page_description', array(
-			'type' => 'checkbox',
-			'div' => false,
-			'label' => __d('quizzes', 'Place the text at the top of the page'),
-			'class' => '',
-			'error' => false,
-			'ng-model' => 'page.isPageDescription',
-			'ng-checked' => 'page.isPageDescription == ' . QuizzesComponent::USES_USE,
-			));
-			?>
+				echo $this->NetCommonsForm->checkbox('QuizPage.{{pageIndex}}.is_page_description', array(
+					'type' => 'checkbox',
+					'div' => false,
+					'label' => __d('quizzes', 'Place the text at the top of the page'),
+					'class' => '',
+					'error' => false,
+					'ng-model' => 'page.isPageDescription',
+					'ng-checked' => 'page.isPageDescription == ' . QuizzesComponent::USES_USE,
+					));
+				?>
 		</label>
 	</div>
 </div>
