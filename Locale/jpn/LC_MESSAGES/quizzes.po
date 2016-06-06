@@ -861,3 +861,6 @@ msgid "download error"
 msgstr "ダウンロードエラー"
 msgid "export error"
 msgstr "エクスポートエラー"
+
+msgid "Content creatable roles"
+msgstr "小テストを作成できる権限"
