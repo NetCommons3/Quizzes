@@ -160,7 +160,7 @@ msgstr "この問題にもう一度挑戦する"
 
 #: View/Elements/QuizAnswers/grade_button.ctp:25
 msgid "Back to top"
-msgstr "最初に戻る"
+msgstr "戻る"
 
 #: View/Elements/QuizAnswers/grade_button.ctp:39
 msgid "Results confirmed"
@@ -580,7 +580,7 @@ msgstr "この小テストを受験することはできません。"
 
 #: View/QuizAnswers/no_more_answer.ctp:15
 msgid "Back to Top"
-msgstr "最初に戻る"
+msgstr "戻る"
 
 #: View/QuizAnswers/start.ctp:26
 msgid "Start quiz. When you are ready , press the \"Start the quiz\" button and  start the quiz ."
@@ -790,7 +790,7 @@ msgstr "※非会員の回答は履歴管理が不可能なため全て１度だ
 
 #: View/QuizResult/index.ctp:139 View/QuizResult/view.ctp:120
 msgid "Back to the quiz top"
-msgstr "小テストTOPに戻る"
+msgstr "小テストTOPへ"
 
 #: View/QuizResult/view.ctp:36
 msgid "%s 's grade"
@@ -822,7 +822,7 @@ msgstr "偏差値"
 
 #: View/QuizResult/view.ctp:126
 msgid "Back to the examinee list"
-msgstr "受験者一覧に戻る"
+msgstr "受験者一覧へ"
 
 #: View/Quizzes/add.ctp:28
 msgid "You can create a new quiz . Please choose from that are displayed how to create below ."
