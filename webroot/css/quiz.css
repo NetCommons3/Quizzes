@@ -80,6 +80,6 @@ dl.quiz-grading-data dd {
  * 縦スクロールバー付き
  */
 .quiz-list-wrapper {
-    max-height:200px;
+    max-height:450px;
     overflow-y: scroll;
 }
