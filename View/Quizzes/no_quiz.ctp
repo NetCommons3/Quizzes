@@ -26,11 +26,5 @@ echo $this->element('Quizzes.scripts');
 		<?php echo __d('quizzes', 'no quiz'); ?>
 	</p>
 
-	<?php if (Current::permission('content_creatable')) : ?>
-		<p>
-			<?php echo __d('quizzes', 'Please create new quiz by pressing the "+" button.'); ?>
-		</p>
-	<?php endif ?>
-
 </article>
 
