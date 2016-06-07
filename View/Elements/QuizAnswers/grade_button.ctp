@@ -22,9 +22,7 @@
 		</a>
 	<?php else: ?>
 		<?php /* 最初に戻る */
-			echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to top'), array(
-			'icon' => 'remove',
-			));
+			echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to top'));
 			?>
 	<?php endif; ?>
 <?php endif; ?>
