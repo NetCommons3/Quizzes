@@ -830,11 +830,11 @@ msgstr "新しい小テストを作成します。作成方法を選んでくだ
 
 #: View/Quizzes/index.ctp:58
 msgid "! There is a non-scoring of data"
-msgstr "未採点の解答があります"
+msgstr "未採点の解答があります。"
 
 #: View/Quizzes/no_quiz.ctp:28
 msgid "no quiz"
-msgstr "小テストがありません"
+msgstr "小テストがありません。"
 
 #: View/Quizzes/no_quiz.ctp:33
 msgid "Please create new quiz by pressing the \"+\" button."
@@ -854,7 +854,7 @@ msgstr "少なくとも１つは正解を設定してください。"
 
 #: /Controller/QuizBlocksController.php
 msgid "Designation of the quiz does not exist."
-msgstr "指定のアンケートデータは存在しません。"
+msgstr "指定の小テストデータは存在しません。"
 msgid "Setting of password is required always to download answers."
 msgstr "解答データをダウンロードする場合は必ず圧縮パスワードの設定が必要です。"
 msgid "download error"
