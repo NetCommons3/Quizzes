@@ -252,13 +252,6 @@ class QuizResultController extends QuizzesAppController {
 				//'is_grade_finished' => true,
 				'user_id' => $userId,
 			);
-
-			$scoreHistory = $this->QuizAnswerSummary->find('all', array(
-				'fields' => array('answer_number', 'summary_score', 'is_grade_finished'),
-				'conditions' => $conditions,
-				'recursive' => -1,
-				'order' => array('answer_number' => 'ASC')
-			));
 		} else {
 			// FUJI
 			// 未ログイン者もしかして、自分のを見てるんだったら回答済みリストで取り出した方がよいか
@@ -267,9 +260,16 @@ class QuizResultController extends QuizzesAppController {
 				//'is_grade_finished' => true,
 				'id' => $summaryId
 			);
-			$scoreHistory = null;
 		}
-		$scoreHistory = Hash::extract($scoreHistory, '{n}.QuizAnswerSummary');
+		$scoreHistory = $this->QuizAnswerSummary->find('all', array(
+			'fields' => array('answer_number', 'summary_score', 'is_grade_finished'),
+			'conditions' => $conditions,
+			'recursive' => -1,
+			'order' => array('answer_number' => 'ASC')
+		));
+		if ($scoreHistory) {
+			$scoreHistory = Hash::extract($scoreHistory, '{n}.QuizAnswerSummary');
+		}
 		return $scoreHistory;
 	}
 

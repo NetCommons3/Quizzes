@@ -864,3 +864,6 @@ msgstr "エクスポートエラー"
 
 msgid "Content creatable roles"
 msgstr "小テストを作成できる権限"
+
+msgid "Answer that ended the scoring is not yet."
+msgstr "採点の終わった解答がまだないため表示できません。"

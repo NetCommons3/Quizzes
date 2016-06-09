@@ -876,3 +876,6 @@ msgstr ""
 
 msgid "Content creatable roles"
 msgstr ""
+
+msgid "Answer that ended the scoring is not yet."
+msgstr ""

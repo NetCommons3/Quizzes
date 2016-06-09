@@ -31,7 +31,11 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 		<h2>
 			<?php echo __d('quizzes', 'Score distribution'); /* 得点分布 */ ?>
 		</h2>
+		<?php if ($general['general']): ?>
 		<nvd3 options="opt" data="data"></nvd3>
+		<?php else: ?>
+			<?php echo __d('quizzes', 'Answer that ended the scoring is not yet.'); ?>
+		<?php endif; ?>
 	</section>
 
 	<section class="clearfix">

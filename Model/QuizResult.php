@@ -163,9 +163,21 @@ class QuizResult extends QuizzesAppModel {
 			'group' => array('quiz_key'),
 			'recursive' => -1,
 		));
-		$general = $general[0][0];
-		$general['avg_score'] = round(floatval($general['avg_score']), 1);
-		$general['samp_score'] = round(floatval($general['samp_score']), 1);
+		if (! $general) {
+			return false;
+		}
+			$general = $general[0][0];
+			$general['avg_score'] = round(floatval($general['avg_score']), 1);
+			$general['samp_score'] = round(floatval($general['samp_score']), 1);
+/*			$general = array(
+				'number_pepole' => 0,
+				'max_score' => 0,
+				'min_score' => 0,
+				'avg_score' => 0,
+				'avg_time' => 0,
+				'samp_score' => 0,
+			);
+*/
 		return $general;
 	}
 /**

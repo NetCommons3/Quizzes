@@ -53,11 +53,31 @@ echo $this->element('Quizzes.scripts');
 				<?php if (in_array($quiz['Quiz']['key'], $notScoringQuizKeys)): ?>
 				<div class="col-md-12 col-xs-12 alert alert-warning alert-dismissible" role="alert">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<a href="#">
-						<span class="text-danger">
-							<?php echo __d('quizzes', '! There is a non-scoring of data'); /* '※未採点のデータがあります' */ ?>
-						</span>
-					</a>
+					<?php
+					if ($this->Workflow->canEdit('Quiz', $quiz)) {
+						$gradingUrl = NetCommonsUrl::actionUrl(array(
+							'controller' => 'quiz_result',
+							'action' => 'index',
+							Current::read('Block.id'),
+							$quiz['Quiz']['key'],
+							'frame_id' => Current::read('Frame.id'),
+						));
+					} else {
+						$gradingUrl = NetCommonsUrl::actionUrl(array(
+							'controller' => 'quiz_result',
+							'action' => 'view',
+							Current::read('Block.id'),
+							$quiz['Quiz']['key'],
+							$ownAnswerdSummaryMap[$quiz['Quiz']['key']],
+							'frame_id' => Current::read('Frame.id'),
+						));
+					}
+					/* '※未採点のデータがあります' */
+					echo $this->NetCommonsHtml->link(
+						'<span class="text-danger">' . __d('quizzes', '! There is a non-scoring of data') . '</span>',
+						$gradingUrl,
+						array('escape' => false));
+					?>
 				</div>
 				<?php endif; ?>
 

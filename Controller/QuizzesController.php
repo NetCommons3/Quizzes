@@ -129,6 +129,7 @@ class QuizzesController extends QuizzesAppController {
 		$this->__setOwnAnsweredQuizKeys();
 		$this->__setPassQuizKeys();
 		$this->__setNotScoringQuizKeys();
+		$this->__setAnswerSummaryIdWithQuizKey();
 
 		if (count($quizzes) == 0) {
 			$this->view = 'Quizzes/no_quiz';
@@ -272,6 +273,27 @@ class QuizzesController extends QuizzesAppController {
 		);
 		$notScoringQuiz = Hash::combine($notScoringQuiz, '{n}.QuizAnswerSummary.quiz_key', '{n}.QuizAnswerSummary.quiz_key');
 		$this->set('notScoringQuizKeys', $notScoringQuiz);
+	}
+/**
+ * 自分の回答サマリIDと小テストキーの対応付けデータ
+ *
+ * @return void
+ */
+	private function __setAnswerSummaryIdWithQuizKey() {
+		$ownAnswerSummaryIds = $this->QuizzesOwnAnswer->getAnsweredSummaryIds();
+		$answeredSummaryMap = $this->QuizAnswerSummary->find('all', array(
+			'fields' => array('id', 'quiz_key'),
+			'conditions' => array(
+				'id' => $ownAnswerSummaryIds,
+			),
+			'recursive' => -1,
+		));
+		$answeredSummaryMap = Hash::combine(
+			$answeredSummaryMap,
+			'{n}.QuizAnswerSummary.quiz_key',
+			'{n}.QuizAnswerSummary.id'
+		);
+		$this->set('ownAnswerdSummaryMap', $answeredSummaryMap);
 	}
 
 }
