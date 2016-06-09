@@ -80,7 +80,7 @@ class QuizFrameSettingsController extends QuizzesAppController {
  */
 	public function edit() {
 		// Postデータ登録
-		if ($this->request->is('put')) {
+		if ($this->request->is('put') || $this->request->is('post')) {
 			if ($this->QuizFrameSetting->saveFrameSettings($this->request->data)) {
 				$this->NetCommons->setFlashNotification(__d('net_commons', 'Successfully saved.'), array(
 					'class' => 'success',

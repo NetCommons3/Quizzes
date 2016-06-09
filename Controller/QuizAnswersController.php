@@ -29,6 +29,7 @@ class QuizAnswersController extends QuizzesAppController {
 		'Quizzes.QuizAnswerSummary',
 		'Quizzes.QuizAnswer',
 		'Quizzes.QuizAnswerGrade',
+		'Quizzes.QuizFrameSetting',
 	);
 
 /**
@@ -70,6 +71,11 @@ class QuizAnswersController extends QuizzesAppController {
 	private $__quiz = null;
 
 /**
+ * frame setting display type
+ */
+	private $__displayType = null;
+
+/**
  * target isAbleToAnswer Action
  *
  */
@@ -103,6 +109,11 @@ class QuizAnswersController extends QuizzesAppController {
 			$this->setAction('throwBadRequest');
 			return;
 		}
+		// 現在の表示形態を調べておく
+		list($this->__displayType) = $this->QuizFrameSetting->getQuizFrameSetting(
+			Current::read('Frame.key')
+		);
+		$this->set('displayType', $this->__displayType);
 
 		// 以下のisAbleto..の内部関数にてNetCommonsお約束である編集権限、参照権限チェックを済ませています
 		// 閲覧可能か

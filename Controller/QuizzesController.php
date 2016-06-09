@@ -261,9 +261,16 @@ class QuizzesController extends QuizzesAppController {
  * @return void
  */
 	private function __setNotScoringQuizKeys() {
+		// 自分が編集権限を持つ小テストの回答サマリか
+		// もしくは自分が解答したサマリ
+		$ownAnswerSummaryIds = $this->QuizzesOwnAnswer->getAnsweredSummaryIds();
+		$canGradingSummaryIds = $this->QuizAnswerSummary->getCanGradingSummary();
+		$summaryIds = array_flip($ownAnswerSummaryIds) + array_flip($canGradingSummaryIds);
+		$summaryIds = array_flip($summaryIds);
 		$notScoringQuiz = $this->QuizAnswer->getNotScoringQuizKey(
-			$this->QuizzesOwnAnswer->getAnsweredSummaryIds()
+			$summaryIds
 		);
+		$notScoringQuiz = Hash::combine($notScoringQuiz, '{n}.QuizAnswerSummary.quiz_key', '{n}.QuizAnswerSummary.quiz_key');
 		$this->set('notScoringQuizKeys', $notScoringQuiz);
 	}
 

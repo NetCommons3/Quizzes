@@ -102,6 +102,24 @@ class QuizAnswerSummary extends QuizzesAppModel {
 	);
 
 /**
+ * Constructor. Binds the model's database table to the object.
+ *
+ * @param bool|int|string|array $id Set this ID for this model on startup,
+ * can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ * @see Model::__construct()
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$this->loadModels([
+			'Quiz' => 'Quizzes.Quiz',
+		]);
+	}
+
+/**
  * getCountAllAnswerSummary
  * 全回答数取得
  *
@@ -181,6 +199,28 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			)
 		);
 		return $passQuizKeys;
+	}
+/*
+ * getCanGradingSummary
+ * 現在のブロックで自分が採点権限を持つ回答サマリを取得する
+ *
+ * @return array 採点権限を持つ採点可能な回答サマリを返す
+ */
+	public function getCanGradingSummary() {
+		$conditions = $this->Quiz->getBaseCondition();
+		$conditions = Hash::merge($conditions, array('created_user' => Current::read('User.id')));
+		$quizKeys = $this->Quiz->find('list', array(
+			'conditions' => $conditions,
+			'fields' => array('key'),
+			'recursive' => -1
+		));
+		$summaryIds = $this->find('list', array(
+			'conditions' => array(
+				'quiz_key' => $quizKeys,
+				'answer_status' => QuizzesComponent::ACTION_ACT,
+			),
+		));
+		return $summaryIds;
 	}
 /**
  * saveStartSummary

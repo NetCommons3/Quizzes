@@ -319,6 +319,11 @@ class Quiz extends QuizzesAppModel {
 				continue;
 			}
 
+			// この場合はlist取得
+			if (! isset($val['Quiz']['answer_timing'])) {
+				continue;
+			}
+
 			$val['Quiz']['period_range_stat'] = $this->getPeriodStatus(
 				$val['Quiz']['answer_timing'],
 				$val['Quiz']['answer_start_period'],
