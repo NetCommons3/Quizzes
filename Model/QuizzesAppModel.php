@@ -58,4 +58,24 @@ class QuizzesAppModel extends AppModel {
 		}
 		return $isPublished;
 	}
+
+/**
+ * clearQuizId 小テストデータからＩＤのみをクリアする
+ *
+ * @param array &$quiz アンケートデータ
+ * @return void
+ */
+	public function clearQuizId(&$quiz) {
+		foreach ($quiz as $qKey => $q) {
+			if (is_array($q)) {
+				$this->clearQuizId($quiz[$qKey]);
+			} elseif (preg_match('/^id$/', $qKey) ||
+				preg_match('/^key$/', $qKey) ||
+				preg_match('/^created(.*?)/', $qKey) ||
+				preg_match('/^modified(.*?)/', $qKey)) {
+				unset($quiz[$qKey]);
+			}
+		}
+	}
+
 }

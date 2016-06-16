@@ -9,6 +9,7 @@
                 <directory suffix=".php">app/Plugin/Quizzes/Config/Schema</directory>
                 <directory suffix=".php">app/Plugin/Quizzes/Test/Case</directory>
                 <directory suffix=".php">app/Plugin/Quizzes/Test/Fixture</directory>
+                <directory suffix=".php">app/Plugin/Quizzes/Test/test_app</directory>
                 <directory suffix=".php">app/Plugin/Quizzes/TestSuite</directory>
             </exclude>
         </whitelist>

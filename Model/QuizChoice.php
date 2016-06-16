@@ -75,12 +75,15 @@ class QuizChoice extends QuizzesAppModel {
 				'choiceLabel' => array(
 					'rule' => array('custom', '/^(?!.*\#\|\|\|\|\|\|\#).*$/'),
 					'message' =>
-						__d('quizzes', 'You can not use the string of #||||||# for choice text '),
+						__d('quizzes', 'You can not use the string of #||||||# for choice text.'),
 				),
 			),
 			'choice_sequence' => array(
-				'numeric' => array(
-					'rule' => array('numeric'),
+				'naturalNumber' => array(
+					'rule' => array('naturalNumber', true),
+					'allowEmpty' => false,
+					'required' => true,
+					'message' => __d('quizzes', 'choice sequence is illegal.')
 				),
 				'comparison' => array(
 					'rule' => array('comparison', '==', $choiceIndex),

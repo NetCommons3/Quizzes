@@ -11,7 +11,7 @@
 App::uses('QuizzesAppModel', 'Quizzes.Model');
 App::uses('TemporaryUploadFile', 'Files.Utility');
 App::uses('UnZip', 'Files.Utility');
-// FUJI App::uses('WysIsWygDownloader', 'Quizzes.Utility');
+App::uses('WysiwygZip', 'Wysiwyg.Utility');
 
 /**
  * Summary for ActionQuizAdd Model
@@ -77,9 +77,9 @@ class ActionQuizAdd extends QuizzesAppModel {
 
 /**
  * createQuiz
- * アンケートデータを作成する
+ * 小テストデータを作成する
  *
- * @param array $data 作成するアンケートデータ
+ * @param array $data 作成する小テストデータ
  * @return array|bool
  */
 	public function createQuiz($data) {
@@ -87,7 +87,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 		$this->set($data);
 		// データチェック
 		if ($this->validates()) {
-			// Postデータの内容に問題がない場合は、そのデータをもとに新しいアンケートデータを作成
+			// Postデータの内容に問題がない場合は、そのデータをもとに新しい小テストデータを作成
 			$quiz = $this->getNewQuiz();
 			return $quiz;
 		} else {
@@ -129,7 +129,13 @@ class ActionQuizAdd extends QuizzesAppModel {
 			return true;
 		}
 		$this->Quiz = ClassRegistry::init('Quizzes.Quiz', true);
-		$cnt = $this->Quiz->find('count', array('id' => $check));
+		$baseCondition = $this->Quiz->getBaseCondition(array(
+			'Quiz.id' => $check['past_quiz_id']
+		));
+		$cnt = $this->Quiz->find('count', array(
+			'conditions' => $baseCondition,
+			'recursive' => -1
+		));
 		if ($cnt == 0) {
 			return false;
 		}
@@ -167,14 +173,14 @@ class ActionQuizAdd extends QuizzesAppModel {
  * @return array QuizData
  */
 	protected function _createNew() {
-		// アンケートデータを新規に作成する
+		// 小テストデータを新規に作成する
 		// 新規作成の場合、タイトル文字のみ画面で設定されPOSTされる
-		// Titleをもとに、アンケートデータ基本構成を作成し返す
+		// Titleをもとに、小テストデータ基本構成を作成し返す
 
 		// デフォルトデータをもとに新規作成
 		$quiz = $this->_getDefaultQuiz(array(
 			'title' => $this->data['ActionQuizAdd']['title']));
-		// アンケートデータを返す
+		// 小テストデータを返す
 		return $quiz;
 	}
 
@@ -184,13 +190,13 @@ class ActionQuizAdd extends QuizzesAppModel {
  * @return array QuizData
  */
 	protected function _createFromReuse() {
-		// アンケートデータを過去のアンケートデータをもとにして作成する
-		// 過去からの作成の場合、参考にする過去のアンケートのidのみPOSTされてくる
+		// 小テストデータを過去の小テストデータをもとにして作成する
+		// 過去からの作成の場合、参考にする過去の小テストのidのみPOSTされてくる
 		// (orgin_idではなくidである点に注意！)
-		// idをもとに、過去のアンケートデータを取得し、
-		// そのデータから今回作成するアンケートデータ基本構成を作成し返す
+		// idをもとに、過去の小テストデータを取得し、
+		// そのデータから今回作成する小テストデータ基本構成を作成し返す
 
-		// 過去のアンケートのコピー・クローンで作成
+		// 過去の小テストのコピー・クローンで作成
 		$quiz = $this->_getQuizCloneById($this->data['ActionQuizAdd']['past_quiz_id']);
 		return $quiz;
 	}
@@ -230,21 +236,19 @@ class ActionQuizAdd extends QuizzesAppModel {
 	}
 
 /**
- * _getQuizCloneById 指定されたIDにのアンケートデータのクローンを取得する
+ * _getQuizCloneById 指定されたIDにの小テストデータのクローンを取得する
  *
- * @param int $quizId アンケートID(編集なのでoriginではなくRAWなIDのほう
+ * @param int $quizId 小テストID(編集なのでoriginではなくRAWなIDのほう
  * @return array
  */
 	protected function _getQuizCloneById($quizId) {
+		// 前もってValidate処理で存在確認されている場合しか
+		// この関数が呼ばれないので$quizの判断は不要
 		$quiz = $this->Quiz->find('first', array(
 			'conditions' => array('Quiz.id' => $quizId),
 		));
-
-		if (!$quiz) {
-			return $this->getDefaultQuiz(array('title' => ''));
-		}
 		// ID値のみクリア
-		$this->Quiz->clearQuizId($quiz);
+		$this->clearQuizId($quiz);
 
 		return $quiz;
 	}
@@ -255,60 +259,59 @@ class ActionQuizAdd extends QuizzesAppModel {
  * @return array QuizData
  */
 	protected function _createFromTemplate() {
-		// アンケートデータをUPLOADされたアンケートテンプレートファイルのデータをもとにして作成する
+		// 小テストデータをUPLOADされた小テストテンプレートファイルのデータをもとにして作成する
 		// テンプレートからの作成の場合、テンプレートファイルがUPLOADされてくる
-		// アップされたファイルをもとに、アンケートデータを解凍、取得し、
-		// そのデータから今回作成するアンケートデータ基本構成を作成し返す
-
-		// アップロードファイルを受け取り、
-		$uploadFile = new TemporaryUploadFile(Hash::get($this->data, 'ActionQuizAdd.template_file'));
-		// エラーチェック
-		if (! $uploadFile) {
-			$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'file upload error.');
+		// アップされたファイルをもとに、小テストデータを解凍、取得し、
+		// そのデータから今回作成する小テストデータ基本構成を作成し返す
+		if (empty($this->data['ActionQuizAdd']['template_file']['name'])) {
+			$this->validationErrors['template_file'][] =
+				__d('quizzes', 'Please input template file.');
 			return null;
 		}
 
-		// アップロードファイル解凍
-		$unZip = new UnZip($uploadFile->path);
-		$temporaryFolder = $unZip->extract();
-		// エラーチェック
-		if (! $temporaryFolder) {
-			$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
+		try {
+			// アップロードファイルを受け取り、
+			// エラーチェックはない。ここでのエラー時はInternalErrorExceptionとなる
+			$uploadFile = new TemporaryUploadFile(Hash::get($this->data, 'ActionQuizAdd.template_file'));
+
+			// アップロードファイル解凍
+			$unZip = new UnZip($uploadFile->path);
+			$temporaryFolder = $unZip->extract();
+			// エラーチェック
+			if (! $temporaryFolder) {
+				$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
+				return null;
+			}
+			// フィンガープリント確認
+			$fingerPrint = $this->__checkFingerPrint($temporaryFolder->path);
+			if ($fingerPrint === false) {
+				$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
+				return null;
+			}
+			// テンプレートファイル本体をテンポラリフォルダに展開する。
+			$quizZip = new UnZip($temporaryFolder->path . DS . QuizzesComponent::QUIZ_TEMPLATE_FILENAME);
+			if (! $quizZip->extract()) {
+				$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
+				return null;
+			}
+			// jsonファイルを読み取り、PHPオブジェクトに変換
+			$jsonFilePath = $quizZip->path . DS . QuizzesComponent::QUIZ_JSON_FILENAME;
+			$jsonFile = new File($jsonFilePath);
+			$jsonData = $jsonFile->read();
+			$jsonQuiz = json_decode($jsonData, true);
+
+		} catch (Exception $ex) {
+			$this->validationErrors['template_file'][] = __d('questionnaires', 'file upload error.');
 			return null;
 		}
-
-		// フィンガープリント確認
-		$fingerPrint = $this->__checkFingerPrint($temporaryFolder->path);
-		if ($fingerPrint === false) {
-			$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
-			return null;
-		}
-
-		// アンケートテンプレートファイル本体をテンポラリフォルダに展開する。
-		$quizZip = new UnZip($temporaryFolder->path . DS . QuizzesComponent::QUIZ_TEMPLATE_FILENAME);
-		if (! $quizZip->extract()) {
-			$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
-			return null;
-		}
-
-		// jsonファイルを読み取り、PHPオブジェクトに変換
-		$jsonFilePath = $quizZip->path . DS . QuizzesComponent::QUIZ_JSON_FILENAME;
-		$jsonFile = new File($jsonFilePath);
-		$jsonData = $jsonFile->read();
-		$jsonQuiz = json_decode($jsonData, true);
-
-		// 初めにファイルに記載されているアンケートプラグインのバージョンと
-		// 現サイトのアンケートプラグインのバージョンを突合し、差分がある場合はインポート処理を中断する。
+		// 初めにファイルに記載されている小テストプラグインのバージョンと
+		// 現サイトの小テストプラグインのバージョンを突合し、差分がある場合はインポート処理を中断する。
 		if ($this->__checkVersion($jsonQuiz) === false) {
 			$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'version is different.');
 			return null;
 		}
-
-		// バージョンが一致した場合、アンケートデータをメモリ上に構築
-		$quizzes = $this->_getQuizzes(
-			$quizZip->path,
-			$jsonQuiz['Quizzes'],
-			$fingerPrint);
+		// バージョンが一致した場合、データをメモリ上に構築
+		$quizzes = $this->_getQuizzes($quizZip->path, $jsonQuiz['Quizzes'], $fingerPrint);
 
 		// 現在の言語環境にマッチしたデータを返す
 		return $quizzes[0];
@@ -323,7 +326,7 @@ class ActionQuizAdd extends QuizzesAppModel {
  * @return array QuizData
  */
 	protected function _getQuizzes($folderPath, $quizzes, $importKey) {
-		$wysiswyg = new WysIsWygDownloader();
+		$wysiswyg = new WysiwygZip();
 
 		foreach ($quizzes as &$q) {
 			// WysIsWygのデータを入れなおす
@@ -346,7 +349,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 					if ($model->getColumnType($columnName) == 'text') {
 						// keyと同じ名前のフォルダの下にあるkeyの名前のZIPファイルを渡して
 						// その返ってきた値をこのカラムに設定
-						$value = $wysiswyg->getFromWysIsWygZIP(
+						$value = $wysiswyg->getFromWysiwygZip(
 							$folderPath . DS . $value,
 							$model->alias . '.' . $columnName
 						);
@@ -388,7 +391,7 @@ class ActionQuizAdd extends QuizzesAppModel {
  */
 	private function __checkVersion($jsonData) {
 		// バージョン情報を取得するためComposer情報を得る
-		$Plugin = ClassRegistry::init('Plugins.Plugin');
+		$Plugin = ClassRegistry::init('PluginManager.Plugin');
 		$composer = $Plugin->getComposer('netcommons/quizzes');
 		if (!$composer) {
 			return false;

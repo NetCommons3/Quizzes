@@ -24,7 +24,6 @@ if ($scoreHistory) {
 } else {
 	$jsScoreHistory = array();
 }
-
 ?>
 
 <article ng-controller="QuizResultView" ng-init="initialize(<?php echo h(json_encode($jsScoreHistory)); ?>)">

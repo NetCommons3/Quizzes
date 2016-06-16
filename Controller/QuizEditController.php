@@ -189,7 +189,8 @@ class QuizEditController extends QuizzesAppController {
 
 			// バリデート
 			$this->Quiz->set($Quiz);
-			if (! $this->Quiz->validates()) {
+			if (! $this->Quiz->validates(
+				array('validate' => Quiz::QUIZ_VALIDATE_TYPE))) {
 				$this->__setupViewParameters($Quiz, '');
 				return;
 			}

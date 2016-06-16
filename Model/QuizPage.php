@@ -154,10 +154,10 @@ class QuizPage extends QuizzesAppModel {
 		$this->validate = array(
 			'page_sequence' => array(
 				'numeric' => array(
-					'rule' => array('numeric'),
-					//'message' => 'Your custom message here',
+					'rule' => array('naturalNumber', true),
 					//'allowEmpty' => false,
-					//'required' => false,
+					//'required' => true,
+					'message' => __d('quizzes', 'page sequence is illegal.')
 				),
 				'comparison' => array(
 					'rule' => array('comparison', '==', $pageIndex),

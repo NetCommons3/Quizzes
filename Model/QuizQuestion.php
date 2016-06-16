@@ -21,6 +21,11 @@ App::uses('QuizzesAppModel', 'Quizzes.Model');
 class QuizQuestion extends QuizzesAppModel {
 
 /**
+ * 配点デフォルト値
+ */
+	const	QUIZ_QUESTION_DEFAULT_ALLOTMENT = 10;
+
+/**
  * use behaviors
  *
  * @var array
@@ -165,13 +170,9 @@ class QuizQuestion extends QuizzesAppModel {
 			),
 			'allotment' => array(
 				'numeric' => array(
-					'rule' => array('numeric'),
+					'rule' => array('naturalNumber'),
 					'required' => true,
 					'allowEmpty' => false,
-					'message' => __d('net_commons', 'Invalid request.'),
-				),
-				'comparison' => array(
-					'rule' => array('comparison', '>', 0),
 					'message' => __d('quizzes', 'Please enter a number greater than 0 .'),
 				),
 			),
@@ -190,7 +191,6 @@ class QuizQuestion extends QuizzesAppModel {
  * @return array
  */
 	public function getDefaultQuestion() {
-		$this->QuizChoice = ClassRegistry::init('Quizzes.QuizChoice', true);
 		$question = array(
 			'question_sequence' => 0,
 			'question_value' => __d('quizzes', 'New Question') . '1',
@@ -198,7 +198,7 @@ class QuizQuestion extends QuizzesAppModel {
 			'is_choice_random' => QuizzesComponent::USES_NOT_USE,
 			'is_choice_horizon' => QuizzesComponent::USES_NOT_USE,
 			'is_order_fixed' => QuizzesComponent::USES_NOT_USE,
-			'allotment' => 10,
+			'allotment' => self::QUIZ_QUESTION_DEFAULT_ALLOTMENT,
 			'commentary' => '',
 		);
 		$question['QuizChoice'] = $this->QuizChoice->getDefaultChoice();

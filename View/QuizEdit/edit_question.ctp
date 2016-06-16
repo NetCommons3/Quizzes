@@ -37,8 +37,6 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 	echo $this->NetCommonsForm->hidden('Frame.id');
 	echo $this->NetCommonsForm->hidden('Block.id');
 	echo $this->NetCommonsForm->hidden('Quiz.key');
-	/* Wizard中は一時保存ステータスで回さないとWorkflowに叱られる */
-	echo $this->NetCommonsForm->hidden('Quiz.status', array('value' => WorkflowComponent::STATUS_IN_DRAFT));
 	?>
 
 	<?php echo $this->element('Quizzes.QuizEdit/quiz_title'); ?>

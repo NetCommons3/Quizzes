@@ -292,6 +292,7 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->request->data['QuizAnswerSummary'] = $summary['QuizAnswerSummary'];
 		$this->set('quiz', $quiz);
 		$this->set('quizPage', $quiz['QuizPage'][$nextPageSeq]);
+		$this->set('quizPageIndex', $nextPageSeq);
 		$this->NetCommons->handleValidationError($this->QuizAnswer->validationErrors);
 	}
 /**

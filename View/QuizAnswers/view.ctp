@@ -18,7 +18,7 @@
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_test_mode_header'); ?>
 
 	<?php if ($quizPage['page_sequence'] > 0): ?>
-		<?php $progress = round((($quizPage['page_sequence']) / $quiz['Quiz']['page_count']) * 100); ?>
+		<?php $progress = round(($quizPageIndex / $quiz['Quiz']['page_count']) * 100); ?>
 		<div class="row">
 			<div class="col-sm-8">
 			</div>

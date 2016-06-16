@@ -169,7 +169,8 @@ class QuizResult extends QuizzesAppModel {
 			$general = $general[0][0];
 			$general['avg_score'] = round(floatval($general['avg_score']), 1);
 			$general['samp_score'] = round(floatval($general['samp_score']), 1);
-/*			$general = array(
+			/*
+			 $general = array(
 				'number_pepole' => 0,
 				'max_score' => 0,
 				'min_score' => 0,
@@ -177,7 +178,7 @@ class QuizResult extends QuizzesAppModel {
 				'avg_time' => 0,
 				'samp_score' => 0,
 			);
-*/
+			*/
 		return $general;
 	}
 /**

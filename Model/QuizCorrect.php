@@ -70,7 +70,7 @@ class QuizCorrect extends QuizzesAppModel {
  * @see Model::save()
  */
 	public function beforeValidate($options = array()) {
-		// Choiceモデルは繰り返し判定が行われる可能性高いのでvalidateルールは最初に初期化
+		// モデルは繰り返し判定が行われる可能性高いのでvalidateルールは最初に初期化
 		// mergeはしません
 		$this->validate = array(
 			//'correct_sequence' => array(

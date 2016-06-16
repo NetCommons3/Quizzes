@@ -53,7 +53,7 @@ class QuizzesShuffleComponent extends Component {
  *
  * @param array $quiz 小テスト
  * @param int $nowPageSeq 現在のページ順番
- * @return void
+ * @return int 次のページのインデックス
  */
 	public function getNextPage($quiz, $nowPageSeq) {
 		$session = $this->_Collection->load('Session');
@@ -62,7 +62,8 @@ class QuizzesShuffleComponent extends Component {
 		foreach ($pages as $index => $page) {
 			if ($page['page_sequence'] == $nowPageSeq) {
 				if (isset($pages[$index + 1])) {
-					return $pages[$index + 1]['page_sequence'];
+					//return $pages[$index + 1]['page_sequence'];
+					return $index + 1;
 				} else {
 					return false;
 				}

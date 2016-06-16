@@ -30,33 +30,7 @@ class QuizAnswerGrade extends QuizzesAppModel {
  *
  * @var array
  */
-	public $validate = array(
-		'id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				'allowEmpty' => false,
-				'required' => true,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'correct_status' => array(
-			'isCorrect' => array(
-				'rule' => array('inList', array(0, 1, 2)),
-			)
-		),
-		'score' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-	);
+	public $validate = array();
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
@@ -76,6 +50,90 @@ class QuizAnswerGrade extends QuizzesAppModel {
 	);
 
 /**
+ * Constructor. Binds the model's database table to the object.
+ *
+ * @param bool|int|string|array $id Set this ID for this model on startup,
+ * can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ * @see Model::__construct()
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$this->loadModels([
+			'QuizQuestion' => 'Quizzes.QuizQuestion',
+			'QuizAnswer' => 'Quizzes.QuizAnswer',
+			'QuizAnswerSummary' => 'Quizzes.QuizAnswerSummary',
+		]);
+	}
+/**
+ * Called during validation operations, before validation. Please note that custom
+ * validation rules can be defined in $validate.
+ *
+ * @param array $options Options passed from Model::save().
+ * @return bool True if validate operation should continue, false to abort
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @see Model::save()
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
+	public function beforeValidate($options = array()) {
+		$question = $this->QuizQuestion->find('first', array(
+			'conditions' => array(
+				'key' => $this->data['QuizAnswerGrade']['quiz_question_key']
+			),
+			'recursive' => -1,
+			'order' => array('modified' => 'desc')
+		));
+		if (! $question) {
+			return false;
+		}
+		// 自由記述以外は採点対象じゃないです
+		if ($question['QuizQuestion']['question_type'] != QuizzesComponent::TYPE_TEXT_AREA) {
+			$this->validationErrors['score'][] =
+				__d('quizzes', 'The scoring is available only descriptive of the problem.');
+			return false;
+		}
+
+		$allotment = $question['QuizQuestion']['allotment'];
+
+		$this->validate = Hash::merge($this->validate, array(
+			'id' => array(
+				'numeric' => array(
+					'rule' => array('numeric'),
+					'message' => __d('net_commons', 'Invalid request.'),
+					'allowEmpty' => false,
+					'required' => true,
+				),
+			),
+			'correct_status' => array(
+				'isCorrect' => array(
+					'rule' => array('inList', array(
+						QuizzesComponent::STATUS_GRADE_YET,
+						QuizzesComponent::STATUS_GRADE_FAIL,
+						QuizzesComponent::STATUS_GRADE_PASS)),
+					'message' => __d('net_commons', 'Invalid request.'),
+				)
+			),
+			'score' => array(
+				'naturalNumber' => array(
+					'rule' => array('naturalNumber', true),
+					'message' => __d('quizzes', 'Please input natural number.'),
+				),
+				'maxCheck' => array(
+					'rule' => array('comparison', '<=', $allotment),
+					'message' =>
+						__d('quizzes',
+							'It is not possible to give the Scoring value or more of the points.'),
+				),
+			),
+		));
+		parent::beforeValidate($options);
+		return true;
+	}
+
+/**
  * 採点の保存
  *
  * @param array $quiz 小テストデータ
@@ -85,41 +143,56 @@ class QuizAnswerGrade extends QuizzesAppModel {
  * @throws InternalErrorException
  */
 	public function saveGrade($quiz, $summaryId, $datas) {
-		$this->loadModels([
-			'QuizAnswer' => 'Quizzes.QuizAnswer',
-			'QuizAnswerSummary' => 'Quizzes.QuizAnswerSummary',
-		]);
 		$this->begin();
-		foreach ($datas as $data) {
-			$answer = $data['QuizAnswerGrade'];
-			if (! $this->save($answer)) {
+		try {
+			foreach ($datas as $data) {
+				$answer = $data['QuizAnswerGrade'];
+				if (! $this->save($answer)) {
+					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+				}
+			}
+			// 未採点があるときはnullが返ってきます
+			$score = $this->QuizAnswer->getScore($quiz, $summaryId);
+
+			$summaryData = array();
+			$summaryData['id'] = $summaryId;
+			$summaryData['summary_score'] = $score['graded'];
+			// 採点完了
+			if ($score['ungraded'] == 0) {
+				// 未採点はもうない場合
+
+				// 採点完了状態にする
+				$summaryData['is_grade_finished'] = true;
+				// 点数による合格判定不要とされている小テストの場合は
+				if ($quiz['Quiz']['passing_grade'] == 0) {
+					// 無条件に合格状態にする
+					$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
+				} elseif ($quiz['Quiz']['passing_grade'] > 0 &&
+					$score['graded'] >= $quiz['Quiz']['passing_grade']) {
+					// 点数による合格判定アリの場合は
+					// 点数が合格点を超えていたら合格です
+					$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
+				} else {
+					// そうじゃないときは不合格
+					$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
+				}
+			} else {
+				$summaryData['is_grade_finished'] = false;
+				$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_YET;
+			}
+			$this->QuizAnswerSummary->Behaviors->unload('Mails.MailQueue');
+			if (! $this->QuizAnswerSummary->save($summaryData, false, array(
+				'summary_score',
+				'is_grade_finished',
+				'passing_status'))) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
+			$this->commit();
+		} catch (Exception $ex) {
+			$this->rollback();
+			CakeLog::error($ex);
+			throw $ex;
 		}
-		// 未採点があるときはnullが返ってきます
-		$score = $this->QuizAnswer->getScore($quiz, $summaryId);
-
-		$summaryData = array();
-		$summaryData['id'] = $summaryId;
-		$summaryData['summary_score'] = $score['graded'];
-		// 採点完了
-		if ($score['ungraded'] == 0) {
-			$summaryData['is_grade_finished'] = true;
-			if ($quiz['Quiz']['passing_grade'] > 0 && $score['graded'] >= $quiz['Quiz']['passing_grade']) {
-				$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
-			} else {
-				$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
-			}
-		} else {
-			$summaryData['is_grade_finished'] = false;
-			$summaryData['passing_status'] = QuizzesComponent::STATUS_GRADE_YET;
-		}
-		if (! $this->QuizAnswerSummary->save($summaryData, false, array(
-			'summary_score',
-			'is_grade_finished',
-			'passing_status'))) {
-			throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-		}
-		$this->commit();
+		return true;
 	}
 }

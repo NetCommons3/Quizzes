@@ -11,6 +11,7 @@
  */
 
 App::uses('QuizzesAppModel', 'Quizzes.Model');
+App::uses('QuizzesComponent', 'Quizzes.Controller/Component');
 
 /**
  * Summary for QuizFrameSetting Model
@@ -32,6 +33,25 @@ class QuizFrameSetting extends QuizzesAppModel {
 	public $validate = array();
 
 /**
+ * Constructor. Binds the model's database table to the object.
+ *
+ * @param bool|int|string|array $id Set this ID for this model on startup,
+ * can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
+ * @see Model::__construct()
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+ */
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+
+		$this->loadModels([
+			'Quiz' => 'Quizzes.Quiz',
+			'QuizFrameDisplayQuiz' => 'Quizzes.QuizFrameDisplayQuiz',
+		]);
+	}
+
+/**
  * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
@@ -46,9 +66,9 @@ class QuizFrameSetting extends QuizzesAppModel {
 			'frame_key' => array(
 				'notBlank' => array(
 					'rule' => array('notBlank'),
-					//'message' => 'Your custom message here',
+					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
-					//'required' => false,
+					'required' => true,
 					//'last' => false, // Stop validation after this rule
 					//'on' => 'create', // Limit validation to 'create' or 'update' operations
 				),
@@ -134,11 +154,6 @@ class QuizFrameSetting extends QuizzesAppModel {
  * @throws InternalErrorException
  */
 	public function saveFrameSettings($data) {
-		$this->loadModels([
-			'Quiz' => 'Quizzes.Quiz',
-			'QuizFrameDisplayQuiz' => 'Quizzes.QuizFrameDisplayQuiz',
-		]);
-
 		//トランザクションBegin
 		$this->begin();
 		try {

@@ -21,6 +21,12 @@ App::uses('QuizzesAppModel', 'Quizzes.Model');
 class Quiz extends QuizzesAppModel {
 
 /**
+ * バリデートタイプ
+ * ウィザード画面で形成中の判定をしてほしいときに使う
+ */
+	const	QUIZ_VALIDATE_TYPE = 'duringSetup';
+
+/**
  * use behaviors
  *
  * @var array
@@ -37,6 +43,20 @@ class Quiz extends QuizzesAppModel {
 			),
 		),
 		'Mails.MailQueueDelete',
+		//新着情報
+		'Topics.Topics' => array(
+			'fields' => array(
+				//※小テストの場合、'title'は$this->dataの値をセットしないので、
+				//　ここではセットせずに、save直前で新着タイトルをセットする
+				'publish_start' => 'answer_start_period',
+				'answer_period_start' => 'answer_start_period',
+				'answer_period_end' => 'answer_end_period',
+				'path' => '/:plugin_key/quiz_answers/view/:block_id/:content_key',
+			),
+			'search_contents' => array(
+				'title', 'sub_title'
+			),
+		),
 	);
 
 /**
@@ -120,6 +140,9 @@ class Quiz extends QuizzesAppModel {
 	public function beforeValidate($options = array()) {
 		// ウィザード画面中はstatusチェックをしないでほしいので
 		// ここに来る前にWorkflowBehaviorでつけられたstatus-validateを削除しておく
+		if (Hash::check($options, 'validate') == self::QUIZ_VALIDATE_TYPE) {
+			$this->validate = Hash::remove($this->validate, 'status');
+		}
 		$this->validate = Hash::merge($this->validate, array(
 			'block_id' => array(
 				'numeric' => array(
@@ -137,17 +160,17 @@ class Quiz extends QuizzesAppModel {
 				'required' => true,
 			),
 			'passing_grade' => array( // 合格点
-				'numeric' => array(
-					'rule' => array('numeric'),
+				'naturalNumber' => array(
+					'rule' => array('naturalNumber', true),
 					'allowEmpty' => true,
-					//'message' => __d('net_commons', 'Invalid request.'),
+					'message' => __d('quizzes', 'Please input natural number.'),
 				)
 			),
 			'estimated_time' => array( // 時間の目安（分）
-				'numeric' => array(
-					'rule' => array('numeric'),
+				'naturalNumber' => array(
+					'rule' => array('naturalNumber', true),
 					'allowEmpty' => true,
-					//'message' => __d('net_commons', 'Invalid request.'),
+					'message' => __d('quizzes', 'Please input natural number.'),
 				)
 			),
 			'answer_timing' => array(
@@ -227,17 +250,25 @@ class Quiz extends QuizzesAppModel {
 			return;
 		}
 		$this->validate['answer_start_period'] = array(
-			'rule' => array('datetime', 'ymd'),
-			'required' => true,
+			'checkFormat' => array(
+				'rule' => array('datetime', 'ymd'),
+				'required' => true,
+				'message' => sprintf(
+					__d('net_commons', 'Unauthorized pattern for %s. Please input the data in %s format.'),
+					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
+			),
 		);
 		$this->validate['answer_end_period'] = array(
 			'checkDateTime' => array(
 				'rule' => array('datetime', 'ymd'),
 				'required' => true,
+				'message' => sprintf(
+					__d('net_commons', 'Unauthorized pattern for %s. Please input the data in %s format.'),
+					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
 			),
 			'checkDateComp' => array(
 				'rule' => array('comparison', '>=', $this->data['Quiz']['answer_start_period']),
-				'message' => __d('quizzes', 'start period must be smaller than end period')
+				'message' => __d('quizzes', 'start period must be smaller than end period.')
 			)
 		);
 	}
@@ -253,16 +284,16 @@ class Quiz extends QuizzesAppModel {
 		if (! $this->data['Quiz']['is_key_pass_use']) {
 			return;
 		}
-		$this->validate['is_image_authentication'] = array(
+		$this->validate['is_image_authentication']['inList'] = array(
 			'rule' => array('inList', array(QuizzesComponent::USES_NOT_USE, false)),
 			'message' =>
 				__d('quizzes',
 					'Authentication key setting , image authentication , either only one can not be selected.')
 		);
-		if (! Validation::notBlank($this->data['AuthorizationKey']['authorization_key'])) {
+		if (! isset($this->data['AuthorizationKey']) ||
+			! Validation::notBlank($this->data['AuthorizationKey']['authorization_key'])) {
 			$this->validationErrors['is_key_pass_use'][] =
-				__d('quizzes',
-					'Please input key phrase.');
+				__d('quizzes', 'Please input key phrase.');
 		}
 	}
 /**
@@ -277,7 +308,7 @@ class Quiz extends QuizzesAppModel {
 		if (! $this->data['Quiz']['is_image_authentication']) {
 			return;
 		}
-		$this->validate['is_key_pass_use'] = array(
+		$this->validate['is_key_pass_use']['inList'] = array(
 			'rule' => array('inList', array(QuizzesComponent::USES_NOT_USE, false)),
 			'message' =>
 				__d('quizzes',
@@ -437,20 +468,25 @@ class Quiz extends QuizzesAppModel {
 		$netCommonsTime = new NetCommonsTime();
 		$nowTime = $netCommonsTime->getNowDatetime();
 
+		// 小テストは始まってないやつは見せないけど
+		// 終わったやつは見せていてよいと思う
 		$limitedConditions[] = array('OR' => array(
 			'Quiz.answer_start_period <=' => $nowTime,
 			'Quiz.answer_start_period' => null,
 		));
-		$limitedConditions[] = array(
-			'OR' => array(
-				'Quiz.answer_end_period >=' => $nowTime,
-				'Quiz.answer_end_period' => null,
-			));
+		//$limitedConditions[] = array(
+		//	'OR' => array(
+		//		'Quiz.answer_end_period >=' => $nowTime,
+		//		'Quiz.answer_end_period' => null,
+		//	));
 
 		$timingConditions = array(
 			'OR' => array(
 				'Quiz.answer_timing' => QuizzesComponent::USES_NOT_USE,
-				$limitedConditions,
+				'AND' => array(
+					'Quiz.answer_timing' => QuizzesComponent::USES_USE,
+					$limitedConditions,
+				)
 			));
 
 		if (Current::permission('content_creatable')) {
@@ -458,25 +494,6 @@ class Quiz extends QuizzesAppModel {
 		}
 
 		return $timingConditions;
-	}
-
-/**
- * clearQuizId 小テストデータからＩＤのみをクリアする
- *
- * @param array &$quiz アンケートデータ
- * @return void
- */
-	public function clearQuizId(&$quiz) {
-		foreach ($quiz as $qKey => $q) {
-			if (is_array($q)) {
-				$this->clearQuizId($quiz[$qKey]);
-			} elseif (preg_match('/^id$/', $qKey) ||
-				preg_match('/^key$/', $qKey) ||
-				preg_match('/^created(.*?)/', $qKey) ||
-				preg_match('/^modified(.*?)/', $qKey)) {
-				unset($quiz[$qKey]);
-			}
-		}
 	}
 
 /**
@@ -508,27 +525,37 @@ class Quiz extends QuizzesAppModel {
 			$quiz = Hash::remove($quiz, 'Quiz.id');
 
 			$this->set($quiz);
-
-			$saveQuiz = $this->save($quiz);
-			if (! $saveQuiz) {
-				$this->rollback();
+			if (!$this->validates()) {
 				return false;
+			}
+
+			//新着データセット
+			$this->setTopicValue(
+				'title', sprintf(__d('quizzes', '%s started'), $quiz['Quiz']['title'])
+			);
+			if (! $quiz['Quiz']['answer_timing']) {
+				$this->setTopicValue('publish_start', null);
+				$this->setTopicValue('answer_period_start', null);
+				$this->setTopicValue('answer_period_end', null);
+			}
+
+			$saveQuiz = $this->save($quiz, false);
+			if (! $saveQuiz) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 			$quizId = $this->id;
 
 			// ページ以降のデータを登録
 			$quiz = Hash::insert($quiz, 'QuizPage.{n}.quiz_id', $quizId);
 			if (! $this->QuizPage->saveQuizPage($quiz['QuizPage'])) {
-				$this->rollback();
-				return false;
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 			// フレーム内表示対象アンケートに登録する
 			if (! $this->QuizFrameDisplayQuiz->saveDisplayQuiz(array(
 				'quiz_key' => $saveQuiz['Quiz']['key'],
 				'frame_key' => Current::read('Frame.key')
 			))) {
-				$this->rollback();
-				return false;
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 			// これまでのテスト回答データを消す
 			$this->QuizAnswerSummary->deleteTestAnswerSummary($saveQuiz['Quiz']['key'], $status);
@@ -556,7 +583,11 @@ class Quiz extends QuizzesAppModel {
 		try {
 			$this->id = $quizId;
 			$this->Behaviors->unload('Mails.MailQueue');
-			if (! $this->saveField('export_key', $exportKey)) {
+			$options = array(
+				'validate' => false,
+				'callbacks' => false
+			);
+			if (! $this->saveField('export_key', $exportKey, $options)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 			$this->commit();
@@ -594,7 +625,7 @@ class Quiz extends QuizzesAppModel {
 				'quiz_key' => $data['Quiz']['key']), true, false)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
-			// アンケート回答削除
+			// 小テスト回答削除
 			if (! $this->QuizAnswerSummary->deleteAll(array(
 				'quiz_key' => $data['Quiz']['key']), true, false)) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));

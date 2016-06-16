@@ -194,7 +194,7 @@ class QuizResultController extends QuizzesAppController {
 
 		// 得点推移データ取得
 		// そのサマリIDに該当する人物のサマリ履歴を取得する
-		$scoreHistory = $this->_getScoreHistory($quiz, $summaryId);
+		$scoreHistory = $this->_getScoreHistory($quiz, $userId, $summaryId);
 
 		if ($userId) {
 			$conditions = array(
@@ -241,11 +241,11 @@ class QuizResultController extends QuizzesAppController {
  * 得点履歴取得
  *
  * @param array $quiz 小テストデータ
+ * @param int $userId ユーザーID
  * @param int $summaryId サマリID
- * @return void
+ * @return array
  */
-	protected function _getScoreHistory($quiz, $summaryId) {
-		$userId = Current::read('User.id');
+	protected function _getScoreHistory($quiz, $userId, $summaryId) {
 		if ($userId) {
 			$conditions = array(
 				'quiz_key' => $quiz['Quiz']['key'],

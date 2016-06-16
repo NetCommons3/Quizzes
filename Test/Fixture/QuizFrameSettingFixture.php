@@ -15,6 +15,13 @@
 class QuizFrameSettingFixture extends CakeTestFixture {
 
 /**
+ * Import
+ *
+ * @var array
+ */
+	public $import = array('connection' => 'master');
+
+/**
  * Fields
  *
  * @var array
@@ -23,7 +30,7 @@ class QuizFrameSettingFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
 		'display_type' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => '0:単一表示(default)|1:リスト表示'),
 		'display_num_per_page' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 3, 'unsigned' => false, 'comment' => 'リスト表示の場合、１ページ当たりに表示するアンケート件数'),
-		'sort_type' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => '表示並び順 0:新着順 1:回答期間順（降順） 2:ステータス順（昇順） 3:タイトル順（昇順）'),
+		'sort_type' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'frame_key' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
@@ -43,15 +50,15 @@ class QuizFrameSettingFixture extends CakeTestFixture {
  */
 	public $records = array(
 		array(
-			'id' => 1,
-			'display_type' => 1,
-			'display_num_per_page' => 1,
-			'sort_type' => 1,
-			'frame_key' => 'Lorem ipsum dolor sit amet',
-			'created_user' => 1,
-			'created' => '2015-12-28 04:30:15',
-			'modified_user' => 1,
-			'modified' => '2015-12-28 04:30:15'
+			'id' => '1',
+			'display_type' => '1',
+			'display_num_per_page' => '5',
+			'sort_type' => 'Quiz.modified DESC',
+			'frame_key' => 'frame_3',
+			'created_user' => null,
+			'created' => '2016-06-07 02:33:27',
+			'modified_user' => '1',
+			'modified' => '2016-06-08 07:02:22'
 		),
 	);
 

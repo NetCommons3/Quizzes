@@ -17,7 +17,7 @@ App::uses('QuizzesAppModel', 'Quizzes.Model');
 /**
  * Summary for QuizAnswerSummary Model
  */
-class QuizAnswerSummaryCsv extends QuizzesAppModel {
+class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 
 /**
  * use table
@@ -297,7 +297,6 @@ class QuizAnswerSummaryCsv extends QuizzesAppModel {
 				$cols[] = $score;
 			}
 		}
-		$this->log($cols, 'debug');
 		return $cols;
 	}
 /**

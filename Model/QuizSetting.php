@@ -23,14 +23,11 @@ class QuizSetting extends QuizzesAppModel {
  * @var array
  */
 	public $validate = array(
-		'block_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+		'block_key' => array(
+			'notBlank' => array(
+				'rule' => array('notBlank'),
+				'allowEmpty' => false,
+				'required' => true,
 			),
 		),
 	);
@@ -69,7 +66,6 @@ class QuizSetting extends QuizzesAppModel {
  * @return mix QuizSetting data
  */
 	public function getSetting() {
-		$this->Block = ClassRegistry::init('Blocks.Block', true);
 		$blockSetting = $this->Block->find('all', array(
 			'recursive' => -1,
 			'fields' => array(
@@ -121,6 +117,7 @@ class QuizSetting extends QuizzesAppModel {
 
 		} catch (Exception $ex) {
 			$this->rollback($ex);
+			throw $ex;
 		}
 		return true;
 	}
@@ -190,7 +187,7 @@ class QuizSetting extends QuizzesAppModel {
 	public function saveSetting() {
 		// block settingはあるか
 		$setting = $this->getSetting();
-		if (! empty($setting)) {
+		if (! empty($setting['QuizSetting']['id'])) {
 			return true;
 		}
 		// ないときは作る

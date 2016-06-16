@@ -66,6 +66,8 @@ msgid "Title"
 msgstr "タイトル"
 
 #: Controller/Component/QuizzesComponent.php:231
+msgid "Start period"
+msgstr "開始期日"
 msgid "End period"
 msgstr "終了期日"
 
@@ -867,3 +869,43 @@ msgstr "小テストを作成できる権限"
 
 msgid "Answer that ended the scoring is not yet."
 msgstr "採点の終わった解答がまだないため表示できません。"
+
+msgid "page sequence is illegal."
+msgstr "データ不正が発生しました。最初からやり直してください。"
+
+msgid "please set at least one question."
+msgstr "少なくとも１つは問題を設定してください。"
+msgid "please set at least one choice."
+msgstr "少なくとも１つは選択肢を設定してください。"
+
+msgid "question sequence is illegal."
+msgstr "データ不正が発生しました。最初からやり直してください。"
+
+msgid "choice sequence is illegal."
+msgstr "データ不正が発生しました。最初からやり直してください。"
+
+msgid "Please input question text."
+msgstr "問題文を入力してください。"
+msgid "Please input choice text."
+msgstr "選択肢を入力してください。"
+
+msgid "Please enter a number greater than 0 ."
+msgstr "0より大きな数字を入力してください。"
+
+msgid "You can not use the string of #||||||# for choice text."
+msgstr "選択肢に「#||||||#」の文字列は使うことができません。"
+
+msgid "The scoring is available only descriptive of the problem."
+msgstr "採点が可能なのは記述式の問題だけです。"
+msgid "Please input natural number."
+msgstr "整数値を入力してください。"
+msgid "It is not possible to give the Scoring value or more of the points."
+msgstr "配点値以上の点数を与えることはできません。"
+msgid "start period must be smaller than end period."
+msgstr "開始日時は終了日時より前でなくてはいけません。"
+msgid "Please input key phrase."
+msgstr "認証キーを入力してください。"
+msgid "Authentication key setting , image authentication , either only one can not be selected."
+msgstr "認証キーと画像認証はどちらか１つしか選べません。"
+msgid "Please set correct answer."
+msgstr "正解を設定してください。"

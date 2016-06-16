@@ -48,7 +48,7 @@ class QuizBlocksController extends QuizzesAppController {
 		'Quizzes.QuizAnswerSummary',
 		'Quizzes.QuizAnswerSummaryCsv',
 		'Blocks.Block',
-		//'Quizzes.QuizExport',
+		'Quizzes.QuizExport',
 	);
 
 /**
@@ -194,15 +194,15 @@ class QuizBlocksController extends QuizzesAppController {
  * @return void
  */
 	public function export() {
-		/*
 		// NetCommonsお約束：コンテンツ操作のためのURLには対象のコンテンツキーが必ず含まれている
 		// まずは、そのキーを取り出す
-		// アンケートキー
+		// 小テストキー
 		$quizKey = $this->_getQuizKeyFromPass();
 		// キー情報をもとにデータを取り出す
 		$quiz = $this->QuizAnswerSummaryCsv->getQuizForAnswerCsv($quizKey);
 		if (! $quiz) {
-			$this->setAction('throwBadRequest');
+			$this->_setFlashMessageAndRedirect(
+				__d('quizzes', 'Designation of the quiz does not exist.'));
 			return;
 		}
 
@@ -222,15 +222,11 @@ class QuizBlocksController extends QuizzesAppController {
 		} catch(Exception $e) {
 			$this->Session->setFlash(__d('quizzes', 'export error') . $e->getMessage(),
 				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL));
-			$this->redirect(NetCommonsUrl::actionUrl(array(
-				'controller' => 'quiz_blocks',
-				'action' => 'index',
-				'frame_id' => Current::read('Frame.id'))));
 			return;
 		}
 		// 大外枠zipファイル準備
 		$zipWrapperFile = new ZipDownloader();
-		// アンケートデータファイルのフィンガープリントを得る
+		// 小テストデータファイルのフィンガープリントを得る
 		$fingerPrint = sha1_file($zipFile->path, false);
 		// フィンガープリントをアーカイブに加える
 		$zipWrapperFile->addFromString(QuizzesComponent::QUIZ_FINGER_PRINT_FILENAME, $fingerPrint);
@@ -246,7 +242,6 @@ class QuizBlocksController extends QuizzesAppController {
 		$exportFileName = $quiz['Quiz']['title'] . '.zip';
 		// 出力
 		return $zipWrapperFile->download(rawurlencode($exportFileName));
-		*/
 	}
 
 /**

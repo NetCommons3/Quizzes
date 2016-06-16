@@ -24,7 +24,7 @@ NetCommonsApp.controller('QuizResult',
             'duration': 500,
             'margin' : {top: 10, right: 0, bottom: 50, left: 100},
             x: function(d) {return d.label;},
-            y: function(d) {return d.value;},
+            y: function(d) {return parseInt(d.value);},
             'xAxis': {
               'axisLabel': quizzesMessages.resultScoreLabel,
               'showMaxMin': false
@@ -59,8 +59,8 @@ NetCommonsApp.controller('QuizResultView',
             'showValues': true,
             'duration': 500,
             'margin' : {top: 10, right: 80, bottom: 50, left: 80},
-            x: function(d) {return d.answerNumber;},
-            y: function(d) {return d.summaryScore;},
+            x: function(d) {return parseInt(d.answerNumber);},
+            y: function(d) {return parseInt(d.summaryScore);},
             'xAxis': {
               'axisLabel': quizzesMessages.resultNumberLabel,
               'showMaxMin': false

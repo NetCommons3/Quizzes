@@ -80,6 +80,7 @@ class QuizzesController extends QuizzesAppController {
 		'NetCommons.TitleIcon',
 		'NetCommons.Button',
 		'Quizzes.QuizStatusLabel',
+		'Quizzes.QuizGradeLink',
 		'Quizzes.QuizAnswerButton',
 		'Quizzes.QuizResultButton',
 	);
@@ -108,9 +109,8 @@ class QuizzesController extends QuizzesAppController {
 			array(
 				'conditions' => $conditions,
 				'page' => 1,
-				'sort' => $sort,
+				'order' => array($sort => $dir),
 				'limit' => $displayNum,
-				'direction' => $dir,
 				'recursive' => 0,
 			)
 		);
@@ -171,7 +171,7 @@ class QuizzesController extends QuizzesAppController {
 		// 過去データ 取り出し
 		$pastQuizzes = $this->Quiz->find('all',
 			array(
-				'conditions' => $this->Quiz->getBaseCondition(),
+				'conditions' => $this->Quiz->getCondition(),
 				'offset' => 0,
 				'limit' => 1000,
 				'recursive' => -1,
@@ -271,7 +271,11 @@ class QuizzesController extends QuizzesAppController {
 		$notScoringQuiz = $this->QuizAnswer->getNotScoringQuizKey(
 			$summaryIds
 		);
-		$notScoringQuiz = Hash::combine($notScoringQuiz, '{n}.QuizAnswerSummary.quiz_key', '{n}.QuizAnswerSummary.quiz_key');
+		$notScoringQuiz = Hash::combine(
+			$notScoringQuiz,
+			'{n}.QuizAnswerSummary.quiz_key',
+			'{n}.QuizAnswerSummary.quiz_key'
+		);
 		$this->set('notScoringQuizKeys', $notScoringQuiz);
 	}
 /**

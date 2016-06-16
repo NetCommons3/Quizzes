@@ -32,14 +32,7 @@
 			</tr>
 			<?php echo $this->TableList->startTableRow(); ?>
 				<?php echo $this->TableList->tableData('', $general['general']['number_pepole'], array('type' => 'numeric'));/* 総受験者数 */ ?>
-				<?php if ($general['general']['avg_time'] < 60) {
-					$avgTime = sprintf(__d('quizzes', '%d sec'), /* %d秒 */
-							$general['general']['avg_time']);
-										} else {
-					$avgTime = sprintf(__d('quizzes', '%d min'), /* %d分 */
-						$general['general']['avg_time'] / 60);
-										}
-				echo $this->TableList->tableData('', $avgTime, array('type' => 'numeric')); ?>
+				<?php echo $this->TableList->tableData('', sprintf('%01.1f分', round($general['general']['avg_time'] / 60, 1)), array('type' => 'numeric'));?>
 				<?php echo $this->TableList->tableData('', $general['general']['avg_score'], array('type' => 'numeric')); ?>
 				<?php echo $this->TableList->tableData('', $general['general']['max_score'], array('type' => 'numeric')); ?>
 				<?php echo $this->TableList->tableData('', $general['general']['min_score'], array('type' => 'numeric')); ?>

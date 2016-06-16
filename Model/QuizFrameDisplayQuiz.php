@@ -199,9 +199,9 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 
 		$saveData = Hash::extract($data, 'Single.QuizFrameDisplayQuiz');
 		$saveData['frame_key'] = $frameKey;
-		if (!$this->saveDisplayQuiz($saveData)) {
-			return false;
-		}
+		// この関数内部でエラーがあった時は、Exceptionなので戻りは見ない
+		$this->saveDisplayQuiz($saveData);
+
 		$action = '\'quiz_answers/start/' . Current::read('Block.id') . '/' . $saveData['quiz_key'] . "'";
 		// この関数内部でエラーがあった時は、Exceptionなので戻りは見ない
 		$this->updateFrameDefaultAction($action);

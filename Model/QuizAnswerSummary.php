@@ -200,7 +200,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		);
 		return $passQuizKeys;
 	}
-/*
+/**
  * getCanGradingSummary
  * 現在のブロックで自分が採点権限を持つ回答サマリを取得する
  *
@@ -259,7 +259,9 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			}
 			$this->create();
 			$this->set($data);
-			$this->save();
+			if (! $this->save()) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
 			$id = $this->getLastInsertID();
 
 			$this->commit();
