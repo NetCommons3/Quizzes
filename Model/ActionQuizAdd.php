@@ -306,7 +306,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 		}
 		// 初めにファイルに記載されている小テストプラグインのバージョンと
 		// 現サイトの小テストプラグインのバージョンを突合し、差分がある場合はインポート処理を中断する。
-		if ($this->__checkVersion($jsonQuiz) === false) {
+		if ($this->_checkVersion($jsonQuiz) === false) {
 			$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'version is different.');
 			return null;
 		}
@@ -384,12 +384,12 @@ class ActionQuizAdd extends QuizzesAppModel {
 	}
 
 /**
- * __checkVersion
+ * _checkVersion
  *
  * @param array $jsonData バージョンが含まれたJson
  * @return bool
  */
-	private function __checkVersion($jsonData) {
+		protected function _checkVersion($jsonData) {
 		// バージョン情報を取得するためComposer情報を得る
 		$Plugin = ClassRegistry::init('PluginManager.Plugin');
 		$composer = $Plugin->getComposer('netcommons/quizzes');
