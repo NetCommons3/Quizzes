@@ -184,6 +184,7 @@ class QuizEditController extends QuizzesAppController {
 				$Quiz['QuizPage'] = $postQuiz['QuizPage'];
 			} else {
 				// booleanの値がPOST時と同じようになるように調整
+				$this->Quiz->clearQuizId($Quiz, true);
 				$Quiz['QuizPage'] = QuizzesAppController::changeBooleansToNumbers($Quiz['QuizPage']);
 			}
 

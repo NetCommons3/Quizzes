@@ -62,18 +62,27 @@ class QuizzesAppModel extends AppModel {
 /**
  * clearQuizId 小テストデータからＩＤのみをクリアする
  *
- * @param array &$quiz アンケートデータ
+ * @param array &$quiz 小テストデータ
+ * @param bool $isIdOnly 純粋にIDフィールドのみをクリアするのか
  * @return void
+ * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
-	public function clearQuizId(&$quiz) {
+	public function clearQuizId(&$quiz, $isIdOnly = false) {
 		foreach ($quiz as $qKey => $q) {
 			if (is_array($q)) {
-				$this->clearQuizId($quiz[$qKey]);
-			} elseif (preg_match('/^id$/', $qKey) ||
-				preg_match('/^key$/', $qKey) ||
-				preg_match('/^created(.*?)/', $qKey) ||
-				preg_match('/^modified(.*?)/', $qKey)) {
-				unset($quiz[$qKey]);
+				$this->clearQuizId($quiz[$qKey], $isIdOnly);
+			} else {
+				if ($isIdOnly) {
+					$judge = preg_match('/^id$/', $qKey);
+				} else {
+					$judge = preg_match('/^id$/', $qKey) ||
+					preg_match('/^key$/', $qKey) ||
+					preg_match('/^created(.*?)/', $qKey) ||
+					preg_match('/^modified(.*?)/', $qKey);
+				}
+				if ($judge) {
+					unset($quiz[$qKey]);
+				}
 			}
 		}
 	}
