@@ -168,42 +168,77 @@ class QuizAnswerGradeSaveGradeTest extends NetCommonsModelTestCase {
 			array($datas[0], $datas[1], $datas[2], 'Quizzes.QuizAnswerSummary', 'save'),
 		);
 	}
-
 /**
- * SaveのValidationErrorテスト
+ * Validatesのテスト
  *
- * @param array $quiz
- * @param int $summaryId
  * @param array $data 登録データ
- * @param string $mockModel Mockのモデル
- * @param string $mockMethod Mockのメソッド
- * @dataProvider dataProviderSaveOnValidationError
+ * @param string $field フィールド名
+ * @param string $value セットする値
+ * @param string $message エラーメッセージ
+ * @param array $overwrite 上書きするデータ
+ * @param array $options オプション
+ * @dataProvider dataProviderValidationError
  * @return void
  */
-	public function testSaveOnValidationError($quiz, $summaryId, $data, $mockModel, $mockMethod = 'validates') {
+	public function testValidationError($data, $field, $value, $message, $overwrite = array(), $options = array()) {
 		$model = $this->_modelName;
-		$method = $this->_methodName;
 
-		$this->_mockForReturnFalse($model, $mockModel, $mockMethod);
-		$this->setExpectedException('InternalErrorException');
-		$this->$model->$method($quiz, $summaryId, $data);
+		if (is_null($value)) {
+			unset($data[$model][$field]);
+		} else {
+			$data[$model][$field] = $value;
+		}
+		$data = Hash::merge($data, $overwrite);
+
+		//validate処理実行
+		$this->$model->set($data);
+		$result = $this->$model->validates($options);
+		$this->assertFalse($result);
+		if ($message) {
+			$this->assertEquals($this->$model->validationErrors[$field][0], $message);
+		}
 	}
 /**
- * SaveのValidationError用DataProvider
+ * ValidationErrorのDataProvider
  *
  * ### 戻り値
  *  - data 登録データ
- *  - mockModel Mockのモデル
- *  - mockMethod Mockのメソッド(省略可：デフォルト validates)
+ *  - field フィールド名
+ *  - value セットする値
+ *  - message エラーメッセージ
+ *  - overwrite 上書きするデータ(省略可)
  *
  * @return array テストデータ
  */
-	public function dataProviderSaveOnValidationError() {
-		$data = $this->dataProviderSave()[0];
+	public function dataProviderValidationError() {
+		$dataGet = new QuizDataGetTest();
+		// 記述式タイプ
+		$quizText = $dataGet->getData(51);
+		// 選択肢タイプ
+		$quiz = $dataGet->getData(46);
+
+		$data = array('QuizAnswerGrade' => array(
+			'id' => 34,
+			'score' => 10,
+			'correct_status' => 2,
+			'quiz_question_key' => '9cc4e8ba1f575fb349e74c5f958c4a69'
+		));
 
 		return array(
-			array($data[0], $data[1], $data[2], 'Quizzes.QuizAnswerGrade'),
+			array(
+				'data' => $data,
+				'field' => 'score',
+				'value' => 'aaaa',
+				'message' => __d('net_commons', 'Invalid request.'),
+				'overwrite' => array(),
+				'options' => array('quiz' => $quiz)),
+			array(
+				'data' => $data,
+				'field' => 'score',
+				'value' => '1000',
+				'message' => __d('quizzes', 'It is not possible to give the Scoring value or more of the points.'),
+				'overwrite' => array(),
+				'options' => array('quiz' => $quizText)),
 		);
 	}
-
 }

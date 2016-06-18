@@ -21,7 +21,7 @@ class QuizAnswerGrade extends QuizzesAppModel {
 /**
  * Use table config
  *
- * @var bool
+ * @var string
  */
 	public $useTable = 'quiz_answers';
 
@@ -79,24 +79,23 @@ class QuizAnswerGrade extends QuizzesAppModel {
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 	public function beforeValidate($options = array()) {
-		$question = $this->QuizQuestion->find('first', array(
-			'conditions' => array(
-				'key' => $this->data['QuizAnswerGrade']['quiz_question_key']
-			),
-			'recursive' => -1,
-			'order' => array('modified' => 'desc')
-		));
+		$quiz = $options['quiz'];
+		$qKey = $this->data['QuizAnswerGrade']['quiz_question_key'];
+		$question = Hash::extract($quiz['QuizPage'], '{n}.QuizQuestion.{n}[key=' . $qKey . ']');
 		if (! $question) {
+			$this->validationErrors['score'][] =
+				__d('net_commons', 'Invalid request.');
 			return false;
 		}
+		$question = $question[0];
 		// 自由記述以外は採点対象じゃないです
-		if ($question['QuizQuestion']['question_type'] != QuizzesComponent::TYPE_TEXT_AREA) {
+		if ($question['question_type'] != QuizzesComponent::TYPE_TEXT_AREA) {
 			$this->validationErrors['score'][] =
 				__d('quizzes', 'The scoring is available only descriptive of the problem.');
 			return false;
 		}
 
-		$allotment = $question['QuizQuestion']['allotment'];
+		$allotment = $question['allotment'];
 
 		$this->validate = Hash::merge($this->validate, array(
 			'id' => array(
@@ -147,7 +146,9 @@ class QuizAnswerGrade extends QuizzesAppModel {
 		try {
 			foreach ($datas as $data) {
 				$answer = $data['QuizAnswerGrade'];
-				if (! $this->save($answer)) {
+				// validateは終わっていることが前提
+				// see:QuizAnswerController-grade
+				if (! $this->save($answer, false)) {
 					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 				}
 			}

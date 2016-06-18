@@ -207,10 +207,7 @@ class QuizAnswersController extends QuizzesAppController {
 				$this->QuizzesAnswerStart->saveStartQuizOfThisUser($quizKey);
 
 				// 回答サマリレコードを作成
-				$summaryId = $this->QuizAnswerSummary->saveStartSummary(
-					$quiz,
-					$this->QuizzesOwnAnswer->getAnsweredSummaryIds()
-				);
+				$summaryId = $this->QuizAnswerSummary->saveStartSummary($quiz);
 
 				// 回答サマリIDをセッションに記録
 				$this->QuizzesOwnAnswerQuiz->saveProgressiveSummaryOfThisUser($quizKey, $summaryId);
@@ -326,6 +323,10 @@ class QuizAnswersController extends QuizzesAppController {
 				$this->__quiz,
 				$summary['QuizAnswerSummary']['id']
 			);
+			if (! $newSummary) {
+				$this->setAction('throwBadRequest');
+				return;
+			}
 			// 回答済み小テストキーをセッション記録
 			$this->QuizzesOwnAnswerQuiz->saveOwnAnsweredKeys($quizKey);
 			// 回答済みサマリIDをセッション記録
@@ -397,7 +398,7 @@ class QuizAnswersController extends QuizzesAppController {
 		// 採点?
 		if ($this->request->is('post') || $this->request->is('put')) {
 			$grade = $this->request->data['QuizAnswer'];
-			if ($this->QuizAnswerGrade->validateMany($grade)) {
+			if ($this->QuizAnswerGrade->validateMany($grade, array('quiz' => $quiz))) {
 				$this->QuizAnswerGrade->saveGrade($quiz, $summaryId, $grade);
 				$summary = $this->QuizAnswerSummary->findById($summaryId);
 			}

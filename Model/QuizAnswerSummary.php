@@ -13,6 +13,7 @@
  */
 
 App::uses('QuizzesAppModel', 'Quizzes.Model');
+App::uses('NetCommonsUrl', 'NetCommons.Utility');
 
 /**
  * Summary for QuizAnswerSummary Model
@@ -89,7 +90,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		'QuizAnswer' => array(
 			'className' => 'Quizzes.QuizAnswer',
 			'foreignKey' => 'quiz_answer_summary_id',
-			'dependent' => false,
+			'dependent' => true,
 			'conditions' => '',
 			'fields' => '',
 			'order' => '',
@@ -116,6 +117,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 
 		$this->loadModels([
 			'Quiz' => 'Quizzes.Quiz',
+			'QuizAnswer' => 'Quizzes.QuizAnswer',
 		]);
 	}
 
@@ -146,7 +148,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		$condition = array(
 			'quiz_key' => $quizKey,
 		);
-		// ログインしている人は自分の数がわかるけど、未ログインの人は指定アンケート
+		// ログインしている人は自分の数がわかるけど、未ログインの人は指定小テスト
 		if (Current::read('User.id')) {
 			$condition['user_id'] = Current::read('User.id');
 		} else {
@@ -172,12 +174,14 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			'conditions' => $condition,
 			'recursive' => -1
 		));
+		$this->log( $this->getDataSource()->getLog(), LOG_DEBUG);
 		return $ret;
 	}
 
 /**
  * getPassedQuizKeys
  * 合格した小テストのキーリストを返す
+ * 汎用的にと考えたが、今のところ追加条件でUser.idをもらうようなシーンしか想定できていない
  *
  * @param array $addConditions 追加条件（必須）
  * @return array
@@ -189,15 +193,31 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			//'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM,
 			'passing_status' => QuizzesComponent::STATUS_GRADE_PASS,
 			'within_time_status' => QuizzesComponent::STATUS_GRADE_PASS,
+			'OR' => array(
+				'Quiz.passing_grade >' => 0,
+				'Quiz.estimated_time >' => 0,
+			)
 		), $addConditions);
-		$passQuizKeys = $this->find(
-			'list',
-			array(
+		$passQuizKeys = $this->find('all', array(
 				'conditions' => $conditions,
-				'fields' => array('QuizAnswerSummary.quiz_key'),
-				'recursive' => -1
+				'fields' => array(
+					'QuizAnswerSummary.id',
+					'QuizAnswerSummary.quiz_key',
+				),
+				'joins' => array(
+					array(
+						'table' => 'quizzes',
+						'alias' => 'Quiz',
+						'type' => 'LEFT',
+						'conditions' => array(
+							'QuizAnswerSummary.quiz_key = Quiz.key',
+						),
+					),
+				),
+				'recursive' => -1,
 			)
 		);
+		$passQuizKeys = Hash::combine($passQuizKeys, '{n}.QuizAnswerSummary.id', '{n}.QuizAnswerSummary.quiz_key');
 		return $passQuizKeys;
 	}
 /**
@@ -227,11 +247,10 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * 回答スタート時に呼ばれる。新しいレコードを作成する。
  *
  * @param array $quiz quiz
- * @param array $ids 回答したサマリID配列
  * @return int 作成したサマリID
  * @throws InternalErrorException
  */
-	public function saveStartSummary($quiz, $ids) {
+	public function saveStartSummary($quiz) {
 		// 完了時以外はメールBehaviorを外す
 		$this->Behaviors->unload('Mails.MailQueue');
 
@@ -240,9 +259,19 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		try {
 			$netCommonsTime = new NetCommonsTime();
 			$nowTime = $netCommonsTime->getNowDatetime();
-			$count = 0;
-			if (Current::read('User.id')) {
-				$count = $this->getCountMyAnswerSummary($quiz['Quiz']['key'], $ids);
+			$userId = Current::read('User.id');
+			// ログインしているとは回数を重ねることができますが
+			if ($userId) {
+				// 回数は純粋にその人の回答サマリ数を数えるのみ
+				// 完答したかどうかとか見ない
+				$count = $this->find('count', array(
+					'conditions' => array(
+						'quiz_key' => $quiz['Quiz']['key'],
+						'user_id' => $userId
+					)));
+			} else {
+				// ログインしてない人は回数履歴を重ねられません
+				$count = 0;
 			}
 			$data = array(
 				'answer_status' => QuizzesComponent::ACTION_NOT_ACT,
@@ -254,8 +283,8 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			if ($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED) {
 				$data['test_status'] = QuizzesComponent::TEST_ANSWER_STATUS_TEST;
 			}
-			if (Current::read('User.id')) {
-				$data['user_id'] = Current::read('User.id');
+			if ($userId) {
+				$data['user_id'] = $userId;
 			}
 			$this->create();
 			$this->set($data);
@@ -290,6 +319,9 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		$this->begin();
 		try {
 			$ret = $this->save($data, false, array('answer_status'));
+			if (! $ret) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
 			$this->commit();
 		} catch (Exception $ex) {
 			$this->rollback();
@@ -319,7 +351,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		try {
 			$summary = $this->findById($summaryId);
 			if (! $summary) {
-				return false;
+				return $summary;
 			}
 			// メールのembed のURL設定を行っておく
 			$url = NetCommonsUrl::actionUrl(array(
@@ -341,22 +373,32 @@ class QuizAnswerSummary extends QuizzesAppModel {
 				strtotime($nowTime) - strtotime($summary[$this->alias]['answer_start_time']);
 			$data['summary_score'] = $score['graded'];
 
+			//
+			// 得点から判定
+			//
+			// 未採点が残っていないなら
+			// 得点からの合格不合格判定を行う
 			if ($score['ungraded'] == 0) {
 				$data['is_grade_finished'] = true;
-				if ($quiz['Quiz']['passing_grade'] > 0 && $score['graded'] >= $quiz['Quiz']['passing_grade']) {
-					$data['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
-				} else {
-					$data['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
+				$data['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
+				if ($quiz['Quiz']['passing_grade'] > 0) {
+					if ($score['graded'] < $quiz['Quiz']['passing_grade']) {
+						$data['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
+					}
 				}
 			} else {
+				// 未採点が残っているときは
 				$data['is_grade_finished'] = false;
 				$data['passing_status'] = QuizzesComponent::STATUS_GRADE_YET;
 			}
-			if ($quiz['Quiz']['estimated_time'] > 0 &&
-				$data['elapsed_second'] <= $quiz['Quiz']['estimated_time'] * 60) {
-				$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_PASS;
-			} else {
-				$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
+			//
+			// 経過時間から判定
+			//
+			$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_PASS;
+			if ($quiz['Quiz']['estimated_time'] > 0) {
+				if ($data['elapsed_second'] > $quiz['Quiz']['estimated_time'] * 60) {
+					$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
+				}
 			}
 			if (! $this->save($data, false, array(
 				'answer_status',
@@ -409,7 +451,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			}
 		}
 		// 合格
-		return true;
+		return QuizzesComponent::STATUS_GRADE_PASS;
 	}
 
 /**
@@ -424,9 +466,19 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		if ($status != WorkflowComponent::STATUS_PUBLISHED) {
 			return true;
 		}
-		$this->deleteAll(array(
-			'quiz_key' => $key,
-			'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_TEST), true);
+		$this->begin();
+		try {
+			if (! $this->deleteAll(array(
+				'quiz_key' => $key,
+				'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_TEST), true)) {
+				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			}
+			$this->commit();
+		} catch (Exception $ex) {
+			$this->rollback();
+			CakeLog::error($ex);
+			throw $ex;
+		}
 		return true;
 	}
 
@@ -441,9 +493,6 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		if (! $quiz['Quiz']['is_total_show']) {
 			return;
 		}
-		$this->loadModels([
-			'QuizAnswer' => 'Quizzes.QuizAnswer',
-		]);
 		$allCount = $this->find('count', array(
 			'conditions' => array(
 				'answer_status' => QuizzesComponent::ACTION_ACT,

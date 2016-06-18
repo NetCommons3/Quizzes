@@ -127,6 +127,9 @@ class QuizAnswer extends QuizzesAppModel {
 			if (! isset($val[$this->alias])) {
 				continue;
 			}
+			if (! isset($val[$this->alias]['answer_value'])) {
+				continue;
+			}
 			$val[$this->alias]['answer_value'] =
 				explode(QuizzesComponent::ANSWER_DELIMITER, $val[$this->alias]['answer_value']);
 			$val[$this->alias]['answer_correct_status'] =
