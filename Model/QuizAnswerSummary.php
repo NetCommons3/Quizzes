@@ -217,7 +217,8 @@ class QuizAnswerSummary extends QuizzesAppModel {
 				'recursive' => -1,
 			)
 		);
-		$passQuizKeys = Hash::combine($passQuizKeys, '{n}.QuizAnswerSummary.id', '{n}.QuizAnswerSummary.quiz_key');
+		$passQuizKeys = Hash::combine(
+			$passQuizKeys, '{n}.QuizAnswerSummary.id', '{n}.QuizAnswerSummary.quiz_key');
 		return $passQuizKeys;
 	}
 /**
@@ -461,6 +462,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * @param int $key quiz key
  * @param int $status publish status
  * @return bool
+ * @throws InternalErrorException
  */
 	public function deleteTestAnswerSummary($key, $status) {
 		if ($status != WorkflowComponent::STATUS_PUBLISHED) {

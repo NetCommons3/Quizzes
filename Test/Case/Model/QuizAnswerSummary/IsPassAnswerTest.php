@@ -66,6 +66,7 @@ class QuizAnswerSummaryIsPassAnswerTest extends NetCommonsGetTest {
  *
  * @param array $quiz quiz
  * @param array $summary summary
+ * @param mixed $expected 期待値
  * @dataProvider dataProviderGet
  * @return void
  */

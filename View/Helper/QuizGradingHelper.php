@@ -180,8 +180,10 @@ class QuizGradingHelper extends AppHelper {
 			'max' => $question['allotment'],
 			'min' => 0
 		));
-		$ret .= $this->Form->hidden($fieldNameBase . 'id', array('value' => $answer['id']));
-		$ret .= $this->Form->hidden($fieldNameBase . 'quiz_question_key', array('value' => $question['key']));
+		$ret .= $this->Form->hidden($fieldNameBase . 'id',
+			array('value' => $answer['id']));
+		$ret .= $this->Form->hidden($fieldNameBase . 'quiz_question_key',
+			array('value' => $question['key']));
 		$ret .= sprintf(__d('quizzes', ' / %d '), $question['allotment']); //  / %d 点
 		$ret .= '</div></div></dd>';
 		return $ret;

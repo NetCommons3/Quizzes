@@ -62,7 +62,6 @@ class QuizAnswerSummarySaveEndSummaryTest extends NetCommonsModelTestCase {
  */
 	protected $_methodName = 'saveEndSummary';
 
-
 /**
  * setUp method
  *

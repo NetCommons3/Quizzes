@@ -389,7 +389,7 @@ class ActionQuizAdd extends QuizzesAppModel {
  * @param array $jsonData バージョンが含まれたJson
  * @return bool
  */
-		protected function _checkVersion($jsonData) {
+	protected function _checkVersion($jsonData) {
 		// バージョン情報を取得するためComposer情報を得る
 		$Plugin = ClassRegistry::init('PluginManager.Plugin');
 		$composer = $Plugin->getComposer('netcommons/quizzes');

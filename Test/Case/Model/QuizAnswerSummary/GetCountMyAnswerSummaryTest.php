@@ -71,7 +71,7 @@ class QuizAnswerSummaryGetCountMyAnswerSummaryTest extends NetCommonsGetTest {
 
 		//データ生成
 		$quizKey = '83b294e176a8c8026d4fbdb07ad2ed7f';
-		$ids = array(26,28);
+		$ids = array(26, 28);
 
 		//テスト実施
 		$result = $this->$model->$methodName($quizKey, $ids);

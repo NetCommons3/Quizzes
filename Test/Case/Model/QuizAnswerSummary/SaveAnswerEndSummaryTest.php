@@ -145,23 +145,4 @@ class QuizAnswerSummarySaveAnswerEndSummaryTest extends NetCommonsModelTestCase 
 		);
 	}
 
-/**
- * SaveのValidationError用DataProvider
- *
- * ### 戻り値
- *  - data 登録データ
- *  - mockModel Mockのモデル
- *  - mockMethod Mockのメソッド(省略可：デフォルト validates)
- *
- * @return array テストデータ
- */
-	public function dataProviderSaveOnValidationError() {
-		$data = $this->dataProviderSave()[0][0];
-
-		//TODO:テストパタンを書く
-		return array(
-			array($data, 'Quizzes.QuizAnswerSummary'),
-		);
-	}
-
 }

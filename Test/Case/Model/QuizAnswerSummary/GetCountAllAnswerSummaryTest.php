@@ -99,7 +99,6 @@ class QuizAnswerSummaryGetCountAllAnswerSummaryTest extends NetCommonsGetTest {
 		$result = $this->$model->$methodName($quizKey);
 		//チェック
 		$this->assertEqual($result, 0);
-
 	}
 
 }
