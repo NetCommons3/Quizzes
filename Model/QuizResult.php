@@ -82,6 +82,10 @@ class QuizResult extends QuizzesAppModel {
 /**
  * initResult
  * 統計情報取得前の初期処理
+ * 回答が完了していること
+ * テスト回答ではないこと
+ * 採点が完了していること
+ * 会員の場合は上記条件に合致した最新の解答データを対象とすること
  *
  * @param array $quiz 小テストデータ
  * @return void
@@ -110,6 +114,7 @@ class QuizResult extends QuizzesAppModel {
 		$this->_userSummaryIds = Hash::extract($userSummaryIds, '{n}.0.summary_id');
 
 		// 受験者一覧取得
+		// ここは未採点情報も欲しいのです　未採点があるよ、って行も出すので
 		$latestSummaryIds = $this->QuizAnswerSummary->find('all', array(
 			'fields' => array('MAX(id) AS summary_id'),
 			'conditions' => array(
@@ -166,19 +171,10 @@ class QuizResult extends QuizzesAppModel {
 		if (! $general) {
 			return false;
 		}
-			$general = $general[0][0];
-			$general['avg_score'] = round(floatval($general['avg_score']), 1);
-			$general['samp_score'] = round(floatval($general['samp_score']), 1);
-			/*
-			 $general = array(
-				'number_pepole' => 0,
-				'max_score' => 0,
-				'min_score' => 0,
-				'avg_score' => 0,
-				'avg_time' => 0,
-				'samp_score' => 0,
-			);
-			*/
+		$general = $general[0][0];
+		$general['avg_score'] = round(floatval($general['avg_score']), 1);
+		$general['samp_score'] = round(floatval($general['samp_score']), 1);
+		$general['avg_time'] = round(floatval($general['avg_time']), 1);
 		return $general;
 	}
 /**
@@ -205,7 +201,10 @@ class QuizResult extends QuizzesAppModel {
 			if ($i == self::DISTRIBUTION_NUMBER - 1) {
 				$condition = Hash::merge(
 					$baseCondition,
-					array('summary_score BETWEEN ? AND ?' => array($rangeLow, $rangeHigh))
+					array(
+						'summary_score >= ' . $rangeLow,
+						'summary_score <= ' . $rangeHigh
+					)
 				);
 			} else {
 				$condition = Hash::merge(
@@ -227,6 +226,8 @@ class QuizResult extends QuizzesAppModel {
 			$dispersion[$i]['number'] = 0;
 			if ($number) {
 				$dispersion[$i]['value'] = $number[0][0]['number'];
+			} else {
+				$dispersion[$i]['value'] = 0;
 			}
 		}
 		return $dispersion;
@@ -293,7 +294,6 @@ class QuizResult extends QuizzesAppModel {
  * @return string サブクエリ文字列
  */
 	protected function _getSubQuery($quizKey) {
-		$query = '';
 		$db = $this->QuizAnswerSummary->getDataSource();
 		$subQuery = $db->buildStatement(array(
 			'fields' => array(

@@ -918,3 +918,5 @@ msgid "Authentication key setting , image authentication , either only one can n
 msgstr ""
 msgid "Please set correct answer."
 msgstr ""
+msgid "You can download only the issued quiz data."
+msgstr ""

@@ -519,6 +519,19 @@ class QuizAnswerFixture extends CakeTestFixture {
 			'modified_user' => '1',
 			'modified' => '2016-06-10 06:51:09'
 		),
+		array(
+			'id' => '37',
+			'answer_value' => '新規選択肢1',
+			'answer_correct_status' => '2',
+			'correct_status' => '2',
+			'score' => '10',
+			'quiz_answer_summary_id' => '34',
+			'quiz_question_key' => '3e656c320d940f9738f4593fa98da529',
+			'created_user' => '1',
+			'created' => '2016-06-07 01:36:31',
+			'modified_user' => '1',
+			'modified' => '2016-06-07 01:36:36'
+		),
 	);
 
 }

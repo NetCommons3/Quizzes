@@ -13,6 +13,7 @@
  */
 
 App::uses('QuizzesAppModel', 'Quizzes.Model');
+App::uses('QuizAnswerSummary', 'Quizzes.Model');
 
 /**
  * Summary for QuizAnswerSummary Model
@@ -87,7 +88,18 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 	public function getQuizForAnswerCsv($quizKey) {
 		// 指定の小テストデータを取得
 		// CSVの取得は公開してちゃんとした回答を得ている小テストに限定である
-		$conditions = $this->Quiz->getBaseCondition(array('Quiz.key' => $quizKey));
+
+		// CSVをダウンロードする対象の小テストは「発行状態」にあるものに限定をしている
+		// ブロック一覧に表示するCSVダウンロードボタン自体がその意味で表示させているので
+		// ここでも同じロジックを用いるものとする
+		//$conditions = $this->Quiz->getBaseCondition(array('Quiz.key' => $quizKey));
+		$conditions = array(
+			'Quiz.block_id' => Current::read('Block.id'),
+			'Quiz.key' => $quizKey,
+			'Quiz.is_active' => true,
+			'Quiz.language_id' => Current::read('Language.id'),
+		);
+
 		$quiz = $this->Quiz->find('first', array(
 			'conditions' => $conditions,
 			'recursive' => -1
@@ -250,7 +262,7 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 		$questionNumber = 0;
 		foreach ($quiz['QuizPage'] as $page) {
 			if ($page['is_page_description'] == QuizzesComponent::USES_USE) {
-				$questions[] = array('#' . $page['page_description']);
+				$questions[] = array('#####' . $page['page_description']);
 			}
 			foreach ($page['QuizQuestion'] as $question) {
 				$questionNumber = $questionNumber + 1;
@@ -258,7 +270,7 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 				$cols[] = $qNumberStr;
 				$cols[] = __d('quizzes', 'Score');
 
-				$questions[] = array('#' . $qNumberStr . $question['question_value']);
+				$questions[] = array('#####' . $qNumberStr . $question['question_value']);
 			}
 		}
 		$colCount = count($cols);

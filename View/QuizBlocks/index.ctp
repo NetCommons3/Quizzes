@@ -16,7 +16,7 @@ echo $this->NetCommonsHtml->script(array(
 <article class="block-setting-body">
 	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
 
-	<?php echo $this->BlockIndex->description(); ?>
+	<?php echo $this->BlockIndex->description(__d('quizzes', 'You can download only the issued quiz data.')); ?>
 
 	<div class="tab-content">
 		<?php echo $this->BlockIndex->addLink('',

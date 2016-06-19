@@ -80,6 +80,7 @@ class QuizExport extends QuizzesAppModel {
 		$languages = $Language->find('all', array(
 			'recursive' => -1
 		));
+
 		$quizzes = array();
 		foreach ($languages as $lang) {
 			// 指定の小テストデータを取得

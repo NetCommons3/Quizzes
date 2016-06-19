@@ -909,3 +909,6 @@ msgid "Authentication key setting , image authentication , either only one can n
 msgstr "認証キーと画像認証はどちらか１つしか選べません。"
 msgid "Please set correct answer."
 msgstr "正解を設定してください。"
+
+msgid "You can download only the issued quiz data."
+msgstr "CSVやテンプレートのダウンロードができるのは発行済みの小テストだけです。"

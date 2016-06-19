@@ -106,66 +106,68 @@ class QuizAnswerSaveConfirmAnswerTest extends NetCommonsModelTestCase {
 	public function dataProviderSave() {
 		$dataGet = new QuizDataGetTest();
 
+		$orderFixQuiz = $dataGet->getData(50);
+		$orderFixQuiz['QuizPage'][0]['QuizQuestion'][0]['is_order_fixed'] = true;
 		$results = array();
-		// 択一選択：正解
+		// 択一選択：正解 #0
 		$results[] = array(
 			$dataGet->getData(46),
 			array('QuizAnswerSummary' => array('id' => 11)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_PASS,
 				'score' => 10, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_PASS));
-		// 択一選択：間違い
+		// 択一選択：間違い #1
 		$results[] = array(
 			$dataGet->getData(46),
 			array('QuizAnswerSummary' => array('id' => 12)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_FAIL,
 				'score' => 0, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_FAIL));
-		// 択一選択：解答記入なし
+		// 択一選択：解答記入なし #2
 		$results[] = array(
 			$dataGet->getData(46),
 			array('QuizAnswerSummary' => array('id' => 13)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_FAIL,
 				'score' => 0, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_FAIL));
-		// 複数選択：正解
+		// 複数選択：正解 #3
 		$results[] = array(
 			$dataGet->getData(47),
 			array('QuizAnswerSummary' => array('id' => 18)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_PASS,
 				'score' => 10, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_PASS .
 					QuizzesComponent::ANSWER_DELIMITER . QuizzesComponent::STATUS_GRADE_PASS));
-		// 複数選択：間違い
+		// 複数選択：間違い #4
 		$results[] = array(
 			$dataGet->getData(47),
 			array('QuizAnswerSummary' => array('id' => 17)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_FAIL,
 				'score' => 0, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_PASS .
 					QuizzesComponent::ANSWER_DELIMITER . QuizzesComponent::STATUS_GRADE_FAIL));
-		// 複数選択：未記入
+		// 複数選択：未記入 #5
 		$results[] = array(
 			$dataGet->getData(47),
 			array('QuizAnswerSummary' => array('id' => 15)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_FAIL,
 				'score' => 0, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_FAIL));
 
-		// 単語：正解
+		// 単語：正解 #6
 		$results[] = array(
-			$dataGet->getData(49),
+			$dataGet->getData(48),
 			array('QuizAnswerSummary' => array('id' => 20)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_PASS,
 				'score' => 10, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_PASS));
-		// 単語：間違い
+		// 単語：間違い #7
 		$results[] = array(
-			$dataGet->getData(49),
+			$dataGet->getData(48),
 			array('QuizAnswerSummary' => array('id' => 21)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_FAIL,
 				'score' => 0, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_FAIL));
-		// 単語：解答記入なし
+		// 単語：解答記入なし #8
 		$results[] = array(
-			$dataGet->getData(49),
+			$dataGet->getData(48),
 			array('QuizAnswerSummary' => array('id' => 19)),
 			array('correct_status' => QuizzesComponent::STATUS_GRADE_FAIL,
 				'score' => 0, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_FAIL));
 
-		// 複数単語：正解
+		// 複数単語：正解 #9
 		$results[] = array(
 			$dataGet->getData(50),
 			array('QuizAnswerSummary' => array('id' => 24)),
@@ -174,7 +176,7 @@ class QuizAnswerSaveConfirmAnswerTest extends NetCommonsModelTestCase {
 					QuizzesComponent::STATUS_GRADE_PASS . QuizzesComponent::ANSWER_DELIMITER .
 					QuizzesComponent::STATUS_GRADE_PASS . QuizzesComponent::ANSWER_DELIMITER .
 					QuizzesComponent::STATUS_GRADE_PASS));
-		// 複数単語：間違い
+		// 複数単語：間違い #10
 		$results[] = array(
 			$dataGet->getData(50),
 			array('QuizAnswerSummary' => array('id' => 23)),
@@ -183,7 +185,7 @@ class QuizAnswerSaveConfirmAnswerTest extends NetCommonsModelTestCase {
 					QuizzesComponent::STATUS_GRADE_PASS . QuizzesComponent::ANSWER_DELIMITER .
 					QuizzesComponent::STATUS_GRADE_FAIL . QuizzesComponent::ANSWER_DELIMITER .
 					QuizzesComponent::STATUS_GRADE_FAIL));
-		// 複数単語：解答記入なし
+		// 複数単語：解答記入なし #11
 		$results[] = array(
 			$dataGet->getData(50),
 			array('QuizAnswerSummary' => array('id' => 25)),
@@ -192,6 +194,21 @@ class QuizAnswerSaveConfirmAnswerTest extends NetCommonsModelTestCase {
 					QuizzesComponent::STATUS_GRADE_FAIL . QuizzesComponent::ANSWER_DELIMITER .
 					QuizzesComponent::STATUS_GRADE_FAIL . QuizzesComponent::ANSWER_DELIMITER .
 					QuizzesComponent::STATUS_GRADE_FAIL));
+		// 複数単語：順番固定：間違い #12
+		$results[] = array(
+			$orderFixQuiz,
+			array('QuizAnswerSummary' => array('id' => 24)),
+			array('correct_status' => QuizzesComponent::STATUS_GRADE_FAIL,
+				'score' => 10, 'answer_correct_status' =>
+				QuizzesComponent::STATUS_GRADE_FAIL . QuizzesComponent::ANSWER_DELIMITER .
+				QuizzesComponent::STATUS_GRADE_PASS . QuizzesComponent::ANSWER_DELIMITER .
+				QuizzesComponent::STATUS_GRADE_FAIL));
+		// 質問データが取れないエラー
+		$results[] = array(
+			$dataGet->getData(49),
+			array('QuizAnswerSummary' => array('id' => 20)),
+			array('correct_status' => QuizzesComponent::STATUS_GRADE_PASS,
+				'score' => 10, 'answer_correct_status' => QuizzesComponent::STATUS_GRADE_PASS));
 		// 記述
 		$results[] = array(
 			$dataGet->getData(51),
