@@ -41,6 +41,11 @@ class QuizAnswerValidateBehavior extends ModelBehavior {
  * @see Model::save()
  */
 	public function beforeValidate(Model $model, $options = array()) {
+		// 未記入は無条件に許す
+		// 「テスト」ですからね...わからなくて答えられないこともありますよ
+		if (empty($model->data['QuizAnswer']['answer_value'])) {
+			return true;
+		}
 		$question = $options['question'];
 		// 選択肢タイプのときは選択肢の中の答えであること
 		if (QuizzesComponent::isSelectionInputType($question['question_type'])) {
