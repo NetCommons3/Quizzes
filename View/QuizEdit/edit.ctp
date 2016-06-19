@@ -68,7 +68,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 
 			<?php echo $this->Workflow->inputComment('Quiz.status'); ?>
 		</div>
-		<?php echo $this->Wizard->workflowButtons('Quiz.status', null, null, true); ?>
+		<?php echo $this->Wizard->workflowButtons('Quiz.status', $cancelUrl['url'], null, true); ?>
 
 	<?php echo $this->NetCommonsForm->end(); ?>
 

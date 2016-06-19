@@ -21,10 +21,11 @@ echo $this->NetCommonsHtml->script(array(
 	<div class="tab-content">
 		<?php echo $this->BlockIndex->addLink('',
 		array(
-			'controller' => 'quiz',
+			'controller' => 'quizzes',
 			'action' => 'add',
 			'frame_id' => Current::read('Frame.id'),
 			'block_id' => Current::read('Block.id'),
+			'q_mode' => 'setting'
 		)); ?>
 
 		<div id="nc-quiz-setting-<?php echo Current::read('Frame.id'); ?>">
@@ -72,7 +73,8 @@ echo $this->NetCommonsHtml->script(array(
 						'controller' => 'quiz_edit',
 						'action' => 'edit_question',
 						$quiz['Quiz']['key'],
-						'frame_id' => Current::read('Frame.id')
+						'frame_id' => Current::read('Frame.id'),
+						'q_mode' => 'setting',
 						)
 					)); ?>
 

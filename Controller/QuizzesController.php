@@ -86,6 +86,17 @@ class QuizzesController extends QuizzesAppController {
 	);
 
 /**
+ * beforeFilter
+ *
+ * @return void
+ */
+	public function beforeFilter() {
+		parent::beforeFilter();
+		// ここへは設定画面の一覧から来たのか、一般画面の一覧から来たのか
+		$this->_decideSettingLayout();
+	}
+
+/**
  * index method
  *
  * @return void
@@ -151,13 +162,17 @@ class QuizzesController extends QuizzesAppController {
 				// 作成中アンケートデータをセッションキャッシュに書く
 				$this->Session->write('Quizzes.quizEdit.' . $tm, $quiz);
 				// 次の画面へリダイレクト
-				$this->redirect(NetCommonsUrl::actionUrl(array(
+				$urlArray = array(
 					'controller' => 'quiz_edit',
 					'action' => 'edit_question',
 					Current::read('Block.id'),
 					'frame_id' => Current::read('Frame.id'),
 					's_id' => $tm,
-				)));
+				);
+				if ($this->layout == 'NetCommons.setting') {
+					$urlArray['q_mode'] = 'setting';
+				}
+				$this->redirect(NetCommonsUrl::actionUrl($urlArray));
 				return;
 			} else {
 				// データに不備があった場合
@@ -178,6 +193,11 @@ class QuizzesController extends QuizzesAppController {
 				'order' => array('Quiz.modified DESC'),
 			));
 		$this->set('pastQuizzes', $pastQuizzes);
+		if ($this->layout == 'NetCommons.setting') {
+			$this->set('cancelUrl', NetCommonsUrl::backToIndexUrl('default_setting_action'));
+		} else {
+			$this->set('cancelUrl', NetCommonsUrl::backToPageUrl());
+		}
 
 		// NetCommonsお約束：投稿のデータはrequest dataに設定する
 		$this->request->data['Frame'] = Current::read('Frame');

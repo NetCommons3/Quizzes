@@ -134,6 +134,8 @@ class QuizEditController extends QuizzesAppController {
 				}
 			}
 		}
+		// ここへは設定画面の一覧から来たのか、一般画面の一覧から来たのか
+		$this->_decideSettingLayout();
 	}
 
 /**
@@ -295,7 +297,11 @@ class QuizEditController extends QuizzesAppController {
 
 		$this->Session->delete(self::QUIZ_EDIT_SESSION_INDEX . $this->_sessionIndex);
 
-		$this->redirect(NetCommonsUrl::backToPageUrl());
+		if ($this->layout == 'NetCommons.setting') {
+			$this->redirect(NetCommonsUrl::backToIndexUrl('default_setting_action'));
+		} else {
+			$this->redirect(NetCommonsUrl::backToPageUrl());
+		}
 	}
 
 /**
@@ -315,14 +321,18 @@ class QuizEditController extends QuizzesAppController {
  * @return void
  */
 	protected function _getActionUrl($method) {
-		return NetCommonsUrl::actionUrl(array(
+		$urlArray = array(
 			'controller' => Inflector::underscore($this->name),
 			'action' => $method,
 			Current::read('Block.id'),
 			$this->_getQuizKey($this->_quiz),
 			'frame_id' => Current::read('Frame.id'),
 			's_id' => $this->_getQuizEditSessionIndex()
-		));
+		);
+		if ($this->layout == 'NetCommons.setting') {
+			$urlArray['q_mode'] = 'setting';
+		}
+		return NetCommonsUrl::actionUrl($urlArray);
 	}
 
 /**
@@ -348,7 +358,13 @@ class QuizEditController extends QuizzesAppController {
 
 		$this->set('backUrl', $backUrl);
 		$this->set('formOptions', array('url' => $this->_getActionUrl($this->action), 'type' => 'post'));
-		$this->set('cancelUrl', $this->_getActionUrl('cancel'));
+		if ($this->layout == 'NetCommons.setting') {
+			$this->set('cancelUrl', array('url' => NetCommonsUrl::backToIndexUrl('default_setting_action')));
+		} else {
+			$this->set('cancelUrl', array('url' => NetCommonsUrl::backToPageUrl()));
+		}
+		$this->set('deleteUrl', array('url' => $this->_getActionUrl('delete')));
+
 		$this->set('questionTypeOptions', $this->Quizzes->getQuestionTypeOptionsWithLabel());
 		$this->set('isPublished', $isPublished);
 		$this->request->data = $Quiz;

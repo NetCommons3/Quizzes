@@ -12,13 +12,7 @@
 
 <?php echo $this->NetCommonsForm->create('Quiz', array(
 			'type' => 'delete',
-			'url' => NetCommonsUrl::actionUrl(array(
-				'controller' => 'quiz_edit',
-				'action' => 'delete',
-				'block_id' => Current::read('Block.id'),
-				'frame_id' => Current::read('Frame.id'),
-				'key' => h($this->data['Quiz']['key'])
-			))
+			'url' => $deleteUrl['url']
 		)); ?>
 
 	<?php echo $this->NetCommonsForm->hidden('Frame.id'); ?>
