@@ -225,7 +225,6 @@ class QuizAnswer extends QuizzesAppModel {
  * @throws InternalErrorException
  */
 	public function saveAnswer($data, $quiz, $summary) {
-		$this->log($data, 'debug');
 		// 回答データを保存する
 		//トランザクションBegin
 		$this->begin();

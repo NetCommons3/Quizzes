@@ -47,27 +47,30 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		// 戻り値初期化
 		$summary = false;
 		$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
-		// 未ログインの人の場合はセッションにある回答中データを参照する
-		$userId = Current::read('User.id');
-		if (empty($userId)) {
-			$session = $this->_Collection->load('Session');
-			$summaryId = $session->read('Quizzes.progressiveSummary.' . $quizKey);
-			if ($summaryId) {
-				$summary = $answerSummary->findById($summaryId);
-			}
-			return $summary;
+		// ログインユーザーといえどもセッションにあることを大前提とすべき
+		// そうしないと、時間を計るテストだというのに、DBに残っている古いデータを持ってきて続行を
+		// 許してしまう。そうすると時間計測がとんでもない時間になる
+		//$userId = Current::read('User.id');
+		//if (empty($userId)) {
+		$session = $this->_Collection->load('Session');
+		$summaryId = $session->read('Quizzes.progressiveSummary.' . $quizKey);
+		if ($summaryId) {
+			$summary = $answerSummary->findById($summaryId);
 		}
-		// ログインユーザーはDBから探す
-		$conditions = array(
-			'answer_status != ' => QuizzesComponent::ACTION_ACT,
-			'quiz_key' => $quizKey,
-			'user_id' => Current::read('User.id'),
-		);
-		$summary = $answerSummary->find('first', array(
-			'conditions' => $conditions,
-			'order' => 'QuizAnswerSummary.created ASC'	// 最も古いものを一つ選ぶ
-		));
 		return $summary;
+		//}
+		////////////////////////////////上記理由により下記ロジックはカット
+		// ログインユーザーはDBから探す
+		//$conditions = array(
+		//	'answer_status != ' => QuizzesComponent::ACTION_ACT,
+		//	'quiz_key' => $quizKey,
+		//	'user_id' => Current::read('User.id'),
+		//);
+		//$summary = $answerSummary->find('first', array(
+		//	'conditions' => $conditions,
+		//	'order' => 'QuizAnswerSummary.created ASC'	// 最も古いものを一つ選ぶ
+		//));
+		//return $summary;
 	}
 /**
  * 指定された小テストに対応する回答中サマリを作成
@@ -76,18 +79,17 @@ class QuizzesOwnAnswerQuizComponent extends Component {
  * @return progressive Answer Summary data
  */
 	public function forceGetProgressiveAnswerSummary($quiz) {
+		// とりあえず現在　回答中のデータがないか調べて
 		$summary = $this->getProgressiveSummaryOfThisUser($quiz['Quiz']['key']);
+		// 無いようだったら新たに作成する
 		if (! $summary) {
 			$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
-			$session = $this->_Collection->load('Session');
-			$summary = $answerSummary->forceGetProgressiveAnswerSummary(
-				$quiz, Current::read('User.id'),
-				$session->id()
-			);
-			if ($summary) {
+			// スタート
+			$summaryId = $answerSummary->saveStartSummary($quiz);
+			if ($summaryId) {
 				$this->saveProgressiveSummaryOfThisUser(
 					$quiz['Quiz']['key'],
-					$summary['QuizAnswerSummary']['id']
+					$summaryId
 				);
 			}
 		}
@@ -218,12 +220,15 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		} else {
 			$this->__ownAnsweredCounts[$quizKey] = 1;
 		}
+		// 回答中アンケートからは削除しておく
+		$this->deleteProgressiveSummaryOfThisUser($quizKey);
+
 		// ログイン状態の人の場合はこれ以上の処理は不要
 		$userId = Current::read('User.id');
 		if (! empty($userId)) {
 			return;
 		}
-		// 未ログインの人の場合はセッションに書いておく
+		// 未ログイン：セッションに書いておく
 		$session = $this->_Collection->load('Session');
 		$blockId = Current::read('Block.id');
 		$session->write(
@@ -231,7 +236,5 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 			$this->__ownAnsweredCounts
 		);
 
-		// 回答中アンケートからは削除しておく
-		$this->deleteProgressiveSummaryOfThisUser($quizKey);
 	}
 }

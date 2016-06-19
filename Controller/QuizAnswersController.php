@@ -206,11 +206,12 @@ class QuizAnswersController extends QuizzesAppController {
 				// スタートしたことをセッションに記載
 				$this->QuizzesAnswerStart->saveStartQuizOfThisUser($quizKey);
 
-				// 回答サマリレコードを作成
-				$summaryId = $this->QuizAnswerSummary->saveStartSummary($quiz);
+				// 回答サマリレコードを取得、または作成
+				//$summaryId = $this->QuizAnswerSummary->saveStartSummary($quiz);
+				$this->QuizzesOwnAnswerQuiz->forceGetProgressiveAnswerSummary($quiz);
 
 				// 回答サマリIDをセッションに記録
-				$this->QuizzesOwnAnswerQuiz->saveProgressiveSummaryOfThisUser($quizKey, $summaryId);
+				///////$this->QuizzesOwnAnswerQuiz->saveProgressiveSummaryOfThisUser($quizKey, $summaryId);
 
 				// ページランダム表示対応
 				$this->QuizzesShuffle->shufflePage($quiz);

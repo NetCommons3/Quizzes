@@ -792,7 +792,7 @@ msgstr "※非会員の回答は履歴管理が不可能なため全て１度だ
 
 #: View/QuizResult/index.ctp:139 View/QuizResult/view.ctp:120
 msgid "Back to the quiz top"
-msgstr "小テストTOPへ"
+msgstr "戻る"
 
 #: View/QuizResult/view.ctp:36
 msgid "%s 's grade"
