@@ -102,6 +102,7 @@ class QuizAnswerSaveConfirmAnswerTest extends NetCommonsModelTestCase {
  *  - data 登録データ
  *
  * @return array テストデータ
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 	public function dataProviderSave() {
 		$dataGet = new QuizDataGetTest();
