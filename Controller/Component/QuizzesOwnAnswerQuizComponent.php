@@ -235,6 +235,5 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 			'Quizzes.ownAnsweredQuizKeys.' . $blockId,
 			$this->__ownAnsweredCounts
 		);
-
 	}
 }
