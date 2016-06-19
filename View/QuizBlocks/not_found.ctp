@@ -16,7 +16,7 @@
     <?php echo $this->BlockIndex->notFoundDescription(); ?>
 
     <div class="tab-content">
-        <div class="pull-right">
+        <div class="text-right clearfix">
             <?php echo $this->element('Quizzes.Quizzes/add_button'); ?>
         </div>
 
