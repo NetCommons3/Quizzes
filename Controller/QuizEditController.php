@@ -245,9 +245,24 @@ class QuizEditController extends QuizzesAppController {
 			}
 			// 成功時 セッションに書き溜めた編集情報を削除
 			$this->Session->delete(self::QUIZ_EDIT_SESSION_INDEX . $this->_getQuizEditSessionIndex());
-			// ページトップへリダイレクト
-			$this->redirect(NetCommonsUrl::backToPageUrl());
-
+			if ($this->layout == 'NetCommons.setting') {
+				$this->redirect(NetCommonsUrl::backToIndexUrl('default_setting_action'));
+			} else {
+				// 回答画面（詳細）へリダイレクト
+				if ($saveQuiz['Quiz']['status'] == WorkflowComponent::STATUS_PUBLISHED) {
+					$action = 'view';
+				} else {
+					$action = 'test_mode';
+				}
+				$urlArray = array(
+					'controller' => 'quiz_answers',
+					'action' => $action,
+					Current::read('Block.id'),
+					$this->_getQuizKey($saveQuiz),
+					'frame_id' => Current::read('Frame.id'),
+				);
+				$this->redirect(NetCommonsUrl::actionUrl($urlArray));
+			}
 		} else {
 			// 指定されて取り出したアンケートデータをセッションキャッシュに書く
 			$this->Session->write($this->_getQuizEditSessionIndex(), $this->_quiz);

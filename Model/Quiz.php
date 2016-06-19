@@ -566,7 +566,7 @@ class Quiz extends QuizzesAppModel {
 			CakeLog::error($ex);
 			throw $ex;
 		}
-		return $quiz;
+		return $saveQuiz;
 	}
 
 /**
