@@ -817,7 +817,7 @@ msgid "Score history"
 msgstr ""
 
 #: View/QuizResult/view.ctp:53
-msgid "Grade history"
+msgid "Answer history"
 msgstr ""
 
 #: View/QuizResult/view.ctp:58
@@ -921,4 +921,9 @@ msgstr ""
 msgid "Please set correct answer."
 msgstr ""
 msgid "You can download only the issued quiz data."
+msgstr ""
+
+msgid "no answer history."
+msgstr ""
+msgid "! Answer has not been completed will not be able to see the details ."
 msgstr ""

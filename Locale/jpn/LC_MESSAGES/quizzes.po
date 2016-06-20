@@ -364,7 +364,7 @@ msgstr "表示順"
 
 #: View/Elements/QuizResult/overall_performance.ctp:15
 msgid "If you allow repeat examination , data is based on the last answer ."
-msgstr "※繰り返し受験を認めている場合は、データは全て直近の回答をもとに算出しています。"
+msgstr "※繰り返し受験を認めている場合は、データは各解答者の直近の回答をもとに算出しています。"
 
 #: View/Elements/QuizResult/overall_performance.ctp:19
 msgid "Overall performance"
@@ -804,8 +804,8 @@ msgid "Score history"
 msgstr "得点推移"
 
 #: View/QuizResult/view.ctp:53
-msgid "Grade history"
-msgstr "成績履歴"
+msgid "Answer history"
+msgstr "解答履歴"
 
 #: View/QuizResult/view.ctp:58
 msgid "Complete"
@@ -913,3 +913,8 @@ msgstr "正解を設定してください。"
 
 msgid "You can download only the issued quiz data."
 msgstr "CSVやテンプレートのダウンロードができるのは発行済みの小テストだけです。"
+
+msgid "no answer history."
+msgstr "解答履歴がありません。"
+msgid "! Answer has not been completed will not be able to see the details ."
+msgstr "※完了していない解答は詳細を見ることはできません。"

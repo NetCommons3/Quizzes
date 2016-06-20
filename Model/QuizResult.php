@@ -119,6 +119,7 @@ class QuizResult extends QuizzesAppModel {
 			'fields' => array('MAX(id) AS summary_id'),
 			'conditions' => array(
 				'quiz_key' => $quiz['Quiz']['key'],
+				//'answer_status' => QuizzesComponent::ACTION_ACT,
 				'NOT' => array(
 					'user_id' => null,
 				)
@@ -256,7 +257,7 @@ class QuizResult extends QuizzesAppModel {
  */
 	public function getPaginateOptions() {
 		$opt = array(
-			'fields' => array('QuizAnswerSummary.*', 'User.*', 'Statistics.*'),
+			'fields' => array('QuizAnswerSummary.*', 'User.*', 'Statistics.*', 'LastAnswer.*'),
 			'joins' => $this->_getJoins(),
 			'conditions' => array(
 				'QuizAnswerSummary.quiz_key' => $this->_quiz['Quiz']['key'],
@@ -275,17 +276,55 @@ class QuizResult extends QuizzesAppModel {
  */
 	protected function _getJoins() {
 		$subQuery = $this->_getSubQuery($this->_quiz['Quiz']['key']);
+		$subQueryLast = $this->_getSubQueryLastAnswer($this->_quiz['Quiz']['key']);
 		$joins = array(
 			array(
 				'table' => "({$subQuery})",
 				'alias' => 'Statistics',
 				'type' => 'LEFT',
 				'conditions' => array(
-					'QuizAnswerSummary.id = Statistics.id',
+					'CASE WHEN Statistics.user_id IS NULL ' .
+					' THEN QuizAnswerSummary.id = Statistics.id' .
+					' ELSE QuizAnswerSummary.user_id = Statistics.user_id' .
+					' END',
+				),
+			),
+			array(
+				'table' => "({$subQueryLast})",
+				'alias' => 'LastAnswer',
+				'type' => 'LEFT',
+				'conditions' => array(
+					'Statistics.id = LastAnswer.id',
 				),
 			),
 		);
 		return $joins;
+	}
+/**
+ * サブクエリ 直近の回答
+ *
+ * @param array $quizKey 小テストキー
+ * @return string サブクエリ文字列
+ */
+	protected function _getSubQueryLastAnswer($quizKey) {
+		$db = $this->QuizAnswerSummary->getDataSource();
+		$subQuery = $db->buildStatement(array(
+			'fields' => array(
+				'user_id',
+				'id',
+				'summary_score',
+				'is_grade_finished',
+			),
+			'table' => $db->fullTableName($this->QuizAnswerSummary),
+			'alias' => 'LastAnswer',
+			'conditions' => array(
+				'quiz_key' => $quizKey,
+				'answer_status' => QuizzesComponent::ACTION_ACT,
+			),
+		),
+			$this->QuizAnswerSummary
+		);
+		return $subQuery;
 	}
 /**
  * サブクエリ
@@ -297,6 +336,7 @@ class QuizResult extends QuizzesAppModel {
 		$db = $this->QuizAnswerSummary->getDataSource();
 		$subQuery = $db->buildStatement(array(
 			'fields' => array(
+				'user_id',
 				'MAX(id) AS id',
 				'MAX(passing_status) as passing_status',
 				'MAX(within_time_status) as within_time_status',
@@ -307,39 +347,15 @@ class QuizResult extends QuizzesAppModel {
 			),
 			'table' => $db->fullTableName($this->QuizAnswerSummary),
 			'alias' => 'Statistics',
-			'group' => array('user_id'),
+			'group' => array('CASE WHEN user_id IS NULL THEN id ELSE user_id END'),
 			'conditions' => array(
 				'Statistics.quiz_key' => $quizKey,
-				'NOT' => array(
-					'Statistics.user_id' => null,
-				),
+				'answer_status' => QuizzesComponent::ACTION_ACT,
 			),
 		),
 			$this->QuizAnswerSummary
 		);
 		$query = $subQuery;
-		$query .= ' UNION ';
-		$subQuery = $db->buildStatement(array(
-			'fields' => array(
-				'MAX(id) AS id',
-				'MAX(passing_status) as passing_status',
-				'MAX(within_time_status) as within_time_status',
-				'AVG(elapsed_second) as avg_elapsed_second',
-				'MAX(summary_score) as max_score',
-				'MIN(summary_score) as min_score',
-				'MIN(passing_status) as not_scoring',
-			),
-			'table' => $db->fullTableName($this->QuizAnswerSummary),
-			'alias' => 'Statistics',
-			'group' => array('id'),
-			'conditions' => array(
-				'Statistics.quiz_key' => $quizKey,
-				'Statistics.user_id' => null,
-			),
-		),
-			$this->QuizAnswerSummary
-		);
-		$query .= $subQuery;
 		return $query;
 	}
 }

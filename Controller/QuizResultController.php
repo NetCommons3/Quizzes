@@ -154,11 +154,18 @@ class QuizResultController extends QuizzesAppController {
  */
 	public function view() {
 		$quiz = $this->__quiz;
+
 		// 権限が編集者でないなら 自分自身のデータであることが必要
 		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
 
 		// サマリID
 		$summaryId = null;
+		// 基本的には自分の履歴を見ようとしていることが前提
+		// （テスト一覧から結果を見ようとしている＝つまり編集権限は無し、自分のデータを見るパターン
+		// サマリIDが指定されているときだけが、前提から異なる可能性があるパターン
+		$userId = Current::read('User.id');
+		$handleName = Current::read('User.handlename');
+
 		if (isset($this->params['pass'][2])) {
 			$summaryId = $this->params['pass'][2];
 			$summary = $this->QuizAnswerSummary->findById($summaryId);
@@ -166,17 +173,10 @@ class QuizResultController extends QuizzesAppController {
 				$this->setAction('throwBadRequest');
 			}
 			$userId = $summary['QuizAnswerSummary']['user_id'];
-			// ハンドル名取得
-			if (isset($summary['User']['handlename'])) {
-				$handleName = $summary['User']['handlename'];
-			} else {
-				$handleName = Current::read('User.handlename');
-			}
-		} else {
-			// サマリの指定がないということは
-			// テスト一覧からいきなり結果を見ようとしているということ
-			// つまり編集権限はなくって、自分のデータを見たい人ということ
-			$userId = Current::read('User.id');
+			$handleName = $summary['User']['handlename'];
+		}
+
+		if (! $handleName) {
 			$handleName = __d('quizzes', 'Guest');
 		}
 
@@ -196,18 +196,19 @@ class QuizResultController extends QuizzesAppController {
 		// そのサマリIDに該当する人物のサマリ履歴を取得する
 		$scoreHistory = $this->_getScoreHistory($quiz, $userId, $summaryId);
 
+		$conditions = array(
+			'quiz_key' => $quiz['Quiz']['key'],
+		);
 		if ($userId) {
-			$conditions = array(
-				'quiz_key' => $quiz['Quiz']['key'],
-				'user_id' => $userId,
-			);
+			$conditions['user_id'] = $userId;
 		} else {
-			// FUJI
-			// 未ログイン者もしかして、自分のを見てるんだったら回答済みリストで取り出した方がよいか
-			$conditions = array(
-				'quiz_key' => $quiz['Quiz']['key'],
-				'id' => $summaryId
-			);
+			// 非会員
+			// サマリID指定
+			if ($summaryId) {
+				$conditions['id'] = $summaryId;
+			} else {
+				$conditions['id'] = $this->QuizzesOwnAnswer->getAnsweredSummaryIds();
+			}
 		}
 		$this->paginate = array(
 			'conditions' => $conditions,
@@ -219,6 +220,7 @@ class QuizResultController extends QuizzesAppController {
 		$summaryList = $this->paginate('QuizAnswerSummary');
 
 		$this->set('quiz', $quiz);
+		$this->set('userId', $userId);
 		$this->set('handleName', $handleName);
 		$this->set('general', $general);
 		$this->set('summaryList', $summaryList);
@@ -246,21 +248,15 @@ class QuizResultController extends QuizzesAppController {
  * @return array
  */
 	protected function _getScoreHistory($quiz, $userId, $summaryId) {
-		if ($userId) {
-			$conditions = array(
-				'quiz_key' => $quiz['Quiz']['key'],
-				//'is_grade_finished' => true,
-				'user_id' => $userId,
-			);
-		} else {
-			// FUJI
-			// 未ログイン者もしかして、自分のを見てるんだったら回答済みリストで取り出した方がよいか
-			$conditions = array(
-				'quiz_key' => $quiz['Quiz']['key'],
-				//'is_grade_finished' => true,
-				'id' => $summaryId
-			);
+		if (! $userId) {
+			// 非会員データの場合は履歴を持たない（１回限り
+			return false;
 		}
+		$conditions = array(
+			'quiz_key' => $quiz['Quiz']['key'],
+			//'is_grade_finished' => true,
+			'user_id' => $userId,
+		);
 		$scoreHistory = $this->QuizAnswerSummary->find('all', array(
 			'fields' => array('answer_number', 'summary_score', 'is_grade_finished'),
 			'conditions' => $conditions,

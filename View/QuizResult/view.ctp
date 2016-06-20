@@ -29,14 +29,16 @@ if ($scoreHistory) {
 <article ng-controller="QuizResultView" ng-init="initialize(<?php echo h(json_encode($jsScoreHistory)); ?>)">
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
 
-	<?php if ($scoreHistory): ?>
-		<h2>
-			<?php echo
+	<?php echo $this->element('Quizzes.QuizResult/overall_performance'); ?>
+
+	<h2>
+		<?php echo
 				sprintf(
 					__d('quizzes', '%s \'s grade'), // %sさんの成績
 					$handleName
 				); ?>
-		</h2>
+	</h2>
+	<?php if ($scoreHistory): ?>
 		<section>
 			<h3>
 				<?php echo __d('quizzes', 'Score history'); /* 得点推移 */ ?>
@@ -45,19 +47,32 @@ if ($scoreHistory) {
 		</section>
 	<?php endif; ?>
 
-	<?php echo $this->element('Quizzes.QuizResult/overall_performance'); ?>
-
 	<?php if ($summaryList): ?>
 	<section>
+		<span class="pull-right help-block">
+			<?php if (! $userId): ?>
+				<?php /* ※非会員の回答データは履歴としての管理ができないため、全て第一回回答として扱われます。*/
+				echo __d('quizzes', '! not logged answer in has been treated as a solution of the only all once because it is impossible to history management .'); ?>
+			<?php endif; ?>
+			<?php /* ※完了していない解答は詳細をみることはできません。*/
+				echo __d('quizzes', '! Answer has not been completed will not be able to see the details .'); ?>
+		</span>
 	<h3>
-		<?php echo __d('quizzes', 'Grade history'); /* 成績履歴 */ ?>
+		<?php echo __d('quizzes', 'Answer history'); /* 解答履歴 */ ?>
 	</h3>
+	<div class="clearfix"></div>
 	<?php echo $this->TableList->startTable(); ?>
 		<tr >
 			<?php echo $this->TableList->tableHeader('QuizAnswerSummary.answer_number', __d('quizzes', 'Number'), array('type' => 'numeric', 'sort' => true));/* 回 */ ?>
 			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Complete'), array('type' => 'center', 'sort' => false));/* 完答 */ ?>
-			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'Pass'), array('type' => 'center', 'sort' => false));/* 合格 */ ?>
-			<?php echo $this->TableList->tableHeader('', __d('quizzes', 'In time'), array('type' => 'center', 'sort' => false));/* 時間内 */ ?>
+			<?php if ($quiz['Quiz']['passing_grade'] > 0) {
+				echo $this->TableList->tableHeader('', __d('quizzes', 'Pass'), array('type' => 'center', 'sort' => false));/* 合格 */
+									}
+			?>
+			<?php if ($quiz['Quiz']['estimated_time'] > 0) {
+				echo $this->TableList->tableHeader('', __d('quizzes', 'In time'), array('type' => 'center', 'sort' => false));/* 時間内 */
+									}
+			?>
 			<?php echo $this->TableList->tableHeader('QuizAnswerSummary.answer_finish_time', __d('quizzes', 'Date'), array('type' => 'datetime', 'sort' => true));/* 日時 */ ?>
 			<?php echo $this->TableList->tableHeader('QuizAnswerSummary.elapsed_second', __d('quizzes', 'Elapsed'), array('type' => 'numeric', 'sort' => true));/* 時間 */ ?>
 			<?php echo $this->TableList->tableHeader('QuizAnswerSummary.summary_score', __d('quizzes', 'Score'), array('type' => 'numeric', 'sort' => true));/* 得点 */ ?>
@@ -68,25 +83,23 @@ if ($scoreHistory) {
 			<tr class="<?php echo $this->QuizResult->getPassClass($quiz, $summary); ?>" >
 				<?php
 				echo $this->TableList->tableData('',
-				$this->NetCommonsHtml->link($summary['QuizAnswerSummary']['answer_number'], NetCommonsUrl::actionUrl(array(
-					'plugin' => 'quizzes',
-					'controller' => 'quiz_answers',
-					'action' => 'grading',
-					'block_id' => Current::read('Block.id'),
-					'key' => $quiz['Quiz']['key'],
-					$summary['QuizAnswerSummary']['id'],
-					'frame_id' => Current::read('Frame.id')
-				))),
+				$this->QuizResult->getGradingLink($quiz, $summary),
 				array('type' => 'numeric', 'escape' => false)); ?>
 				<?php echo $this->TableList->tableData('',
 					$this->QuizResult->getComplete($quiz, $summary),
 					array('type' => 'center', 'escape' => false)); ?>
-				<?php echo $this->TableList->tableData('',
-					$this->QuizResult->getPassing($quiz, $summary),
-					array('type' => 'center', 'escape' => false)); ?>
-				<?php echo $this->TableList->tableData('',
-					$this->QuizResult->getWithinTime($quiz, $summary),
-					array('type' => 'center', 'escape' => false)); ?>
+				<?php if ($quiz['Quiz']['passing_grade'] > 0) {
+					echo $this->TableList->tableData('',
+						$this->QuizResult->getPassing($quiz, $summary),
+						array('type' => 'center', 'escape' => false));
+										}
+				?>
+				<?php if ($quiz['Quiz']['estimated_time'] > 0) {
+					echo $this->TableList->tableData('',
+						$this->QuizResult->getWithinTime($quiz, $summary),
+						array('type' => 'center', 'escape' => false));
+										}
+				?>
 				<?php echo $this->TableList->tableData('',
 					$summary['QuizAnswerSummary']['answer_finish_time'],
 					array('type' => 'datetime')); ?>
@@ -100,7 +113,7 @@ if ($scoreHistory) {
 					$this->QuizResult->getStdScore($general, $summary),
 					array('type' => 'numeric')); ?>
 				<td class="text-center">
-					<?php if (! $summary['QuizAnswerSummary']['is_grade_finished']): ?>
+					<?php if ($summary['QuizAnswerSummary']['answer_status'] == QuizzesComponent::ACTION_ACT && ! $summary['QuizAnswerSummary']['is_grade_finished']): ?>
 						<span class="label label-danger">
 							<?php echo __d('quizzes', 'Ungraded'); /* 未採点あり */ ?>
 						</span>
@@ -113,6 +126,8 @@ if ($scoreHistory) {
 	<?php echo $this->element('NetCommons.paginator'); ?>
 
 	</section>
+	<?php else: ?>
+		<?php echo __d('quizzes', 'no answer history.'); ?>
 	<?php endif; ?>
 
 	<div class="text-center">

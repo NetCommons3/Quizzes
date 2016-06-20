@@ -52,6 +52,16 @@ class QuizResultHelper extends AppHelper {
 		return $this->NetCommonsHtml->link($userName, $url);
 	}
 /**
+ * 解答回数
+ *
+ * @param array $quiz 小テストデータ
+ * @param array $summary 回答サマリ
+ * @return string 解答した回数
+ */
+	public function getAnswerNumber($quiz, $summary) {
+		return $summary['QuizAnswerSummary']['answer_number'];
+	}
+/**
  * 合格チェック
  *
  * @param array $quiz 小テストデータ
@@ -133,7 +143,7 @@ class QuizResultHelper extends AppHelper {
 	public function getAvgElapsed($quiz, $summary) {
 		if (is_null($summary['Statistics']['avg_elapsed_second'])) {
 			//$second = $summary['QuizAnswerSummary']['elapsed_second'];
-			return '';
+			return '-';
 		} else {
 			$second = $summary['Statistics']['avg_elapsed_second'];
 		}
@@ -147,10 +157,15 @@ class QuizResultHelper extends AppHelper {
  * @return string 得点
  */
 	public function getScore($summary) {
-		if ($summary['QuizAnswerSummary']['is_grade_finished'] == false) {
+		if (isset($summary['LastAnswer'])) {
+			$data = $summary['LastAnswer'];
+		} else {
+			$data = $summary['QuizAnswerSummary'];
+		}
+		if ($data['is_grade_finished'] == false) {
 			return '-';
 		}
-		return $summary['QuizAnswerSummary']['summary_score'];
+		return $data['summary_score'];
 	}
 /**
  * 直近の偏差値
@@ -160,7 +175,12 @@ class QuizResultHelper extends AppHelper {
  * @return string 偏差値
  */
 	public function getStdScore($general, $summary) {
-		if ($summary['QuizAnswerSummary']['is_grade_finished'] == false) {
+		if (isset($summary['LastAnswer'])) {
+			$data = $summary['LastAnswer'];
+		} else {
+			$data = $summary['QuizAnswerSummary'];
+		}
+		if ($data['is_grade_finished'] == false) {
 			return '-';
 		}
 		$variance = $general['general']['samp_score'];
@@ -169,10 +189,38 @@ class QuizResultHelper extends AppHelper {
 		if ($std == 0) {
 			$stdScore = 50;
 		} else {
-			$stdDiv = ($summary['QuizAnswerSummary']['summary_score'] - $avg) * 10 / $std;
+			$stdDiv = ($data['summary_score'] - $avg) * 10 / $std;
 			$stdScore = 50 + $stdDiv;
 		}
 		return round($stdScore);
+	}
+/**
+ * 最高点
+ *
+ * @param array $quiz 小テストデータ
+ * @param array $summary 回答サマリ
+ * @return string 最高点
+ */
+	public function getMaxScore($quiz, $summary) {
+		if (is_null($summary['Statistics']['max_score'])) {
+			return '-';
+		} else {
+			return $summary['Statistics']['max_score'];
+		}
+	}
+/**
+ * 最低点
+ *
+ * @param array $quiz 小テストデータ
+ * @param array $summary 回答サマリ
+ * @return string 最低点
+ */
+	public function getMinScore($quiz, $summary) {
+		if (is_null($summary['Statistics']['min_score'])) {
+			return '-';
+		} else {
+			return $summary['Statistics']['min_score'];
+		}
 	}
 /**
  * 未採点チェック
@@ -182,12 +230,13 @@ class QuizResultHelper extends AppHelper {
  * @return string 合格状態
  */
 	public function getNotScoring($quiz, $summary) {
+		$value = null;
 		if (! is_null($summary['Statistics']['not_scoring'])) {
 			$value = $summary['Statistics']['not_scoring'];
-		} else {
+		} elseif ($summary['QuizAnswerSummary']['answer_status'] == QuizzesComponent::ACTION_ACT) {
 			$value = $summary['QuizAnswerSummary']['passing_status'];
 		}
-		if ($value == QuizzesComponent::STATUS_GRADE_YET) {
+		if ($value === QuizzesComponent::STATUS_GRADE_YET) {
 			return '<span class="label label-danger">' . __d('quizzes', 'Not Scoring') . '</span>';
 		}
 		return '';
@@ -210,7 +259,7 @@ class QuizResultHelper extends AppHelper {
  *
  * @param array $quiz 小テストデータ
  * @param array $summary 回答サマリ
- * @return string 平均所要時間
+ * @return string 所要時間
  */
 	public function getElapsed($quiz, $summary) {
 		$second = $summary['QuizAnswerSummary']['elapsed_second'];
@@ -232,5 +281,29 @@ class QuizResultHelper extends AppHelper {
 			$value = $summary['QuizAnswerSummary'][$fieldName];
 		}
 		return $value;
+	}
+/**
+ * 採点結果画面へのリンク取得
+ *
+ * @param array $quiz 小テストデータ
+ * @param array $summary 回答サマリ
+ * @return string リンク
+ */
+	public function getGradingLink($quiz, $summary) {
+		if ($summary['QuizAnswerSummary']['answer_status'] != QuizzesComponent::ACTION_ACT) {
+			return $summary['QuizAnswerSummary']['answer_number'];
+		}
+		$link = $this->NetCommonsHtml->link(
+			$summary['QuizAnswerSummary']['answer_number'],
+			NetCommonsUrl::actionUrl(array(
+				'plugin' => 'quizzes',
+				'controller' => 'quiz_answers',
+				'action' => 'grading',
+				'block_id' => Current::read('Block.id'),
+				'key' => $quiz['Quiz']['key'],
+				$summary['QuizAnswerSummary']['id'],
+				'frame_id' => Current::read('Frame.id')
+		)));
+		return $link;
 	}
 }
