@@ -593,6 +593,8 @@ msgstr ""
 #: View/QuizAnswers/start.ctp:26
 msgid "Start quiz. When you are ready , press the \"Start the quiz\" button and  start the quiz ."
 msgstr ""
+msgid "If you still have the data in the answer , the test will be resumed."
+msgstr ""
 
 #: View/QuizAnswers/start.ctp:39
 msgid "Start the quiz"

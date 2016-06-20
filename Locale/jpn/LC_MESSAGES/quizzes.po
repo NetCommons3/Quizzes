@@ -587,7 +587,8 @@ msgstr "戻る"
 #: View/QuizAnswers/start.ctp:26
 msgid "Start quiz. When you are ready , press the \"Start the quiz\" button and  start the quiz ."
 msgstr "これから小テストを始めます。用意ができたら下の「テストを開始する」ボタンを押して、テストを開始してください。"
-
+msgid "If you still have the data in the answer , the test will be resumed."
+msgstr "※回答中のデータが残っている場合には、テストは再開となります。"
 #: View/QuizAnswers/start.ctp:39
 msgid "Start the quiz"
 msgstr "テストを開始する"
