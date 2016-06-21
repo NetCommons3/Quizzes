@@ -32,6 +32,7 @@ class QuizzesOwnAnswerQuizComponent extends Component {
  * Answered quiz keys
  *
  * 回答済み小テスト回答数
+ * 小テストキーを配列のキーにして、それぞれの値はこれまでの回答数
  *
  * @var array
  */
@@ -41,7 +42,7 @@ class QuizzesOwnAnswerQuizComponent extends Component {
  * 指定された小テストに該当する回答中小テストのサマリを取得する
  *
  * @param string $quizKey 回答済に追加する小テストキー
- * @return progressive Answer Summary id list
+ * @return progressive Answer Summary data
  */
 	public function getProgressiveSummaryOfThisUser($quizKey) {
 		// 戻り値初期化
@@ -73,31 +74,6 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		//return $summary;
 	}
 /**
- * 指定された小テストに対応する回答中サマリを作成
- *
- * @param array $quiz 小テスト
- * @return progressive Answer Summary data
- */
-	public function forceGetProgressiveAnswerSummary($quiz) {
-		// とりあえず現在　回答中のデータがないか調べて
-		$summary = $this->getProgressiveSummaryOfThisUser($quiz['Quiz']['key']);
-		// 無いようだったら新たに作成する
-		if (! $summary) {
-			$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
-			// スタート
-			$summaryId = $answerSummary->saveStartSummary($quiz);
-			if ($summaryId) {
-				$this->saveProgressiveSummaryOfThisUser(
-					$quiz['Quiz']['key'],
-					$summaryId
-				);
-			}
-		}
-
-		return $summary;
-	}
-
-/**
  * 指定された小テストのサマリIDを回答中サマリIDとしてセッションに記録
  *
  * @param string $quizKey 回答中の小テストキー
@@ -117,6 +93,31 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 	public function deleteProgressiveSummaryOfThisUser($quizKey) {
 		$session = $this->_Collection->load('Session');
 		$session->delete('Quizzes.progressiveSummary.' . $quizKey);
+	}
+/**
+ * 指定された小テストに対応する回答中サマリを作成
+ *
+ * @param array $quiz 小テスト
+ * @return progressive Answer Summary data
+ */
+	public function forceGetProgressiveSummaryOfThisUser($quiz) {
+		// とりあえず現在　回答中のデータがないか調べて
+		$summary = $this->getProgressiveSummaryOfThisUser($quiz['Quiz']['key']);
+		// 無いようだったら新たに作成する
+		if (! $summary) {
+			$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
+			// スタート
+			$summaryId = $answerSummary->saveStartSummary($quiz);
+			if ($summaryId) {
+				$this->saveProgressiveSummaryOfThisUser(
+					$quiz['Quiz']['key'],
+					$summaryId
+				);
+				$summary = $answerSummary->findById($summaryId);
+			}
+		}
+
+		return $summary;
 	}
 
 /**

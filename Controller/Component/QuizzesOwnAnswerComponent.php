@@ -58,6 +58,7 @@ class QuizzesOwnAnswerComponent extends Component {
 			'answer_status' => QuizzesComponent::ACTION_ACT,
 			'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM,
 		);
+
 		$answerSummaryIds = $answerSummary->find(
 			'list',
 			array(

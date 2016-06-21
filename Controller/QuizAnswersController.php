@@ -208,7 +208,7 @@ class QuizAnswersController extends QuizzesAppController {
 
 				// 回答サマリレコードを取得、または作成
 				//$summaryId = $this->QuizAnswerSummary->saveStartSummary($quiz);
-				$this->QuizzesOwnAnswerQuiz->forceGetProgressiveAnswerSummary($quiz);
+				$this->QuizzesOwnAnswerQuiz->forceGetProgressiveSummaryOfThisUser($quiz);
 
 				// 回答サマリIDをセッションに記録
 				///////$this->QuizzesOwnAnswerQuiz->saveProgressiveSummaryOfThisUser($quizKey, $summaryId);
