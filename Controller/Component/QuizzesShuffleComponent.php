@@ -59,6 +59,9 @@ class QuizzesShuffleComponent extends Component {
 		$session = $this->_Collection->load('Session');
 		$sessionPath = 'Quizzes.quizShuffles.' . $quiz['Quiz']['key'] . '.QuizPage';
 		$pages = $session->read($sessionPath);
+		if (! $pages) {
+			$pages = $quiz['QuizPage'];
+		}
 		foreach ($pages as $index => $page) {
 			if ($page['page_sequence'] == $nowPageSeq) {
 				if (isset($pages[$index + 1])) {
@@ -83,14 +86,14 @@ class QuizzesShuffleComponent extends Component {
 		$session = $this->_Collection->load('Session');
 		foreach ($quiz['QuizPage'] as &$page) {
 			foreach ($page['QuizQuestion'] as &$q) {
+				if (! QuizzesComponent::isSelectionInputType($q['question_type'])) {
+					continue;
+				}
 				$choices = $q['QuizChoice'];
 				if ($q['is_choice_random'] == QuizzesComponent::USES_USE) {
 					$sessionPath =
-						'Quizzes.quizShuffles.' .
-						$quiz['Quiz']['key'] .
-						'.QuizQuestion.' .
-						$q['key'] .
-						'.QuizChoice';
+						'Quizzes.quizShuffles.' . $quiz['Quiz']['key'] .
+						'.QuizQuestion.' . $q['key'] . '.QuizChoice';
 					if ($session->check($sessionPath)) {
 						$choices = $session->read($sessionPath);
 					} else {

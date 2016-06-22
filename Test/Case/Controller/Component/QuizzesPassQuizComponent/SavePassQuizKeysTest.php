@@ -1,6 +1,6 @@
 <?php
 /**
- * QuizzesOwnAnswerQuizComponent::saveOwnAnsweredKeys()のテスト
+ * QuizzesPassQuizComponent::savePassQuizKeys()のテスト
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author AllCreator <info@allcreator.net>
@@ -13,12 +13,12 @@ App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
 App::uses('QuizzesComponent', 'Quizzes.Controller/Component');
 
 /**
- * QuizzesOwnAnswerQuizComponent::saveOwnAnsweredKeys()のテスト
+ * QuizzesPassQuizComponent::savePassQuizKeys()のテスト
  *
  * @author AllCreator <info@allcreator.net>
- * @package NetCommons\Quizzes\Test\Case\Controller\Component\QuizzesOwnAnswerQuizComponent
+ * @package NetCommons\Quizzes\Test\Case\Controller\Component\QuizzesPassQuizComponent
  */
-class QuizzesOwnAnswerQuizComponentSaveOwnAnsweredKeysTest extends NetCommonsControllerTestCase {
+class QuizzesPassQuizComponentSavePassQuizKeysTest extends NetCommonsControllerTestCase {
 
 /**
  * Fixtures
@@ -67,48 +67,48 @@ class QuizzesOwnAnswerQuizComponentSaveOwnAnsweredKeysTest extends NetCommonsCon
 	}
 
 /**
- * saveOwnAnsweredKeys()のテスト
+ * savePassQuizKeys()のテスト
  *
  * @return void
  */
-	public function testSaveOwnAnsweredKeys() {
+	public function testSavePassQuizKeys() {
 		//テストコントローラ生成
-		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerQuizComponent');
+		$this->generateNc('TestQuizzes.TestQuizzesPassQuizComponent');
 
 		//ログイン
 		TestAuthGeneral::login($this);
 
 		//テストアクション実行
-		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_quiz_component/index',
+		$this->_testGetAction('/test_quizzes/test_quizzes_pass_quiz_component/index',
 				array('method' => 'assertNotEmpty'), null, 'view');
-		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesOwnAnswerQuizComponent', '/') . '/';
+		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesPassQuizComponent', '/') . '/';
 		$this->assertRegExp($pattern, $this->view);
 
 		//テスト実行
-		$this->controller->QuizzesOwnAnswerQuiz->saveOwnAnsweredKeys('quiz_1');
+		$this->controller->QuizzesPassQuiz->savePassQuizKeys('quiz_1');
+		$result = $this->controller->QuizzesPassQuiz->checkPassQuizKeys('quiz_1');
+		$this->assertTrue($result);
 	}
 /**
- * saveOwnAnsweredKeys()のテスト
+ * savePassQuizKeys()のテスト
  *
  * @return void
  */
-	public function testSaveOwnAnsweredKeysNoLogin() {
+	public function testSavePassQuizKeysNoLogin() {
 		//テストコントローラ生成
-		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerQuizComponent');
+		$this->generateNc('TestQuizzes.TestQuizzesPassQuizComponent');
 
 		//テストアクション実行
-		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_quiz_component/index',
+		$this->_testGetAction('/test_quizzes/test_quizzes_pass_quiz_component/index',
 			array('method' => 'assertNotEmpty'), null, 'view');
-		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesOwnAnswerQuizComponent', '/') . '/';
+		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesPassQuizComponent', '/') . '/';
 		$this->assertRegExp($pattern, $this->view);
 
 		//テスト実行
-		$this->controller->QuizzesOwnAnswerQuiz->saveOwnAnsweredKeys('quiz_1');
-		//もう一回呼ぶと作成済みのリストデータに加算する
-		$this->controller->QuizzesOwnAnswerQuiz->saveOwnAnsweredKeys('quiz_1');
-		// saveした後にcheckするとcheckのテストにも
-		$result = $this->controller->QuizzesOwnAnswerQuiz->checkOwnAnsweredKeys('quiz_1');
-		$this->assertTrue($result);
+		$this->controller->QuizzesPassQuiz->savePassQuizKeys('quiz_1');
+		$this->controller->QuizzesPassQuiz->savePassQuizKeys('quiz_2');
+		$result = $this->controller->QuizzesPassQuiz->getPassQuizKeys();
+		$this->assertEqual($result, array('quiz_1', 'quiz_2'));
 	}
 
 }

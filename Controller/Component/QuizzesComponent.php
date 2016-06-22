@@ -223,20 +223,6 @@ class QuizzesComponent extends Component {
 	}
 
 /**
- * isSingleInputType
- *
- * @param int $type quiz type
- * @return bool
- */
-	public static function isOnlyInputType($type) {
-		// textareaの単純入力タイプであるか
-		if ($type == self::TYPE_TEXT_AREA) {
-			return true;
-		}
-		return false;
-	}
-
-/**
  * isSelectionInputType
  *
  * @param int $type quiz type
@@ -253,21 +239,6 @@ class QuizzesComponent extends Component {
 		return false;
 	}
 
-/**
- * isMultipleWordType
- *
- * @param int $type quiz type
- * @return bool
- */
-	public static function isMultipleWordType($type) {
-		if ($type == self::TYPE_WORD) {
-			return true;
-		}
-		if ($type == self::TYPE_MULTIPLE_WORD) {
-			return true;
-		}
-		return false;
-	}
 /**
  * isMultipleAnswerType
  *

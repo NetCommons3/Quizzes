@@ -1,6 +1,6 @@
 <?php
 /**
- * QuizzesOwnAnswerComponent::getAnsweredSummaryIds()のテスト
+ * QuizzesPassQuizComponent::getPassQuizKeys()のテスト
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author AllCreator <info@allcreator.net>
@@ -13,12 +13,12 @@ App::uses('NetCommonsControllerTestCase', 'NetCommons.TestSuite');
 App::uses('QuizzesComponent', 'Quizzes.Controller/Component');
 
 /**
- * QuizzesOwnAnswerComponent::getAnsweredSummaryIds()のテスト
+ * QuizzesPassQuizComponent::getPassQuizKeys()のテスト
  *
  * @author AllCreator <info@allcreator.net>
- * @package NetCommons\Quizzes\Test\Case\Controller\Component\QuizzesOwnAnswerComponent
+ * @package NetCommons\Quizzes\Test\Case\Controller\Component\QuizzesPassQuizComponent
  */
-class QuizzesOwnAnswerComponentGetAnsweredSummaryIdsTest extends NetCommonsControllerTestCase {
+class QuizzesPassQuizComponentGetPassQuizKeysTest extends NetCommonsControllerTestCase {
 
 /**
  * Fixtures
@@ -67,67 +67,70 @@ class QuizzesOwnAnswerComponentGetAnsweredSummaryIdsTest extends NetCommonsContr
 	}
 
 /**
- * getAnsweredSummaryIds()のテスト
+ * getPassQuizKeys()のテスト
  *
  * @return void
  */
-	public function testGetAnsweredSummaryIds() {
+	public function testGetPassQuizKeys() {
 		//テストコントローラ生成
-		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerComponent');
+		$this->generateNc('TestQuizzes.TestQuizzesPassQuizComponent');
 
 		//ログイン
 		TestAuthGeneral::login($this);
 
 		//テストアクション実行
-		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_component/index_with_login',
+		$this->_testGetAction('/test_quizzes/test_quizzes_pass_quiz_component/index',
 				array('method' => 'assertNotEmpty'), null, 'view');
-		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesOwnAnswerComponent', '/') . '/';
+		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesPassQuizComponent', '/') . '/';
 		$this->assertRegExp($pattern, $this->view);
 
 		//テスト実行
-		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
-		$this->assertEqual($result, array(31, 32, 33));
-		// もう一回呼ぶ
-		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
-		$this->assertEqual($result, array(31, 32, 33));
+		$result = $this->controller->QuizzesPassQuiz->getPassQuizKeys();
+
+		$this->assertEqual($result, array());
 	}
 /**
- * getAnsweredSummaryIds()のテスト
+ * getPassQuizKeys()のテスト
  *
  * @return void
  */
-	public function testGetAnsweredSummaryIdsNoLogin() {
+	public function testGetPassQuizKeysNoLogin() {
 		//テストコントローラ生成
-		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerComponent');
+		$this->generateNc('TestQuizzes.TestQuizzesPassQuizComponent');
 
 		//テストアクション実行
-		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_component/index',
+		$this->_testGetAction('/test_quizzes/test_quizzes_pass_quiz_component/index',
 			array('method' => 'assertNotEmpty'), null, 'view');
-		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesOwnAnswerComponent', '/') . '/';
+		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesPassQuizComponent', '/') . '/';
 		$this->assertRegExp($pattern, $this->view);
 
 		//テスト実行
-		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
-		$this->assertEmpty($result);
+		$result = $this->controller->QuizzesPassQuiz->getPassQuizKeys();
+
+		$this->assertEqual($result, array());
 	}
 /**
- * getAnsweredSummaryIds()のテスト
+ * getPassQuizKeys()のテスト
  *
  * @return void
  */
-	public function testGetAnsweredSummaryIdsNoLogin2() {
+	public function testGetPassQuizKeysNoLogin2() {
 		//テストコントローラ生成
-		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerComponent');
+		$this->generateNc('TestQuizzes.TestQuizzesPassQuizComponent');
 
 		//テストアクション実行
-		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_component/index',
+		$this->_testGetAction('/test_quizzes/test_quizzes_pass_quiz_component/index',
 			array('method' => 'assertNotEmpty'), null, 'view');
-		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesOwnAnswerComponent', '/') . '/';
+		$pattern = '/' . preg_quote('Controller/Component/TestQuizzesPassQuizComponent', '/') . '/';
 		$this->assertRegExp($pattern, $this->view);
 
-		//テスト実行
 		$this->_mockForReturn('Session', 'read', '11,12,13', 1);
-		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
+
+		//テスト実行
+		$result = $this->controller->QuizzesPassQuiz->getPassQuizKeys();
+		$this->assertEqual($result, array(11, 12, 13));
+		//もう一回呼ぶ
+		$result = $this->controller->QuizzesPassQuiz->getPassQuizKeys();
 		$this->assertEqual($result, array(11, 12, 13));
 	}
 
