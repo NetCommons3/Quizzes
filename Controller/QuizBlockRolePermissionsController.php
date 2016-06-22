@@ -82,12 +82,11 @@ class QuizBlockRolePermissionsController extends QuizzesAppController {
  */
 	public function edit() {
 		$quizSetting = $this->QuizSetting->getSetting();
-		if (! $quizSetting) {
-			$this->setAction('throwBadRequest');
-			return false;
-		}
 		$permissions = $this->Workflow->getBlockRolePermissions(
-			array('content_creatable', 'content_publishable')
+			array(
+				'content_creatable',
+				'content_publishable'
+			)
 		);
 		$this->set('roles', $permissions['Roles']);
 		if ($this->request->is('post')) {

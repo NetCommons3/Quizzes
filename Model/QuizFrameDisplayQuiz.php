@@ -78,13 +78,13 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
-					'required' => true,
+					//'required' => true,
 					//'last' => false, // Stop validation after this rule
 					//'on' => 'create', // Limit validation to 'create' or 'update' operations
 				),
 				'inList' => array(
 					'rule' => array('inList', $this->chkQuizList),
-					'message' => __d('net_commons', 'Invalid request.'),
+					'message' => __d('net_commons', 'not found.'),
 				),
 			),
 		));

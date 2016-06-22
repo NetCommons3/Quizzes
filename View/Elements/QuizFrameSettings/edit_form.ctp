@@ -13,6 +13,7 @@
 <?php echo $this->NetCommonsForm->hidden('id'); ?>
 <?php echo $this->NetCommonsForm->hidden('frame_key', array('value' => Current::read('Frame.key'))); ?>
 <?php echo $this->NetCommonsForm->hidden('Frame.id'); ?>
+<?php echo $this->NetCommonsForm->hidden('Frame.key'); ?>
 <?php echo $this->NetCommonsForm->hidden('Block.id'); ?>
 
 <div class="col-xs-12 form-group">
