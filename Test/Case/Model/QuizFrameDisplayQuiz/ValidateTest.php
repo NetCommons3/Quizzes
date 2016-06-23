@@ -78,8 +78,8 @@ class QuizFrameDisplayQuizValidateTest extends NetCommonsValidateTest {
 		return array(
 			array('data' => $data, 'field' => 'quiz_key', 'value' => '',
 				'message' => __d('net_commons', 'Invalid request.')),
-			array('data' => $data, 'field' => 'quiz_key', 'value' => null,
-				'message' => __d('net_commons', 'Invalid request.')),
+			//array('data' => $data, 'field' => 'quiz_key', 'value' => null,
+			//	'message' => __d('net_commons', 'Invalid request.')),
 			array('data' => $data, 'field' => 'quiz_key', 'value' => 'error_ni_naru_code',
 				'message' => __d('net_commons', 'Invalid request.')),
 		);

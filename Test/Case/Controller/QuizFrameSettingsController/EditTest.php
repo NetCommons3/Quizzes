@@ -111,7 +111,7 @@ class QuizFrameSettingsControllerEditTest extends FrameSettingsControllerTest {
  * @return array
  */
 	public function dataProviderEdit() {
-		$data = $this->__data(true);
+		$data = $this->__data();
 
 		//テストデータ
 		$results = array();

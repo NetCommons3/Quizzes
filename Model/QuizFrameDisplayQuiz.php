@@ -84,7 +84,7 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 				),
 				'inList' => array(
 					'rule' => array('inList', $this->chkQuizList),
-					'message' => __d('net_commons', 'not found.'),
+					'message' => __d('net_commons', 'Invalid request.'),
 				),
 			),
 		));
