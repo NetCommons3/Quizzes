@@ -10,6 +10,7 @@
  */
 
 App::uses('AppController', 'Controller');
+App::uses('QuizzesComponent', 'Quizzes.Controller/Component');
 
 /**
  * QuizzesAppController

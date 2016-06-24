@@ -220,8 +220,8 @@ class QuizBlocksController extends QuizzesAppController {
 			// アーカイブ閉じる
 			$zipFile->close();
 		} catch(Exception $e) {
-			$this->Session->setFlash(__d('quizzes', 'export error') . $e->getMessage(),
-				array('interval' => NetCommonsComponent::ALERT_VALIDATE_ERROR_INTERVAL));
+			$this->_setFlashMessageAndRedirect(
+				__d('quizzes', 'export error' . $e->getMessage()));
 			return;
 		}
 		// 大外枠zipファイル準備
