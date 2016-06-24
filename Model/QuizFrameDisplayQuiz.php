@@ -78,7 +78,7 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 					'rule' => array('notBlank'),
 					'message' => __d('net_commons', 'Invalid request.'),
 					'allowEmpty' => false,
-					//'required' => true,
+					'required' => true,
 					//'last' => false, // Stop validation after this rule
 					//'on' => 'create', // Limit validation to 'create' or 'update' operations
 				),
@@ -164,7 +164,13 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 
 		foreach ($data['List']['QuizFrameDisplayQuiz'] as $value) {
 			$quizKey = $value['quiz_key'];
-			$isDisplay = $value['is_display'];
+			// 何かinputの実現時にどのメソッド呼ぶかで配列で来たり値で来たりするんだ..
+			// 仕方ないのでくる値のタイプによって見るところを変更する
+			if (is_array($value['is_display'])) {
+				$isDisplay = $value['is_display'][0];
+			} else {
+				$isDisplay = $value['is_display'];
+			}
 			$saveQs = array(
 				'frame_key' => $frameKey,
 				'quiz_key' => $quizKey
@@ -173,7 +179,7 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 				// この関数内部でエラーがあった時は、Exceptionなので戻りは見ない
 				$this->saveDisplayQuiz($saveQs);
 			} else {
-				if (!$this->deleteAll($saveQs, false)) {
+				if (! $this->deleteAll($saveQs, false)) {
 					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 				}
 			}

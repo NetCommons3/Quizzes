@@ -83,15 +83,12 @@ class QuizFrameSettingsControllerEditTest extends FrameSettingsControllerTest {
 			),
 		);
 		$quizRec = (new QuizFixture())->records;
-		$break = 1;
 		$displayQ = array();
 		foreach ($quizRec as $index => $rec) {
 			$displayQ['List']['QuizFrameDisplayQuiz'][$rec['key']] = array(
-				'is_display' => '1', 'quiz_key' => $rec['key']);
-			if ($index == $break) {
-				break;
-			}
+				'is_display' => array('1'), 'quiz_key' => $rec['key']);
 		}
+		$displayQ['List']['QuizFrameDisplayQuiz'] = array_values($displayQ['List']['QuizFrameDisplayQuiz']);
 		$displayQ['Single']['QuizFrameDisplayQuiz']['quiz_key'] = $quizRec[0]['key'];
 
 		$data = Hash::merge($data, $displayQ);
