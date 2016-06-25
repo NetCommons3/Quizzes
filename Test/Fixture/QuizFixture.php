@@ -634,9 +634,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:05:55',
-			'modified_user' => '4',
+			'modified_user' => '3',
 			'modified' => '2016-06-10 03:05:55'
 		),
 		array(
@@ -664,9 +664,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:06:40',
-			'modified_user' => '4',
+			'modified_user' => '3',
 			'modified' => '2016-06-10 03:06:40'
 		),
 		array(
@@ -694,9 +694,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:07:18',
-			'modified_user' => '4',
+			'modified_user' => '3',
 			'modified' => '2016-06-10 03:07:18'
 		),
 		array(
@@ -724,9 +724,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:08:40',
-			'modified_user' => '5',
+			'modified_user' => '4',
 			'modified' => '2016-06-10 03:08:40'
 		),
 		array(
@@ -754,9 +754,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:09:21',
-			'modified_user' => '5',
+			'modified_user' => '4',
 			'modified' => '2016-06-10 03:09:21'
 		),
 		array(
@@ -784,9 +784,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:10:04',
-			'modified_user' => '5',
+			'modified_user' => '4',
 			'modified' => '2016-06-10 03:10:04'
 		),
 		array(
@@ -814,7 +814,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:05:55',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 03:05:55'
@@ -844,7 +844,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:06:40',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 03:06:40'
@@ -874,7 +874,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:07:18',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 03:07:18'
@@ -904,7 +904,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:08:40',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 03:08:40'
@@ -934,7 +934,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:09:21',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 03:09:21'
@@ -964,7 +964,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:10:04',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 03:10:04'
@@ -1024,9 +1024,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:14:46',
-			'modified_user' => '4',
+			'modified_user' => '3',
 			'modified' => '2016-06-10 03:14:46'
 		),
 		array(
@@ -1054,9 +1054,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:15:57',
-			'modified_user' => '5',
+			'modified_user' => '4',
 			'modified' => '2016-06-10 03:15:57'
 		),
 		array(
@@ -1084,9 +1084,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:17:08',
-			'modified_user' => '4',
+			'modified_user' => '3',
 			'modified' => '2016-06-10 03:17:08'
 		),
 		array(
@@ -1114,9 +1114,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 03:18:21',
-			'modified_user' => '5',
+			'modified_user' => '4',
 			'modified' => '2016-06-10 03:18:21'
 		),
 		array(
@@ -1144,9 +1144,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:19:37',
-			'modified_user' => '4',
+			'modified_user' => '3',
 			'modified' => '2016-06-10 03:19:37'
 		),
 		array(
@@ -1174,9 +1174,9 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 05:30:41',
-			'modified_user' => '5',
+			'modified_user' => '4',
 			'modified' => '2016-06-10 05:30:41'
 		),
 		array(
@@ -1204,7 +1204,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '4',
+			'created_user' => '3',
 			'created' => '2016-06-10 03:19:37',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 03:19:37'
@@ -1234,7 +1234,7 @@ class QuizFixture extends CakeTestFixture {
 			'is_total_show' => 0,
 			'import_key' => '',
 			'export_key' => '',
-			'created_user' => '5',
+			'created_user' => '4',
 			'created' => '2016-06-10 05:30:41',
 			'modified_user' => '1',
 			'modified' => '2016-06-10 05:30:41'

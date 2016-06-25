@@ -53,6 +53,13 @@ class QuizMailSettingsController extends MailSettingsController {
 		$this->MailSettings->typeKeys =
 			array(MailSettingFixedPhrase::DEFAULT_TYPE, MailSettingFixedPhrase::ANSWER_TYPE);
 
+		// 設定画面を表示する前にこのルームのアンケートブロックがあるか確認
+		// 万が一、まだ存在しない場合には作成しておく
+		// afterFrameSaveが呼ばれないような状況の想定
+		$Quiz = ClassRegistry::init('Quizzes.Quiz');
+		$frame['Frame'] = Current::read('Frame');
+		$Quiz->afterFrameSave($frame);
+
 		$this->backUrl = NetCommonsUrl::backToPageUrl(true);
 	}
 }

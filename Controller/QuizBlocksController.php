@@ -10,6 +10,7 @@
  */
 
 App::uses('AppController', 'Controller');
+App::uses('QuizzesAppSettingController', 'Quizzes.Controller');
 App::uses('TemporaryFolder', 'Files.Utility');
 App::uses('CsvFileWriter', 'Files.Utility');
 App::uses('ZipDownloader', 'Files.Utility');
@@ -21,7 +22,7 @@ App::uses('QuizFrameSetting', 'Quizzes.Model');
  * @author Allcreator <info@allcreator.net>
  * @package NetCommons\Quizzes\Controller
  */
-class QuizBlocksController extends QuizzesAppController {
+class QuizBlocksController extends QuizzesAppSettingController {
 
 /**
  * csv download item count handling unit
@@ -87,16 +88,6 @@ class QuizBlocksController extends QuizzesAppController {
 		'NetCommons.Date',
 		'AuthorizationKeys.AuthKeyPopupButton',
 	);
-
-/**
- * beforeFilter
- *
- * @return void
- */
-	public function beforeFilter() {
-		parent::beforeFilter();
-		$this->Auth->deny('index');
-	}
 
 /**
  * index

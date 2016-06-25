@@ -123,7 +123,7 @@ class QuizBlocksControllerExportTest extends NetCommonsControllerTestCase {
 			'key' => 'acc5e94c9617ed332cc2ef4d013ae686',
 		);
 
-		$this->_testNcAction($url, array(), 'InternalErrorException');
+		$this->_testNcAction($url, array(), 'NotFoundException');
 	}
 /**
  * export()の不正アンケート指定テスト

@@ -13,6 +13,11 @@ $urlParams = Hash::merge(array(
 	'controller' => 'quizzes',
 	'action' => 'index'),
 	$this->params['named']);
+
+if (! isset($this->params['named']['answer_status']) ||
+	! array_key_exists($this->params['named']['answer_status'], $filterList)) {
+	$currentStatus = QuizzesController::QUIZ_ANSWER_VIEW_ALL;
+}
 ?>
 
 <div class="form-group quiz-list-select">

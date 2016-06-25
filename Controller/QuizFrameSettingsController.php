@@ -9,7 +9,7 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('QuizBlocksController', 'Quizzes.Controller');
+App::uses('QuizzesAppSettingController', 'Quizzes.Controller');
 
 /**
  * QuizFrameSettingsController
@@ -17,7 +17,7 @@ App::uses('QuizBlocksController', 'Quizzes.Controller');
  * @author Allcreator <info@allcreator.net>
  * @package NetCommons\Quizzes\Controller
  */
-class QuizFrameSettingsController extends QuizzesAppController {
+class QuizFrameSettingsController extends QuizzesAppSettingController {
 
 /**
  * layout

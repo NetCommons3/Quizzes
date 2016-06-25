@@ -132,7 +132,7 @@ class QuizBlocksControllerDownloadTest extends NetCommonsControllerTestCase {
 			'AuthorizationKey' => array(
 				'authorization_key' => 'ABC'
 			)
-		), $url, 'InternalErrorException');
+		), $url, 'NotFoundException');
 	}
 /**
  * download()の不正小テスト指定テスト

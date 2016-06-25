@@ -96,7 +96,7 @@ class QuizAnswerSummaryGetCanGradingSummaryTest extends NetCommonsGetTest {
 
 		Current::$current['Permission']['content_creatable']['value'] = true;
 		Current::$current['Language']['id'] = 2;
-		Current::$current['User']['id'] = 5;
+		Current::$current['User']['id'] = 4;
 		Current::$current['Block']['id'] = 2;
 
 		//テスト実施
