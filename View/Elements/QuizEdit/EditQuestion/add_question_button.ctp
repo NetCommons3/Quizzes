@@ -10,11 +10,12 @@
  */
 ?>
 
-<div class="form-group text-right"
-     ng-if="isPublished == 0"
-     ng-show="page.quizQuestion.length > 0">
-    <button class="btn btn-success" type="button" ng-click="addQuestion($event, pageIndex)">
-        <span class="glyphicon glyphicon-plus"></span>
-        <?php echo __d('quizzes', 'Add Question'); ?>
-    </button>
-</div>
+<?php if (! $isPublished): ?>
+    <div class="form-group text-right"
+         ng-show="page.quizQuestion.length > 0">
+        <button class="btn btn-success" type="button" ng-click="addQuestion($event, pageIndex)">
+            <span class="glyphicon glyphicon-plus"></span>
+            <?php echo __d('quizzes', 'Add Question'); ?>
+        </button>
+    </div>
+<?php endif;

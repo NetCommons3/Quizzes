@@ -63,14 +63,14 @@
 				<div class="pull-right quiz-edit-correct-option" ng-if="question.questionType == <?php echo QuizzesComponent::TYPE_SELECTION; ?>">
 					<label>
 						<?php echo $this->NetCommonsForm->radio('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.0.correct',
-						array('{{choice.choiceLabel}}' => __d('quizzes', 'To correct')), /* 正解にする */
+						array('' => __d('quizzes', 'To correct')), /* 正解にする */
 						array(
 						'label' => false,
-						'ng-checked' => 'choice.choiceLabel == question.quizCorrect[0].correct',
+						'ng-value' => 'choice.choiceLabel',
+						'ng-model' => 'question.quizCorrect[0].correct[0]',
 						'hiddenField' => false
 						));
 						?>
-
 					</label>
 				</div>
 				<div class="checkbox pull-right quiz-edit-correct-option" ng-if="question.questionType == <?php echo QuizzesComponent::TYPE_MULTIPLE_SELECTION; ?>">

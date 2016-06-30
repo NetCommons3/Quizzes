@@ -105,7 +105,7 @@ class QuizEditController extends QuizzesAppController {
 
 		// セッションインデックスパラメータ
 		$sessionName = self::QUIZ_EDIT_SESSION_INDEX . $this->_getQuizEditSessionIndex();
-		if ($this->request->is('post')) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			// ウィザード画面なのでセッションに記録された前画面データが必要
 			$this->_quiz = $this->Session->read($sessionName);
 			if (! $this->_quiz) {
@@ -127,11 +127,13 @@ class QuizEditController extends QuizzesAppController {
 						$this->Quiz->alias . '.key' => $QuizKey
 					)
 				));
-				// NetCommonsお約束：編集の場合には改めて編集権限をチェックする必要がある
-				// getWorkflowContentsはとりあえず自分が「見られる」コンテンツデータを取ってきてしまうので
-				if (! $this->Quiz->canEditWorkflowContent($this->_quiz)) {
-					$this->_quiz = null;
-				}
+			}
+		}
+		if ($QuizKey) {
+			// NetCommonsお約束：編集の場合には改めて編集権限をチェックする必要がある
+			// getWorkflowContentsはとりあえず自分が「見られる」コンテンツデータを取ってきてしまうので
+			if (! $this->Quiz->canEditWorkflowContent($this->_quiz)) {
+				$this->_quiz = null;
 			}
 		}
 		// ここへは設定画面の一覧から来たのか、一般画面の一覧から来たのか
@@ -156,6 +158,10 @@ class QuizEditController extends QuizzesAppController {
 				$urlParam[$passParam] = null;
 			}
 			$actions['url'] = $urlParam;
+
+			if (! isset($actions['url']['s_id'])) {
+				$actions['url']['s_id'] = $this->_getQuizEditSessionIndex();
+			}
 		}
 	}
 
@@ -172,7 +178,7 @@ class QuizEditController extends QuizzesAppController {
 			return false;
 		}
 		// Postの場合
-		if ($this->request->is('post')) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 
 			$postQuiz = $this->request->data;
 
@@ -226,7 +232,7 @@ class QuizEditController extends QuizzesAppController {
 		}
 
 		// Postの場合
-		if ($this->request->is('post')) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			$postQuiz = $this->request->data;
 
 			$beforeStatus = $this->_quiz['Quiz']['status'];
@@ -267,7 +273,9 @@ class QuizEditController extends QuizzesAppController {
 			}
 		} else {
 			// 指定されて取り出したアンケートデータをセッションキャッシュに書く
-			$this->Session->write($this->_getQuizEditSessionIndex(), $this->_quiz);
+			$this->Session->write(
+				self::QUIZ_EDIT_SESSION_INDEX . $this->_getQuizEditSessionIndex(),
+				$this->_quiz);
 			$this->__setupViewParameters($this->_quiz, $this->_getActionUrl('edit_question'));
 		}
 	}

@@ -43,6 +43,8 @@
 						));
 					?>
 				</div>
+				<?php echo $this->NetCommonsForm->error('answer_start_period'); ?>
+				<?php echo $this->NetCommonsForm->error('answer_end_period'); ?>
 			</div>
 		</div>
 	</div>

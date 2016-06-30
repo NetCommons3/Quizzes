@@ -62,6 +62,14 @@ class QuizzesControllerAddTest extends WorkflowControllerAddTest {
 		$this->Quiz = ClassRegistry::init('Quizzes.Quiz');
 		$this->Quiz->Behaviors->unload('AuthorizationKey');
 		$this->ActionQuizAdd = ClassRegistry::init('Quizzes.ActionQuizAdd');
+		$this->Plugin = ClassRegistry::init('PluginManager.Plugin');
+		$db = $this->Plugin->getDataSource();
+		$value = 'quiz_blocks/index';
+		$value = $db->value($value, 'string');
+		$this->Plugin->updateAll(
+			array('Plugin.default_setting_action' => $value),
+			array('Plugin.key' => 'quizzes')
+		);
 	}
 
 /**
@@ -177,6 +185,13 @@ class QuizzesControllerAddTest extends WorkflowControllerAddTest {
 			),
 			'assert' => array('method' => 'assertNotEmpty'),
 		);
+		// セッティングモードから来た振りをしてもCreatableなだけだと設定が効かないことを確認
+		array_push($results, Hash::merge($results[0], array(
+			'urlOptions' => array('q_mode' => 'setting'),
+			'assert' => array(
+				'method' => 'assertActionLink', 'action' => 'index', 'linkExist' => false,
+				'url' => array('controller' => 'quiz_blocks')),
+		)));
 		// フレームIDのhidden-inputがあるか
 		array_push($results, Hash::merge($results[0], array('assert' => array(
 			'method' => 'assertInput', 'type' => 'input',
@@ -227,7 +242,69 @@ class QuizzesControllerAddTest extends WorkflowControllerAddTest {
 
 		return $results;
 	}
+/**
+ * addアクションのGETテスト(管理者)用DataProvider
+ *
+ * ### 戻り値
+ *  - urlOptions: URLオプション
+ *  - assert: テストの期待値
+ *  - exception: Exception
+ *  - return: testActionの実行後の結果
+ *
+ * @return array
+ */
+	public function dataProviderAddGetByAdmin() {
+		$data = $this->__data();
 
+		//テストデータ
+		$results = array();
+		//テストデータ
+		$results = array();
+
+		// 正しいフレームIDとブロックID
+		$results[0] = array(
+			'urlOptions' => array(
+				'frame_id' => $data['Frame']['id'],
+				'block_id' => $data['Block']['id'],
+			),
+			'assert' => array('method' => 'assertNotEmpty'),
+		);
+		// セッティングモードから来た振りをしてもCreatableなだけだと設定が効かないことを確認
+		array_push($results, Hash::merge($results[0], array(
+			'urlOptions' => array('q_mode' => 'setting'),
+			'assert' => array(
+				'method' => 'assertActionLink', 'action' => 'index', 'linkExist' => true,
+				'url' => array('controller' => 'quiz_blocks', 'q_mode' => null)),
+		)));
+		return $results;
+	}
+
+/**
+ * addアクションのGETテスト(ブロック編集権限)
+ *
+ * @param array $urlOptions URLオプション
+ * @param array $assert テストの期待値
+ * @param string|null $exception Exception
+ * @param string $return testActionの実行後の結果
+ * @dataProvider dataProviderAddGetByAdmin
+ * @return void
+ */
+	public function testAddGetByAdmin($urlOptions, $assert, $exception = null, $return = 'view') {
+		//ログイン
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_ROOM_ADMINISTRATOR);
+
+		//テスト実施
+		$url = Hash::merge(array(
+			'plugin' => $this->plugin,
+			'controller' => $this->_controller,
+			'action' => 'add',
+		), $urlOptions);
+
+		$this->_testGetAction($url, $assert, $exception, $return);
+
+		//ログアウト
+		TestAuthGeneral::logout($this);
+	}
 /**
  * addアクションのPOSTテスト用DataProvider
  *
@@ -274,6 +351,13 @@ class QuizzesControllerAddTest extends WorkflowControllerAddTest {
 			'urlOptions' => array(
 				'frame_id' => null,
 				'block_id' => $data['Block']['id']),
+		);
+		$results[] = array(
+			'data' => $data, 'role' => Role::ROOM_ROLE_KEY_ROOM_ADMINISTRATOR,
+			'urlOptions' => array(
+				'frame_id' => $data['Frame']['id'],
+				'block_id' => $data['Block']['id'],
+				'q_mode' => 'setting'),
 		);
 
 		return $results;
