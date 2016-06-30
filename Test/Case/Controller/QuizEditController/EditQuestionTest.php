@@ -91,6 +91,7 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
  * @param string $role ロール
  * @param string $key 小テストキー
  * @return array
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 	private function __data($role = null, $key = null) {
 		$frameId = '6';
