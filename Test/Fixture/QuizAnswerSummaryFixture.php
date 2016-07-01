@@ -537,6 +537,26 @@ class QuizAnswerSummaryFixture extends CakeTestFixture {
 			'modified_user' => null,
 			'modified' => '2016-06-10 06:20:53'
 		),
+		array(
+			'id' => '35',
+			'answer_status' => '2',
+			'test_status' => '0',
+			'answer_number' => '1',
+			'is_grade_finished' => 1,
+			'summary_score' => '10',
+			'passing_status' => '1',
+			'answer_start_time' => '2016-06-10 06:20:39',
+			'answer_finish_time' => '2016-06-10 06:20:53',
+			'elapsed_second' => '14',
+			'within_time_status' => '1',
+			'quiz_key' => 'c389a74ef01516f9b3e477afcf3dfa02',
+			'session_value' => null,
+			'user_id' => 4,
+			'created_user' => 4,
+			'created' => '2016-06-10 06:20:39',
+			'modified_user' => 4,
+			'modified' => '2016-06-10 06:20:53'
+		),
 	);
 
 }
