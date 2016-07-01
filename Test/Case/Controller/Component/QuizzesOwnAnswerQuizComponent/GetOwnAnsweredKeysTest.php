@@ -111,7 +111,9 @@ class QuizzesOwnAnswerQuizComponentGetOwnAnsweredKeysTest extends NetCommonsCont
 
 		//テスト実行
 		$result = $this->controller->QuizzesOwnAnswerQuiz->getOwnAnsweredKeys();
-		$this->assertEqual($result, array('83b294e176a8c8026d4fbdb07ad2ed7f'));
+		$this->assertEqual($result, array(
+			'83b294e176a8c8026d4fbdb07ad2ed7f',
+			'c389a74ef01516f9b3e477afcf3dfa02'));
 	}
 /**
  * getOwnAnsweredKeys()のテスト

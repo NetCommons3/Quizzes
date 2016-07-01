@@ -86,10 +86,10 @@ class QuizzesOwnAnswerComponentGetAnsweredSummaryIdsTest extends NetCommonsContr
 
 		//テスト実行
 		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
-		$this->assertEqual($result, array(31, 32, 33));
+		$this->assertEqual($result, array(31, 32, 33, 35));
 		// もう一回呼ぶ
 		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
-		$this->assertEqual($result, array(31, 32, 33));
+		$this->assertEqual($result, array(31, 32, 33, 35));
 	}
 /**
  * getAnsweredSummaryIds()のテスト

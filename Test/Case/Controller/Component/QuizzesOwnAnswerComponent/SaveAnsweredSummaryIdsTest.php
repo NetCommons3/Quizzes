@@ -88,7 +88,7 @@ class QuizzesOwnAnswerComponentSaveAnsweredSummaryIdsTest extends NetCommonsCont
 		$this->controller->QuizzesOwnAnswer->saveAnsweredSummaryIds(11);
 
 		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
-		$this->assertEqual($result, array(31, 32, 33, 11));
+		$this->assertEqual($result, array(31, 32, 33, 35, 11));
 		$result = $this->controller->QuizzesOwnAnswer->checkOwnAnsweredSummaryId(11);
 		$this->assertTrue($result);
 	}

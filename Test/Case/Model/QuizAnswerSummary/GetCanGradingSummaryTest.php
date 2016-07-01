@@ -103,7 +103,7 @@ class QuizAnswerSummaryGetCanGradingSummaryTest extends NetCommonsGetTest {
 		$result = $this->$model->$methodName();
 
 		//チェック
-		$this->assertEqual($result, array(35 => 35));
+		$this->assertEqual($result, array(36 => 36));
 	}
 /**
  * getCanGradingSummary()のテスト

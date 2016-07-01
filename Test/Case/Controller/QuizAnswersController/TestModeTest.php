@@ -172,8 +172,8 @@ class QuizAnswersControllerTestModeTest extends WorkflowControllerViewTest {
 		if ($exception) {
 			return;
 		}
-		$result = $this->headers['Location'];
 		if ($assert === null && $exception === null) {
+			$result = $this->headers['Location'];
 			$this->assertTextContains('/quizzes/quiz_answers/view/2/' . $urlOptions['key'], $result);
 		}
 	}
