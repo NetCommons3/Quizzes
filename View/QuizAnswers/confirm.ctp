@@ -1,6 +1,6 @@
 <?php
 /**
- * questionnaire page setting view template
+ * quiz page setting view template
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author Allcreator <info@allcreator.net>
@@ -66,7 +66,7 @@
 		__d('net_commons', 'Confirm'),
 		array(
 		'class' => 'btn btn-primary',
-		'name' => 'confirm_' . 'questionnaire',
+		'name' => 'confirm_' . 'quiz',
 		)) ?>
 	</div>
 	<?php echo $this->NetCommonsForm->end(); ?>

@@ -111,7 +111,7 @@ class QuizSaveQuizTest extends WorkflowSaveTest {
 /**
  * テストDataの取得
  *
- * @param string $id questionnaireId
+ * @param string $id quizId
  * @param string $status
  * @return array
  */

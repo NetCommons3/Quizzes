@@ -427,13 +427,6 @@ class QuizzesControllerAddTest extends WorkflowControllerAddTest {
 					'message' => sprintf(__d('quizzes', 'Please select past quiz.'))
 				)
 			)),
-			//Hash::merge($resultTemplate, array(
-			//	'validationError' => array(
-			//		'field' => 'ActionQuestionnaireAdd.template_file',
-			//		'value' => null,
-			//		'message' => sprintf(__d('questionnaires', 'file upload error.'))
-			//	)
-			//)),
 		);
 	}
 

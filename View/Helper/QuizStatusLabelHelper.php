@@ -21,7 +21,7 @@ class QuizStatusLabelHelper extends AppHelper {
 /**
  * Status label
  *
- * @param array $quiz questionnaire
+ * @param array $quiz quiz
  * @return string
  */
 	public function statusLabel($quiz) {

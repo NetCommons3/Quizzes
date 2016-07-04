@@ -148,7 +148,7 @@ class QuizResultController extends QuizzesAppController {
 
 /**
  * view method
- * Display the question of the questionnaire , to accept the answer input
+ * Display the question of the quiz , to accept the answer input
  *
  * @return void
  */

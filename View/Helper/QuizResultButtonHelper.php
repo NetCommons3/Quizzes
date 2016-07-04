@@ -77,7 +77,7 @@ class QuizResultButtonHelper extends AppHelper {
  * @return array
  */
 	protected function _getBtnAttributes($options) {
-		$btnClass = 'btn btn-default questionnaire-listbtn';
+		$btnClass = 'btn btn-default quiz-listbtn';
 		if (isset($options['class'])) {
 			$btnClass = 'btn btn-' . $options['class'];
 		}

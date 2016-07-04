@@ -231,7 +231,7 @@ class QuizAnswersController extends QuizzesAppController {
 	}
 /**
  * view method
- * Display the question of the questionnaire , to accept the answer input
+ * Display the question of the quiz , to accept the answer input
  *
  * @return void
  */
@@ -241,12 +241,12 @@ class QuizAnswersController extends QuizzesAppController {
 
 		// スタート画面を表示して、時間スタートしてるか
 		// してなかったらスタート画面へ
-		$this->_gardQuiz($quizKey);
-
+		if (! $this->_gardQuiz($quizKey)) {
+			return;
+		}
 		$summary = $this->QuizzesOwnAnswerQuiz->getProgressiveSummaryOfThisUser($quizKey);
 		if (empty($summary)) {
 			$this->setAction('throwBadRequest');
-			return;
 		}
 
 		// ページランダム表示対応
@@ -300,14 +300,15 @@ class QuizAnswersController extends QuizzesAppController {
  */
 	public function confirm() {
 		$quizKey = $this->_getQuizKey($this->__quiz);
-		$this->_gardQuiz($quizKey);
+		if (! $this->_gardQuiz($quizKey)) {
+			return;
+		}
 
 		// 回答中サマリレコード取得
 		$summary = $this->QuizzesOwnAnswerQuiz->getProgressiveSummaryOfThisUser(
 			$this->_getQuizKey($this->__quiz));
 		if (!$summary) {
 			$this->setAction('throwBadRequest');
-			return;
 		}
 
 		// ページランダム表示対応
@@ -316,7 +317,10 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->QuizzesShuffle->shuffleChoice($this->__quiz);
 
 		// POSTチェック
-		if ($this->request->is('post')) {
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($summary['QuizAnswerSummary']['id'] != $this->request->data('QuizAnswerSummary.id')) {
+				$this->setAction('throwBadRequest');
+			}
 			// 回答を確定して採点
 			$this->QuizAnswer->saveConfirmAnswer($this->__quiz, $summary);
 			// サマリ状態を完了に変える
@@ -326,7 +330,6 @@ class QuizAnswersController extends QuizzesAppController {
 			);
 			if (! $newSummary) {
 				$this->setAction('throwBadRequest');
-				return;
 			}
 			// 回答済み小テストキーをセッション記録
 			$this->QuizzesOwnAnswerQuiz->saveOwnAnsweredKeys($quizKey);
@@ -361,6 +364,7 @@ class QuizAnswersController extends QuizzesAppController {
 		// 質問情報をView変数にセット
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
+		$this->request->data['QuizAnswerSummary'] = $summary['QuizAnswerSummary'];
 		$this->set('quiz', $this->__quiz);
 		$this->request->data['QuizAnswer'] = $this->_setAnswerToView($setAnswers);
 		$this->set('answers', $setAnswers);
@@ -433,7 +437,7 @@ class QuizAnswersController extends QuizzesAppController {
  * _gardQuiz method
  *
  * @param string $quizKey 小テストキー
- * @return void
+ * @return bool
  */
 	protected function _gardQuiz($quizKey) {
 		if (! $this->QuizzesAnswerStart->checkStartedQuizKeys($quizKey)) {
@@ -445,8 +449,9 @@ class QuizAnswersController extends QuizzesAppController {
 				'frame_id' => Current::read('Frame.id'),
 			));
 			$this->redirect($url);
-			return;
+			return false;
 		}
+		return true;
 	}
 /**
  * _setAnswerToView method

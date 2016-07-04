@@ -165,8 +165,8 @@ class QuizPage extends QuizzesAppModel {
 				),
 			),
 		);
-		// validates時にはまだquestionnaire_idの設定ができないのでチェックしないことにする
-		// questionnaire_idの設定は上位のQuestionnaireクラスで責任を持って行われるものとする
+		// validates時にはまだquiz_idの設定ができないのでチェックしないことにする
+		// quiz_idの設定は上位のQuestionnaireクラスで責任を持って行われるものとする
 
 		parent::beforeValidate($options);
 

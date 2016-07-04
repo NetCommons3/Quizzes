@@ -180,7 +180,7 @@ class QuizBlocksController extends QuizzesAppSettingController {
 /**
  * export
  *
- * template file about questionnaire export action
+ * template file about quiz export action
  *
  * @return void
  */

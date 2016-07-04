@@ -301,7 +301,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 			$jsonQuiz = json_decode($jsonData, true);
 
 		} catch (Exception $ex) {
-			$this->validationErrors['template_file'][] = __d('questionnaires', 'file upload error.');
+			$this->validationErrors['template_file'][] = __d('quizzes', 'file upload error.');
 			return null;
 		}
 		// 初めにファイルに記載されている小テストプラグインのバージョンと

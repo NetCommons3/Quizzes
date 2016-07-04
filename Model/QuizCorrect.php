@@ -87,8 +87,8 @@ class QuizCorrect extends QuizzesAppModel {
 				),
 			),
 		);
-		// validates時にはまだquestionnaire_question_idの設定ができないのでチェックしないことにする
-		// questionnaire_question_idの設定は上位のQuestionnaireQuestionクラスで責任を持って行われるものとする
+		// validates時にはまだquiz_question_idの設定ができないのでチェックしないことにする
+		// quiz_question_idの設定は上位のQuestionnaireQuestionクラスで責任を持って行われるものとする
 		if (is_array($this->data['QuizCorrect']['correct'])) {
 			$this->data['QuizCorrect']['correct'] =
 				implode(QuizzesComponent::ANSWER_DELIMITER, $this->data['QuizCorrect']['correct']);

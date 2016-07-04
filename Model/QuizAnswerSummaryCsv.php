@@ -338,7 +338,7 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
  */
 	protected function _getUserName($quiz, $summary) {
 		if (empty($summary['User']['handlename'])) {
-			return __d('questionnaires', 'Guest');
+			return __d('quizzes', 'Guest');
 		}
 		return $summary['User']['handlename'];
 	}

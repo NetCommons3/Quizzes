@@ -45,7 +45,7 @@ class QuizzesAppController extends AppController {
  * isAbleTo
  * Whether access to survey of the specified ID
  * Forced URL hack guard
- * And against the authority of the state of the specified questionnaire respondents put a guard
+ * And against the authority of the state of the specified quiz respondents put a guard
  * It is not in the public state
  * Out of period
  * Stopped
