@@ -32,6 +32,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 				'X-SUBJECT' => 'Quiz.title',
 			),
 			'keyField' => 'id',
+			'typeKey' => MailSettingFixedPhrase::ANSWER_TYPE,
 		),
 		'Mails.MailQueueDelete',
 	);
