@@ -254,4 +254,22 @@ class QuizzesComponent extends Component {
 		}
 		return false;
 	}
+/**
+ * hasFreeStyleQuestion
+ *
+ * 採点する記述式問題を持っているテストなのか
+ *
+ * @param array $quiz 小テスト
+ * @return bool
+ */
+	public static function hasFreeStyleQuestion($quiz) {
+		$ret = Hash::extract(
+			$quiz['QuizPage'],
+			'{n}.QuizQuestion.{n}[question_type=' . self::TYPE_TEXT_AREA . ']'
+		);
+		if ($ret) {
+			return true;
+		}
+		return false;
+	}
 }

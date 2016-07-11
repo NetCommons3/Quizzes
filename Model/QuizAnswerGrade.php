@@ -88,6 +88,7 @@ class QuizAnswerGrade extends QuizzesAppModel {
 			return false;
 		}
 		$question = $question[0];
+		$answerIds = Hash::extract($options['answerSummary'], 'QuizAnswer.{n}.id');
 		// 自由記述以外は採点対象じゃないです
 		if ($question['question_type'] != QuizzesComponent::TYPE_TEXT_AREA) {
 			$this->validationErrors['score'][] =
@@ -105,6 +106,10 @@ class QuizAnswerGrade extends QuizzesAppModel {
 					'allowEmpty' => false,
 					'required' => true,
 				),
+				'inList' => array(
+					'rule' => array('inList', $answerIds),
+					'message' => __d('net_commons', 'Invalid request.'),
+				)
 			),
 			'correct_status' => array(
 				'isCorrect' => array(

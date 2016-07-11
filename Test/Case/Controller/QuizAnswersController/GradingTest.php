@@ -303,7 +303,7 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
  *
  * @param array $data post データ
  * @param array $urlOptions urlパラメータ配列データ
- * @param array $va	lidationError バリデーションエラー情報
+ * @param array $validationError バリデーションエラー情報
  * @dataProvider dataProviderEditValidationError
  * @return mixed テスト結果
  */
