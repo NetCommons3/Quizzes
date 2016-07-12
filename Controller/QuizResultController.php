@@ -39,7 +39,7 @@ class QuizResultController extends QuizzesAppController {
 		'NetCommons.Permission' => array(
 			//アクセスの権限
 			'allow' => array(
-				'index' => 'content_editable',
+				'index' => 'content_creatable',
 			),
 		),
 		'Quizzes.QuizzesOwnAnswerQuiz',	// 回答済み小テスト管理
@@ -81,7 +81,7 @@ class QuizResultController extends QuizzesAppController {
 		$quizKey = $this->_getQuizKeyFromPass();
 
 		// キーで指定されたデータを取り出しておく
-		$conditions = $this->Quiz->getBaseCondition(
+		$conditions = $this->Quiz->getResultViewCondition(
 			array('Quiz.key' => $quizKey)
 		);
 		$this->__quiz = $this->Quiz->find('first', array(
@@ -89,9 +89,7 @@ class QuizResultController extends QuizzesAppController {
 		));
 		if (! $this->__quiz) {
 			$this->setAction('throwBadRequest');
-			return;
 		}
-		// FUJI 結果画面を見ていい状態かどうか判定すること
 	}
 
 /**
@@ -106,9 +104,10 @@ class QuizResultController extends QuizzesAppController {
 		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
 		if (! $canEdit) {
 			$this->setAction('throwBadRequest');
-			return;
 		}
+		// 集計処理モデル初期設定処理
 		$this->QuizResult->initResult($quiz);
+
 		// 総合情報取得
 		// 得点分布データ取得
 		$general = $this->QuizResult->getAllResult();
@@ -123,7 +122,6 @@ class QuizResultController extends QuizzesAppController {
 			),
 			$options
 		);
-		//$this->QuizResult->setPaginateOrder($this->_getOrder());
 		$filter = $this->_getFilter();
 		$summaryList = $this->paginate(
 			'QuizResult',
@@ -154,18 +152,19 @@ class QuizResultController extends QuizzesAppController {
  */
 	public function view() {
 		$quiz = $this->__quiz;
-
-		// 権限が編集者でないなら 自分自身のデータであることが必要
+		// 編集権限状態を取得
 		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
 
-		// サマリID
-		$summaryId = null;
 		// 基本的には自分の履歴を見ようとしていることが前提
-		// （テスト一覧から結果を見ようとしている＝つまり編集権限は無し、自分のデータを見るパターン
-		// サマリIDが指定されているときだけが、前提から異なる可能性があるパターン
+		// 初期表示のテスト一覧から結果を見ようとしている＝つまり編集権限は無し、自分のデータを見るパターン
 		$userId = Current::read('User.id');
 		$handleName = Current::read('User.handlename');
 
+		// サマリIDが指定されているときだけが、上記の前提から異なる可能性があるパターン
+		// 成績一覧画面(quiz_result/index）からこの画面へ来たときの遷移
+		// この時は対象人物が自分ではないので適宜設定しなおす
+		// サマリID
+		$summaryId = null;
 		if (isset($this->params['pass'][2])) {
 			$summaryId = $this->params['pass'][2];
 			$summary = $this->QuizAnswerSummary->findById($summaryId);
@@ -180,11 +179,11 @@ class QuizResultController extends QuizzesAppController {
 			$handleName = __d('quizzes', 'Guest');
 		}
 
+		// 権限が編集者でないなら 自分自身のデータであることが必要
 		if (! $canEdit && $summaryId) {
 			// 自分の？
 			if (! $this->QuizzesOwnAnswer->checkOwnAnsweredSummaryId($summaryId)) {
 				$this->setAction('throwBadRequest');
-				return;
 			}
 		}
 		// 初期設定
@@ -225,16 +224,6 @@ class QuizResultController extends QuizzesAppController {
 		$this->set('general', $general);
 		$this->set('summaryList', $summaryList);
 		$this->set('scoreHistory', $scoreHistory);
-	}
-
-/**
- * no_more_result method
- *
- * 条件によって回答できないアンケートにアクセスしたときに表示
- *
- * @return void
- */
-	public function no_more_result() {
 	}
 
 /**
@@ -281,20 +270,6 @@ class QuizResultController extends QuizzesAppController {
 			return $this->request->named[$name];
 		}
 		return '';
-	}
-/**
- * _getOrder method
- * ソート条件取り出し
- *
- * @return array
- */
-	protected function _getOrder() {
-		$sort = $this->_getParam('sort');
-		$dir = $this->_getParam('direction');
-		if (! empty($sort)) {
-			return array($sort => $dir);
-		}
-		return null;
 	}
 /**
  * _getFilter method

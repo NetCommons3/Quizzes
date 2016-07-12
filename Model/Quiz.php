@@ -450,6 +450,23 @@ class Quiz extends QuizzesAppModel {
 		$conditions = array_merge($conditions, $addConditions);
 		return $conditions;
 	}
+/**
+ * get result view condition method
+ *
+ * @param array $addConditions 追加条件
+ * @return array
+ */
+	public function getResultViewCondition($addConditions = array()) {
+		// ベースとなる権限のほかに,期間、会員専用
+		$conditions = $this->getBaseCondition($addConditions);
+		$periodCondition = $this->_getPeriodConditions();
+		$conditions[] = $periodCondition;
+		if (! Current::read('User')) {
+			$conditions['is_no_member_allow'] = QuizzesComponent::PERMISSION_PERMIT;
+		}
+		$conditions = array_merge($conditions, $addConditions);
+		return $conditions;
+	}
 
 /**
  * get index sql condition method
