@@ -107,7 +107,6 @@ class QuizAnswersController extends QuizzesAppController {
 		));
 		if (! $this->__quiz) {
 			$this->setAction('throwBadRequest');
-			return;
 		}
 		// 現在の表示形態を調べておく
 		list($this->__displayType) = $this->QuizFrameSetting->getQuizFrameSetting(
@@ -390,7 +389,7 @@ class QuizAnswersController extends QuizzesAppController {
 		// 自分のならば採点結果を出してもよい
 		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
 		$isMineAnswer = $this->QuizzesOwnAnswer->checkOwnAnsweredSummaryId($summaryId);
-		if (! ($canEdit || $isMineAnswer)) {
+		if (!$canEdit && !$isMineAnswer) {
 			$this->setAction('throwBadRequest');
 		}
 		// 採点?

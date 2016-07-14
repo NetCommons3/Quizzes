@@ -285,6 +285,10 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 	public function testGradingPostNG() {
 		$data = $this->__data();
 
+		$this->_targetController->QuizzesOwnAnswer->expects($this->any())
+			->method('checkOwnAnsweredSummaryId')
+			->will($this->returnValue(true));
+
 		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
 
 		$this->setExpectedException('BadRequestException');
