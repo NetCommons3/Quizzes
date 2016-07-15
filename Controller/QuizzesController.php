@@ -186,6 +186,9 @@ class QuizzesController extends QuizzesAppController {
 		// 過去データ 取り出し
 		$pastQuizzes = $this->Quiz->find('all',
 			array(
+				'fields' => array(
+					'id', 'title', 'status', 'answer_timing', 'answer_start_period', 'answer_end_period',
+				),
 				'conditions' => $this->Quiz->getCondition(),
 				'offset' => 0,
 				'limit' => 1000,
