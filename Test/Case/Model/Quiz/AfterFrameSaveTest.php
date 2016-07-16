@@ -154,4 +154,19 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
 			array($this->__getData(16, null, 4)), //
 		);
 	}
+/**
+ * testSaveN ブロック保存でのエラー発生時
+ *
+ * @return void
+ */
+	public function testSaveNG() {
+		$model = $this->_modelName;
+		$method = $this->_methodName;
+
+		$data = $this->__getData(16, null, 4);
+		$this->_mockForReturnFalse($model, 'Quizzes.QuizSetting', 'save');
+		$this->setExpectedException('InternalErrorException');
+
+		$this->$model->$method($data);
+	}
 }
