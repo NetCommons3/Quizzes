@@ -216,4 +216,35 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
 			'/quizzes/quiz_result/view/2/83b294e176a8c8026d4fbdb07ad2ed7f/33', $this->view
 		);
 	}
+
+/**
+ * testIndexByEditableWithPassLine
+ *
+ * 合格判定付きの結果画面の場合
+ * @return void
+ */
+	public function testIndexByEditableWithPassLine() {
+		// 公開されている 回答あり
+		$urlOptions = $this->__data('83b294e176a8c8026d4fbdb07ad2ed7f');
+		$assert = array('method' => 'assertNotEmpty');
+		// テストを合格判定付きにしておく
+		// 合格ラインつきにしておく
+		$Quiz = ClassRegistry::init('Quizzes.Quiz');
+		$Quiz->updateAll(
+			['Quiz.passing_grade' => 5, 'Quiz.estimated_time' => 1],
+			['Quiz.key' => '83b294e176a8c8026d4fbdb07ad2ed7f']
+		);
+		//テスト実行
+		parent::testIndexByEditable($urlOptions, $assert);
+
+		//チェック
+		$this->assertRegExp(
+			'/<a href=".*?\/quizzes\/quiz_result\/index\/2\/83b294e176a8c8026d4fbdb07ad2ed7f' .
+			'\/passing_status:2\?frame_id=6">/',
+			$this->view);
+		$this->assertRegExp(
+			'/<a href=".*?\/quizzes\/quiz_result\/index\/2\/83b294e176a8c8026d4fbdb07ad2ed7f' .
+			'\/within_time_status:2\?frame_id=6">/',
+			$this->view);
+	}
 }
