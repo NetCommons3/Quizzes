@@ -291,7 +291,7 @@ class QuizAnswersControllerStartTest extends WorkflowControllerViewTest {
 
 		// 自分の一時保存
 		$results[0] = array(
-			'urlOptions' => Hash::insert($data, 'key', '257b711744f8fb6ba8313a688a9de52f '),
+			'urlOptions' => Hash::insert($data, 'key', '257b711744f8fb6ba8313a688a9de52f'),
 			'assert' => array('method' => 'assertTextContains', 'expected' => __d('quizzes', $tstmsg))
 		);
 		// 一般が書いた差し戻し

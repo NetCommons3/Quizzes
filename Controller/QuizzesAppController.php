@@ -207,11 +207,11 @@ class QuizzesAppController extends AppController {
  * @return string
  */
 	protected function _getQuizKeyFromPass() {
-		if (isset($this->params['pass'][QuizzesComponent::QUIZ_KEY_PASS_INDEX])) {
-			if (strpos($this->params['pass'][QuizzesComponent::QUIZ_KEY_PASS_INDEX], 's_id:') === 0) {
+		if (isset($this->params['key'])) {
+			if (strpos($this->params['key'], 's_id:') === 0) {
 				return '';
 			}
-			return $this->params['pass'][QuizzesComponent::QUIZ_KEY_PASS_INDEX];
+			return $this->params['key'];
 		}
 		return '';
 	}
