@@ -380,10 +380,10 @@ class QuizAnswersController extends QuizzesAppController {
 		$quiz = $this->__quiz;
 
 		// 指定のサマリIDを取り出し
-		if (! isset($this->params['pass'][2])) {
+		if (! isset($this->params['pass'][0])) {
 			throw new ForbiddenException(__d('net_commons', 'Forbidden Request'));
 		}
-		$summaryId = $this->params['pass'][2];
+		$summaryId = $this->params['pass'][0];
 		$summary = $this->QuizAnswerSummary->findById($summaryId);
 		if (! $summary) {
 			throw new ForbiddenException(__d('net_commons', 'Forbidden Request'));

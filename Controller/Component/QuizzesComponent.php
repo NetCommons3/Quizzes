@@ -20,13 +20,6 @@ App::uses('Component', 'Controller');
 class QuizzesComponent extends Component {
 
 /**
- * コンテンツキーがパスに含まれる位置
- *
- * @var int
- */
-	const	QUIZ_KEY_PASS_INDEX = 1;
-
-/**
  * quiz create options
  *
  * @var string

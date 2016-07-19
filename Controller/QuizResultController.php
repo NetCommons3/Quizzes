@@ -166,8 +166,8 @@ class QuizResultController extends QuizzesAppController {
 		$userId = Current::read('User.id');
 		$handleName = Current::read('User.handlename');
 
-		if (isset($this->params['pass'][2])) {
-			$summaryId = $this->params['pass'][2];
+		if (isset($this->params['pass'][0])) {
+			$summaryId = $this->params['pass'][0];
 			$summary = $this->QuizAnswerSummary->findById($summaryId);
 			if (! $summary) {
 				$this->setAction('throwBadRequest');
