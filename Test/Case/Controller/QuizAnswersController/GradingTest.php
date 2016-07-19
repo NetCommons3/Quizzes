@@ -234,9 +234,13 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
 
 		// 一般がつくったことにしておく
+		// なおかつ、正解や統計表示にもしておく
 		$this->Quiz = ClassRegistry::init('Quizzes.Quiz');
 		$this->Quiz->updateAll(
-			['Quiz.created_user' => 4],
+			['Quiz.created_user' => 4,
+				'Quiz.is_correct_show' => true,
+				'Quiz.is_total_show' => true
+			],
 			['Quiz.key' => '64f129efa1cc9f1f21feaa7052f3b86c']);
 
 		$data = $this->__urlOption();

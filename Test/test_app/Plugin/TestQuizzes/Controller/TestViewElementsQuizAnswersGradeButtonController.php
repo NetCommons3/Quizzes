@@ -25,6 +25,18 @@ class TestViewElementsQuizAnswersGradeButtonController extends AppController {
  * @return void
  */
 	public function grade_button() {
+		$this->set('isMineAnswer', true);
+		$this->set('gradePass', '1');
+		$this->set('quiz', array(
+			'Quiz' => array(
+				'key' => 'test_key',
+			)
+		));
+		$this->set('summary', array(
+			'QuizAnswerSummary' => array(
+				'id' => '99999',
+			)
+		));
 		$this->autoRender = true;
 	}
 

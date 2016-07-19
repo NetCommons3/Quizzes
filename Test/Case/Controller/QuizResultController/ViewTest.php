@@ -318,6 +318,11 @@ class QuizResultControllerViewTest extends WorkflowControllerViewTest {
  */
 	public function testViewByEditable($urlOptions, $assert, $exception = null, $return = 'view') {
 		//テスト実行
+		$this->Quiz = ClassRegistry::init('Quizzes.Quiz');
+		$this->Quiz->updateAll(
+			array('passing_grade' => '5', 'estimated_time' => 1),
+			array('Quiz.key' => '83b294e176a8c8026d4fbdb07ad2ed7f')
+		);
 		parent::testViewByEditable($urlOptions, $assert, $exception, $return);
 		if ($exception) {
 			return;

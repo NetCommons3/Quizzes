@@ -352,7 +352,7 @@ class Quiz extends QuizzesAppModel {
 	public function beforeSave($options = array()) {
 		$this->data['perfect_score'] = 0;
 		$allotments = Hash::extract($this->data['QuizPage'], '{n}.QuizQuestion.{n}.allotment');
-		$this->data['perfect_score'] = array_sum($allotments);
+		$this->data['Quiz']['perfect_score'] = array_sum($allotments);
 		return true;
 	}
 /**
