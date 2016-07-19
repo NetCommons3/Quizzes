@@ -165,8 +165,8 @@ class QuizResultController extends QuizzesAppController {
 		// この時は対象人物が自分ではないので適宜設定しなおす
 		// サマリID
 		$summaryId = null;
-		if (isset($this->params['pass'][2])) {
-			$summaryId = $this->params['pass'][2];
+		if (isset($this->params['pass'][0])) {
+			$summaryId = $this->params['pass'][0];
 			$summary = $this->QuizAnswerSummary->findById($summaryId);
 			if (! $summary) {
 				$this->setAction('throwBadRequest');

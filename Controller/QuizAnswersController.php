@@ -378,7 +378,7 @@ class QuizAnswersController extends QuizzesAppController {
 	public function grading() {
 		$quiz = $this->__quiz;
 
-		$summaryId = Hash::get($this->params['pass'], '2');
+		$summaryId = Hash::get($this->params['pass'], '0');
 		$summary = $this->QuizAnswerSummary->findById($summaryId);
 		if (! $summary) {
 			throw new ForbiddenException(__d('net_commons', 'Forbidden Request'));
