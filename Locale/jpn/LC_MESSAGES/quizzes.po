@@ -918,3 +918,10 @@ msgid "no answer history."
 msgstr "解答履歴がありません。"
 msgid "! Answer has not been completed will not be able to see the details ."
 msgstr "※完了していない解答は詳細を見ることはできません。"
+
+# 新着関連
+msgid "%s started"
+msgstr "「%s」が公開されました。"
+
+msgid "Content creatable roles"
+msgstr "小テストを作成できる権限"
