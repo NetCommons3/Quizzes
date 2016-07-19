@@ -153,39 +153,36 @@ class QuizGradingHelper extends AppHelper {
 		if (! $this->_View->Workflow->canEdit('Quiz', $quiz)) {
 			return '';
 		}
-		$fieldNameBase = 'QuizAnswer.' . $answer['id'] . '.';
+		$fieldNameBase = 'QuizAnswerGrade.' . $answer['id'] . '.';
 		$ret = '<dt>' . __d('quizzes', 'Graded') . '</dt>';
 		$ret .= '<dd><div class="form-inline"><div class="form-group">';
-		$ret .= $this->Form->input($fieldNameBase . 'correct_status', array(
-			'type' => 'radio',
-			'options' => array(
+		$ret .= $this->NetCommonsForm->radio($fieldNameBase . 'correct_status', array(
 				QuizzesComponent::STATUS_GRADE_YET => __d('quizzes', 'Ungraded'), // 未採点
 				QuizzesComponent::STATUS_GRADE_PASS => __d('quizzes', 'Correct'), // 正解
 				QuizzesComponent::STATUS_GRADE_FAIL => __d('quizzes', 'Wrong'), // 不正解
 			),
-			'div' => false,
-			'legend' => false,
-			'label' => false,
-			'before' => '<label class="radio-inline">',
-			'separator' => '</label><label class="radio-inline">',
-			'after' => '</label>',
-			'error' => false,
-		));
-		$ret .= '&nbsp;&nbsp;';
-		$ret .= $this->Form->input($fieldNameBase . 'score', array(
+			array(
+				'inline' => true,
+			)
+		);
+		$ret .= $this->NetCommonsForm->error($fieldNameBase . 'correct_status');
+		$ret .= '</div>&nbsp;&nbsp;';
+		$ret .= $this->NetCommonsForm->input($fieldNameBase . 'score', array(
 			'div' => 'form-group',
 			'label' => __d('quizzes', 'points'), // 点数
 			'class' => 'form-control',
 			'type' => 'number',
 			'max' => $question['allotment'],
-			'min' => 0
+			'min' => 0,
+			'after' => sprintf(__d('quizzes', ' / %d '), $question['allotment']) //  / %d 点
 		));
 		$ret .= $this->Form->hidden($fieldNameBase . 'id',
 			array('value' => $answer['id']));
 		$ret .= $this->Form->hidden($fieldNameBase . 'quiz_question_key',
 			array('value' => $question['key']));
-		$ret .= sprintf(__d('quizzes', ' / %d '), $question['allotment']); //  / %d 点
-		$ret .= '</div></div></dd>';
+		$ret .= $this->NetCommonsForm->error($fieldNameBase . 'id');
+		$ret .= $this->NetCommonsForm->error($fieldNameBase . 'quiz_question_key');
+		$ret .= '</div></dd>';
 		return $ret;
 	}
 /**

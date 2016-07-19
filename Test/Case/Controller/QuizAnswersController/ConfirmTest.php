@@ -227,6 +227,57 @@ class QuizAnswersControllerConfirmTest extends NetCommonsControllerTestCase {
 	}
 /**
  * Confirmアクションのテスト
+ * 一般ログイン：解答をPOSTする テストが合格判定付きのものとする
+ *
+ * @return void
+ */
+	public function testConfirmPostWithPass() {
+		$data = array(
+			'data' => array(
+				'Frame' => array('id' => 6),
+				'Block' => array('id' => 2),
+				'QuizAnswerSummary' => array('id' => 36),
+			)
+		);
+		// 合格ラインつきにしておく
+		$Quiz = ClassRegistry::init('Quizzes.Quiz');
+		$Quiz->updateAll(
+			['Quiz.passing_grade' => 5, 'Quiz.estimated_time' => 1],
+			['Quiz.key' => '5cd22110e513bf7e3964b223212c329e']
+		);
+
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
+
+		$this->__saveTestAnswer();
+
+		$this->_targetController->QuizzesAnswerStart->expects($this->any())
+			->method('checkStartedQuizKeys')
+			->will($this->returnValue(true));
+		$this->_targetController->Session->expects($this->any())
+			->method('read')
+			->will($this->returnValueMap(
+				[['Quizzes.progressiveSummary.5cd22110e513bf7e3964b223212c329e', 36]]));
+		$mock = $this->getMockForModel('Quizzes.QuizAnswerSummary', array('isPassAnswer'));
+		$mock->expects($this->once())
+			->method('isPassAnswer')
+			->will($this->returnValue(QuizzesComponent::STATUS_GRADE_PASS));
+
+		$this->_testPostAction('post', $data, array(
+			'action' => 'confirm',
+			'frame_id' => 6,
+			'block_id' => 2,
+			'key' => '5cd22110e513bf7e3964b223212c329e'));
+
+		$result = $this->headers['Location'];
+
+		$this->assertTextContains('grading', $result);
+
+		//ログアウト
+		TestAuthGeneral::logout($this);
+	}
+
+/**
+ * Confirmアクションのテスト
  * 一般ログイン：違う解答をPOSTする
  *
  * @return void

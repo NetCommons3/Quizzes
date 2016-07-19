@@ -107,7 +107,6 @@ class QuizAnswersController extends QuizzesAppController {
 		));
 		if (! $this->__quiz) {
 			$this->setAction('throwBadRequest');
-			return;
 		}
 		// 現在の表示形態を調べておく
 		list($this->__displayType) = $this->QuizFrameSetting->getQuizFrameSetting(
@@ -379,11 +378,7 @@ class QuizAnswersController extends QuizzesAppController {
 	public function grading() {
 		$quiz = $this->__quiz;
 
-		// 指定のサマリIDを取り出し
-		if (! isset($this->params['pass'][0])) {
-			throw new ForbiddenException(__d('net_commons', 'Forbidden Request'));
-		}
-		$summaryId = $this->params['pass'][0];
+		$summaryId = Hash::get($this->params['pass'], '2');
 		$summary = $this->QuizAnswerSummary->findById($summaryId);
 		if (! $summary) {
 			throw new ForbiddenException(__d('net_commons', 'Forbidden Request'));
@@ -394,19 +389,26 @@ class QuizAnswersController extends QuizzesAppController {
 		// 自分のならば採点結果を出してもよい
 		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
 		$isMineAnswer = $this->QuizzesOwnAnswer->checkOwnAnsweredSummaryId($summaryId);
-		if (! $canEdit) {
-			if (! $isMineAnswer) {
-				$this->setAction('throwBadRequest');
-				return;
-			}
+		if (!$canEdit && !$isMineAnswer) {
+			$this->setAction('throwBadRequest');
 		}
 		// 採点?
 		if ($this->request->is('post') || $this->request->is('put')) {
-			$grade = $this->request->data['QuizAnswer'];
-			if ($this->QuizAnswerGrade->validateMany($grade, array('quiz' => $quiz))) {
+			// 編集権限のない人が採点できないからチェック
+			if (! $canEdit) {
+				$this->setAction('throwBadRequest');
+			}
+			$grade = $this->request->data['QuizAnswerGrade'];
+			$validate = $this->QuizAnswerGrade->validateMany($grade, array(
+				'quiz' => $quiz,
+				'answerSummary' => $summary
+			));
+			if ($validate) {
 				$this->QuizAnswerGrade->saveGrade($quiz, $summaryId, $grade);
 				$summary = $this->QuizAnswerSummary->findById($summaryId);
 			}
+		} else {
+			$this->request->data['QuizAnswerGrade'] = Hash::combine($summary['QuizAnswer'], '{n}.id', '{n}');
 		}
 		$gradePass = $this->QuizAnswerSummary->isPassAnswer($this->__quiz, $summary);
 		$this->QuizAnswerSummary->getCorrectRate($quiz);
@@ -414,9 +416,8 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->set('summary', $summary);
 		$this->set('passQuizKeys', $this->QuizzesPassQuiz->getPassQuizKeys());
 		$this->set('gradePass', $gradePass);
-		$this->set('hasFreeStyleQuestion', $this->_hasFreeStyleQuestion($quiz));
+		$this->set('hasFreeStyleQuestion', QuizzesComponent::hasFreeStyleQuestion($quiz));
 		$this->set('isMineAnswer', $isMineAnswer);
-		$this->request->data['QuizAnswer'] = Hash::combine($summary['QuizAnswer'], '{n}.id', '{n}');
 		$this->NetCommons->handleValidationError($this->QuizAnswerGrade->validationErrors);
 
 		if ($canEdit) {
@@ -480,23 +481,4 @@ class QuizAnswersController extends QuizzesAppController {
 		}
 		return $ret;
 	}
-/**
- * _hasFreeStyleQuestion
- *
- * 採点する記述式問題を持っているテストなのか
- *
- * @param array $quiz 小テスト
- * @return bool
- */
-	protected function _hasFreeStyleQuestion($quiz) {
-		$ret = Hash::extract(
-			$quiz['QuizPage'],
-			'{n}.QuizQuestion.{n}[question_type=' . QuizzesComponent::TYPE_TEXT_AREA . ']'
-		);
-		if ($ret) {
-			return true;
-		}
-		return false;
-	}
-
 }

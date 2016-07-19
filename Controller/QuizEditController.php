@@ -278,6 +278,8 @@ class QuizEditController extends QuizzesAppController {
 				$this->_quiz);
 			$this->__setupViewParameters($this->_quiz, $this->_getActionUrl('edit_question'));
 		}
+		$comments = $this->Quiz->getCommentsByContentKey($this->_quiz['Quiz']['key']);
+		$this->set('comments', $comments);
 	}
 
 /**

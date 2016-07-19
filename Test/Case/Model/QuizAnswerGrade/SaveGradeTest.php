@@ -214,8 +214,10 @@ class QuizAnswerGradeSaveGradeTest extends NetCommonsModelTestCase {
 		$dataGet = new QuizDataGetTest();
 		// 記述式タイプ
 		$quizText = $dataGet->getData(51);
+		$summaryText = array('QuizAnswer' => array(array('id' => 34)));
 		// 選択肢タイプ
 		$quiz = $dataGet->getData(46);
+		$summary = array('QuizAnswer' => array(array('id' => 16)));
 
 		$data = array('QuizAnswerGrade' => array(
 			'id' => 34,
@@ -231,14 +233,14 @@ class QuizAnswerGradeSaveGradeTest extends NetCommonsModelTestCase {
 				'value' => 'aaaa',
 				'message' => __d('net_commons', 'Invalid request.'),
 				'overwrite' => array(),
-				'options' => array('quiz' => $quiz)),
+				'options' => array('quiz' => $quiz, 'answerSummary' => $summary)),
 			array(
 				'data' => $data,
 				'field' => 'score',
 				'value' => '1000',
 				'message' => __d('quizzes', 'It is not possible to give the Scoring value or more of the points.'),
 				'overwrite' => array(),
-				'options' => array('quiz' => $quizText)),
+				'options' => array('quiz' => $quizText, 'answerSummary' => $summaryText)),
 		);
 	}
 }

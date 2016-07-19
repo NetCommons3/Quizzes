@@ -96,16 +96,29 @@ class QuizFrameSettingsController extends QuizzesAppSettingController {
 				),
 				'order' => 'QuizFrameSetting.id DESC'
 			));
-			if (!$frame) {
-				$frame = $this->QuizFrameSetting->getDefaultFrameSetting();
-			}
+			// ここに来る前にbeforeFilterで必ず$frameに相当する情報は作られていることが
+			// 保証されているのでチェックは行わないことにする
+			//if (!$frame) {
+			//	$frame = $this->QuizFrameSetting->getDefaultFrameSetting();
+			//}
 			$this->request->data['QuizFrameSetting'] = $frame['QuizFrameSetting'];
 			$this->request->data['Frame'] = Current::read('Frame');
 			$this->request->data['Block'] = Current::read('Block');
 		}
 
 		$quizzes = $this->Quiz->find('all', array(
-			'fields' => array('Quiz.*', 'QuizFrameDisplayQuiz.*'),
+			'fields' => array(
+				'Quiz.id',
+				'Quiz.key',
+				'Quiz.status',
+				'Quiz.title',
+				'Quiz.answer_start_period',
+				'Quiz.answer_end_period',
+				'Quiz.modified',
+				'QuizFrameDisplayQuiz.id',
+				'QuizFrameDisplayQuiz.frame_key',
+				'QuizFrameDisplayQuiz.quiz_key',
+			),
 			'conditions' => $this->Quiz->getBaseCondition(),
 			'order' => array('Quiz.created' => 'DESC'),
 			'recursive' => -1,

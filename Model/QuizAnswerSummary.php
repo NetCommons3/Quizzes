@@ -14,6 +14,7 @@
 
 App::uses('QuizzesAppModel', 'Quizzes.Model');
 App::uses('NetCommonsUrl', 'NetCommons.Utility');
+App::uses('MailSettingFixedPhrase', 'Mails.Model');
 
 /**
  * Summary for QuizAnswerSummary Model

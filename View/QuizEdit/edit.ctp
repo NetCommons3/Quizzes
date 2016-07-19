@@ -78,6 +78,8 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 		</div>
 	<?php endif; ?>
 
+	</div>
+
 	<?php echo $this->Workflow->comments(); ?>
 
 </article>

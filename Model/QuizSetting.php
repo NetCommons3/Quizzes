@@ -116,7 +116,7 @@ class QuizSetting extends QuizzesAppModel {
 			$this->commit();
 
 		} catch (Exception $ex) {
-			$this->rollback($ex);
+			$this->rollback();
 			throw $ex;
 		}
 		return true;
