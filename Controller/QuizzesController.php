@@ -242,10 +242,12 @@ class QuizzesController extends QuizzesAppController {
 		$filterCondition = array('Quiz.key' => $this->QuizzesOwnAnswerQuiz->getOwnAnsweredKeys());
 		if ($this->request->params['named']['answer_status'] == self::QUIZ_ANSWER_UNANSWERED) {
 			$filter = array(
+				'Quiz.status' => WorkflowComponent::STATUS_PUBLISHED,
 				'NOT' => $filterCondition
 			);
 		} elseif ($this->request->params['named']['answer_status'] == self::QUIZ_ANSWER_ANSWERED) {
 			$filter = array(
+				'Quiz.status' => WorkflowComponent::STATUS_PUBLISHED,
 				$filterCondition
 			);
 		}
