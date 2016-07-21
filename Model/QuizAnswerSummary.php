@@ -364,7 +364,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 				'key' => $quiz['Quiz']['key'],
 				'frame_id' => Current::read('Frame.id'),
 				$summary['QuizAnswerSummary']['answer_number'],
-			));
+			), true);
 			$this->setAddEmbedTagValue('X-URL', $url);
 
 			$score = $this->QuizAnswer->getScore($quiz, $summaryId);
