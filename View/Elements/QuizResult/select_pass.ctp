@@ -8,13 +8,15 @@
  * @license http://www.netcommons.org/license.txt NetCommons License
  * @copyright Copyright 2014, NetCommons Project
  */
-$urlParams = Hash::merge(array(
-	'controller' => 'quiz_result',
-	'action' => 'index'),
-	$this->params['named']);
-$named = $this->Paginator->params['named'];
-$named['page'] = '1';
-$url = $named;
+$url = NetCommonsUrl::actionUrlAsArray(Hash::merge(array(
+		'plugin' => 'quizzes',
+		'controller' => 'quiz_result',
+		'action' => 'index',
+		'block_id' => Current::read('Block.id'),
+		'key' => $quiz['Quiz']['key'],
+		'frame_id' => Current::read('Frame.id'),
+	),
+	$this->Paginator->params['named']));
 ?>
 
 <span class="btn-group">
@@ -30,7 +32,7 @@ $url = $named;
 					$key = null;
 				}
 			?>
-				<?php echo $this->Paginator->link($label, Hash::merge($url, array($keyName => $key))); ?>
+				<?php echo $this->Paginator->link($label, 	array($keyName => $key), array('url' => $url)); ?>
 			</li>
 		<?php endforeach; ?>
 	</ul>
