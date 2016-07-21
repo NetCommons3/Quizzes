@@ -32,7 +32,7 @@ $url = NetCommonsUrl::actionUrlAsArray(Hash::merge(array(
 					$key = null;
 				}
 			?>
-				<?php echo $this->Paginator->link($label, 	array($keyName => $key), array('url' => $url)); ?>
+				<?php echo $this->Paginator->link($label, array($keyName => $key), array('url' => $url)); ?>
 			</li>
 		<?php endforeach; ?>
 	</ul>
