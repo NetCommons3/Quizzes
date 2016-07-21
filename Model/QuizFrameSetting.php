@@ -140,10 +140,37 @@ class QuizFrameSetting extends QuizzesAppModel {
 			'QuizFrameSetting' => array(
 				'display_type' => QuizzesComponent::DISPLAY_TYPE_LIST,
 				'display_num_per_page' => self::QUIZ_DEFAULT_DISPLAY_NUM_PER_PAGE,
-				'sort_type' => 'Questionnaire.modified DESC',
+				'sort_type' => 'Quiz.modified DESC',
 			)
 		);
 		return $frame;
+	}
+/**
+ * saveDefaultFrameSetting
+ *
+ * @return array
+ */
+	public function saveDefaultFrameSetting() {
+		$frame = $this->find('first', array(
+			'conditions' => array(
+				'frame_key' => Current::read('Frame.key')
+			),
+			'recursive' => -1
+		));
+		if (isset($frame['QuizFrameSetting']['id'])) {
+			return true;
+		}
+		// ないときは作る
+		$frameSetting = $this->create();
+		$frameSetting['QuizFrameSetting']['frame_key'] = Current::read('Frame.key');
+		$frameSetting['QuizFrameSetting']['display_type'] =
+			QuizzesComponent::DISPLAY_TYPE_LIST;
+		$frameSetting['QuizFrameSetting']['display_num_per_page'] =
+			self::QUIZ_DEFAULT_DISPLAY_NUM_PER_PAGE;
+		$frameSetting['QuizFrameSetting']['sort_type'] =
+			'Quiz.modified DESC';
+		$ret = $this->save($frameSetting);
+		return $ret;
 	}
 
 /**

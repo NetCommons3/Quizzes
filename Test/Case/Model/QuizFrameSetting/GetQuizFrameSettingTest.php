@@ -75,7 +75,7 @@ class QuizFrameSettingGetQuizFrameSettingTest extends NetCommonsGetTest {
 		$expected = array(
 			QuizzesComponent::DISPLAY_TYPE_LIST,
 			QuizFrameSetting::QUIZ_DEFAULT_DISPLAY_NUM_PER_PAGE,
-			'Questionnaire.modified',
+			'Quiz.modified',
 			'DESC',
 		);
 

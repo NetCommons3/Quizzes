@@ -73,7 +73,7 @@ class QuizFrameSettingGetDefaultFrameSettingTest extends NetCommonsGetTest {
 			'QuizFrameSetting' => array(
 				'display_type' => QuizzesComponent::DISPLAY_TYPE_LIST,
 				'display_num_per_page' => QuizFrameSetting::QUIZ_DEFAULT_DISPLAY_NUM_PER_PAGE,
-				'sort_type' => 'Questionnaire.modified DESC',
+				'sort_type' => 'Quiz.modified DESC',
 			)
 		);
 

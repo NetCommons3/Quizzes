@@ -121,6 +121,7 @@ class Quiz extends QuizzesAppModel {
 		$this->loadModels([
 			'Frame' => 'Frames.Frame',
 			'QuizSetting' => 'Quizzes.QuizSetting',
+			'QuizFrameSetting' => 'Quizzes.QuizFrameSetting',
 			'QuizPage' => 'Quizzes.QuizPage',
 			'QuizFrameDisplayQuiz' => 'Quizzes.QuizFrameDisplayQuiz',
 			'QuizAnswerSummary' => 'Quizzes.QuizAnswerSummary',
@@ -426,6 +427,7 @@ class Quiz extends QuizzesAppModel {
 			$this->QuizSetting->saveBlock($frame);
 			// 設定情報も
 			$this->QuizSetting->saveSetting();
+			$this->QuizFrameSetting->saveDefaultFrameSetting();
 			$this->commit();
 		} catch (Exception $ex) {
 			//トランザクションRollback
