@@ -549,11 +549,15 @@ msgid " + There are ungraded question %d points."
 msgstr ""
 
 #: View/Helper/QuizGradingHelper.php:334
-msgid "Elapsed : %d min."
+msgid "Elapsed : %d sec."
+msgstr ""
+msgid "Elapsed : %d min %d sec."
 msgstr ""
 
 #: View/Helper/QuizGradingHelper.php:340
-msgid "  Overtime %d min."
+msgid "Overtime %d sec."
+msgstr ""
+msgid "Overtime %d min %d sec."
 msgstr ""
 
 #: View/Helper/QuizStatusLabelHelper.php:31

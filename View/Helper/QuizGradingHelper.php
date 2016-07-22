@@ -345,18 +345,42 @@ class QuizGradingHelper extends AppHelper {
  * @return string header描画HTML
  */
 	protected function _getElapseTimeSummary($quiz, $summary) {
-		$elapsedSec = $summary['QuizAnswerSummary']['elapsed_second'];
-		$elapsedMin = $elapsedSec / 60;
-		$ret = sprintf(
-			__d('quizzes', 'Elapsed : %d min.'), // 解答にかかった時間：%d分
-			$elapsedMin
-		);
-		if ($quiz['Quiz']['estimated_time'] > 0 && $quiz['Quiz']['estimated_time'] * 60 < $elapsedSec) {
-			$ret .= '<span class="text-danger">';
-			$ret .= sprintf(
-				__d('quizzes', '  Overtime %d min.'), //   %d分オーバーです
-				($elapsedSec - $quiz['Quiz']['estimated_time'] * 60) / 60);
+		// 消費時間
+		$elapsedSec = intval($summary['QuizAnswerSummary']['elapsed_second']);
+		// 設定された目安時間
+		$estimatedSec = intval($quiz['Quiz']['estimated_time'] * 60);
+		// オーバー時間
+		$overSec = $elapsedSec - $estimatedSec;
+
+		$ret = $this->_getTimeMsg($elapsedSec, 'Elapsed : ');
+		if ($quiz['Quiz']['estimated_time'] > 0 && $overSec > 0) {
+			$ret .= '&nbsp;<span class="label label-danger">';
+			$ret .= $this->_getTimeMsg($overSec, 'Overtime ');
 			$ret .= '</span>';
+		}
+		return $ret;
+	}
+
+/**
+ * _getTimeMsg
+ *
+ * 時間のための表示メッセージ組立（分、秒）
+ *
+ * @param int $secTime 秒
+ * @param string $msg 表示メッセージ
+ * @return string
+ */
+	protected function _getTimeMsg($secTime, $msg) {
+		if ($secTime < 60) {
+			$min = 0;
+			$sec = $secTime;
+			$msg .= '%d sec.';
+			$ret = sprintf(__d('quizzes', $msg), $sec);
+		} else {
+			$min = $secTime / 60;
+			$sec = $secTime % 60;
+			$msg .= '%d min %d sec.';
+			$ret = sprintf(__d('quizzes', $msg), $min, $sec);
 		}
 		return $ret;
 	}

@@ -545,12 +545,16 @@ msgid " + There are ungraded question %d points."
 msgstr "+ 未採点分が%d点あります"
 
 #: View/Helper/QuizGradingHelper.php:334
-msgid "Elapsed : %d min."
-msgstr "解答にかかった時間：%d分"
+msgid "Elapsed : %d sec."
+msgstr "解答にかかった時間： %d秒"
+msgid "Elapsed : %d min %d sec."
+msgstr "解答にかかった時間： %d分 %d秒"
 
 #: View/Helper/QuizGradingHelper.php:340
-msgid "  Overtime %d min."
-msgstr " %d分オーバーです"
+msgid "Overtime %d sec."
+msgstr "%d秒 オーバー"
+msgid "Overtime %d min %d sec."
+msgstr "%d分%d秒 オーバー"
 
 #: View/Helper/QuizStatusLabelHelper.php:31
 msgid "Undefined"
