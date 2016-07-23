@@ -11,7 +11,6 @@
 
 echo $this->element('Quizzes.scripts');
 echo $this->NetCommonsHtml->script(array(
-	'/quizzes/js/quizzes_messages_constant.js',
 	'/quizzes/js/quizzes_edit_question.js',
 ));
 $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->data));

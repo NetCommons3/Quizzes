@@ -15,7 +15,6 @@ echo $this->NetCommonsHtml->script(array(
 '/components/d3/d3.min.js',
 '/components/nvd3/build/nv.d3.min.js',
 '/components/angular-nvd3/dist/angular-nvd3.min.js',
-'/quizzes/js/quizzes_messages_constant.js',
 '/quizzes/js/quizzes_result.js'
 ));
 echo $this->NetCommonsHtml->css('/components/nvd3/build/nv.d3.css');
