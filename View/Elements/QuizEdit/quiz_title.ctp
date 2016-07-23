@@ -10,7 +10,7 @@
  */
 ?>
 <!--<div class="bg-info">-->
-<h1 class="">
+<h1 ng-cloak class="">
     {{quiz.quiz.title}}
     <?php if ($this->action != 'edit'): ?>
     <small>

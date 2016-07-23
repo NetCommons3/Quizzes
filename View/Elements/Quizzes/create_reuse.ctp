@@ -17,7 +17,7 @@
 	'ng-disabled' => 'pastQuizzes.length == 0',
 	));
 ?>
-<div class="row form-horizontal" uib-collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_REUSE; ?>'">
+<div ng-cloak class="row form-horizontal" uib-collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_REUSE; ?>'">
 	<div class="col-lg-11 col-lg-offset-1">
 		<div class="form-group">
 			<div class="col-lg-3">

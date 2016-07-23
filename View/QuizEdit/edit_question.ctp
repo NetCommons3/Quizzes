@@ -50,7 +50,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 
 			<uib-tabset>
 				<uib-tab ng-repeat="(pageIndex, page) in quiz.quizPage" active="page.tabActive">
-					<uib-tab-heading>
+					<uib-tab-heading ng-cloak>
 						{{pageIndex+1}}<span class="glyphicon glyphicon-exclamation-sign text-danger" ng-if="page.hasError"></span>
 					</uib-tab-heading>
 
@@ -64,7 +64,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 						<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/add_question_button'); ?>
 						<div class="clearfix"></div>
 
-							<uib-accordion close-others="true">
+							<uib-accordion ng-cloak close-others="true">
 								<uib-accordion-group
 										class="form-horizontal"
 										ng-repeat="(qIndex, question) in page.quizQuestion"
@@ -76,7 +76,6 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 										<div class="clearfix"></div>
 									</uib-accordion-heading>
 									<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/hidden_question_info_set'); ?>
-
 									<?php /* ここから質問本体設定 */
 
 										/* 配点 */
