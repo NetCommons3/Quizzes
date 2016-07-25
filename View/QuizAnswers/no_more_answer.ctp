@@ -10,16 +10,16 @@
  */
 ?>
 <article>
-    <p>
-        <?php echo __d('quizzes', 'you will not be able to answer this quiz.'); ?>
-        <?php echo $this->QuizResultButton->getResultButtons($quiz, array(
-            'title' => '&nbsp;' . __d('quizzes', 'Results confirmed'),
-            'icon' => 'stats',
-        )); ?>
-        <?php if ($displayType == QuizzesComponent::DISPLAY_TYPE_LIST): ?>
-            <div class="text-center">
-                <?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to Top'), array('icon' => 'chevron-left')); ?>
-            </div>
-        <?php endif; ?>
-    </p>
+	<p>
+		<?php echo __d('quizzes', 'you will not be able to answer this quiz.'); ?>
+		<?php echo $this->QuizResultButton->getResultButtons($quiz, array(
+			'title' => '&nbsp;' . __d('quizzes', 'Results confirmed'),
+			'icon' => 'stats',
+		)); ?>
+		<?php if ($displayType == QuizzesComponent::DISPLAY_TYPE_LIST): ?>
+			<div class="text-center">
+				<?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to Top'), array('icon' => 'chevron-left')); ?>
+			</div>
+		<?php endif; ?>
+	</p>
 </article>

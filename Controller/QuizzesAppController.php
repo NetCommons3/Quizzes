@@ -121,7 +121,11 @@ class QuizzesAppController extends AppController {
  * @return bool
  */
 	public function isAbleToAnswer($quiz) {
+		// 未公開のものは編集権限がる人にはAll-OKだが、それ以外の人にはAll-NG
 		if ($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED) {
+			if ($this->Quiz->canEditWorkflowContent($quiz)) {
+				return true;
+			}
 			return false;
 		}
 		// 繰り返し回答を許していないのにすでに回答済みか
@@ -129,6 +133,10 @@ class QuizzesAppController extends AppController {
 			if ($this->QuizzesOwnAnswerQuiz->checkOwnAnsweredKeys($quiz['Quiz']['key'])) {
 				return false;
 			}
+		}
+		// 解答期限外
+		if ($quiz['Quiz']['period_range_stat'] != QuizzesComponent::QUIZ_PERIOD_STAT_IN) {
+			return false;
 		}
 
 		return true;
