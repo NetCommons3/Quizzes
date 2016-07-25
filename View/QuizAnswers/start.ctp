@@ -18,7 +18,14 @@ echo $this->element('Quizzes.scripts');
 
 	<div class="row">
 
-		<?php echo $this->NetCommonsForm->create('QuizAnswer', array('type' => 'post')); ?>
+		<?php echo $this->NetCommonsForm->create('QuizAnswer', array(
+			'url' => NetCommonsUrl::actionUrl(array(
+			'controller' => 'quiz_answers',
+			'action' => 'start',
+			Current::read('Block.id'),
+			$quiz['Quiz']['key'],
+			'frame_id' => Current::read('Frame.id')
+		)))); ?>
 		<?php echo $this->NetCommonsForm->hidden('Frame.id', array('value' => $frameId)); ?>
 		<?php echo $this->NetCommonsForm->hidden('Block.id', array('value' => $blockId)); ?>
 
