@@ -47,7 +47,11 @@ echo $this->element('Quizzes.scripts');
 		</div>
 
 		<div class="text-center">
-			<?php echo $this->BackTo->pageLinkButton(__d('net_commons', 'Cancel'), array('icon' => 'remove')); ?>
+			<?php
+			if ($displayType == QuizzesComponent::DISPLAY_TYPE_LIST) {
+				echo $this->BackTo->pageLinkButton(__d('net_commons', 'Cancel'), array('icon' => 'remove'));
+			}
+			?>
 			<?php /* テストを開始する */
 			echo $this->Button->save(__d('quizzes', 'Start the quiz'), array('icon' => 'chevron-right')) ?>
 		</div>
