@@ -41,11 +41,16 @@ class QuizResultButtonHelper extends AppHelper {
 	public function getResultButtons($quiz, $options = array()) {
 		//
 		// 成績ボタン
-		// 小テスト自体が公開状態にない(not editor)
-		// 未回答＆回答期間内　　　　　　　集計ボタン（disabled）
-		$key = $quiz['Quiz']['key'];
+		// (not editor)でかつ
+		// 小テスト自体が公開状態にないまたはまだ回答日がきてないときは表示しない
+		$canEdit = $this->_View->Workflow->canEdit('Quiz', $quiz);
+		if (! $canEdit &&
+			($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED ||
+			$quiz['Quiz']['period_range_stat'] == QuizzesComponent::QUIZ_PERIOD_STAT_BEFORE)) {
+			return '';
+		}
 
-		$disabled = '';
+		$key = $quiz['Quiz']['key'];
 
 		//　編集できる人かどうかで見に行くアクションが異なる
 		// 総合情報（index）は一般の人は見ることができません
@@ -64,7 +69,7 @@ class QuizResultButtonHelper extends AppHelper {
 		));
 		$html = $this->NetCommonsHtml->link($icon . $title,
 			$url, array(
-			'class' => $btnClass . ' ' . $disabled,
+			'class' => $btnClass,
 			'escape' => false
 		));
 

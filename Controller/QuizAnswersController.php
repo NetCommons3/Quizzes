@@ -114,6 +114,7 @@ class QuizAnswersController extends QuizzesAppController {
 		);
 		$this->set('displayType', $this->__displayType);
 
+		$this->set('quiz', $this->__quiz);
 		// 以下のisAbleto..の内部関数にてNetCommonsお約束である編集権限、参照権限チェックを済ませています
 		// 閲覧可能か
 		if (! $this->isAbleTo($this->__quiz)) {
@@ -161,7 +162,6 @@ class QuizAnswersController extends QuizzesAppController {
 		}
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
-		$this->set('quiz', $this->__quiz);
 	}
 
 /**
@@ -178,7 +178,6 @@ class QuizAnswersController extends QuizzesAppController {
 		// なので全てSetでやりくり
 		$this->set('frameId', Current::read('Frame.id'));
 		$this->set('blockId', Current::read('Block.id'));
-		$this->set('quiz', $quiz);
 		$this->set('quizPage', $quiz['QuizPage'][0]);
 
 		// POSTチェック
@@ -287,7 +286,6 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->request->data['Block'] = Current::read('Block');
 		$this->request->data['QuizPage'] = $quiz['QuizPage'][$nextPageSeq];
 		$this->request->data['QuizAnswerSummary'] = $summary['QuizAnswerSummary'];
-		$this->set('quiz', $quiz);
 		$this->set('quizPage', $quiz['QuizPage'][$nextPageSeq]);
 		$this->set('quizPageIndex', $nextPageSeq);
 		$this->NetCommons->handleValidationError($this->QuizAnswer->validationErrors);
@@ -364,7 +362,6 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
 		$this->request->data['QuizAnswerSummary'] = $summary['QuizAnswerSummary'];
-		$this->set('quiz', $this->__quiz);
 		$this->request->data['QuizAnswer'] = $this->_setAnswerToView($setAnswers);
 		$this->set('answers', $setAnswers);
 	}
@@ -412,7 +409,6 @@ class QuizAnswersController extends QuizzesAppController {
 		}
 		$gradePass = $this->QuizAnswerSummary->isPassAnswer($this->__quiz, $summary);
 		$this->QuizAnswerSummary->getCorrectRate($quiz);
-		$this->set('quiz', $quiz);
 		$this->set('summary', $summary);
 		$this->set('passQuizKeys', $this->QuizzesPassQuiz->getPassQuizKeys());
 		$this->set('gradePass', $gradePass);

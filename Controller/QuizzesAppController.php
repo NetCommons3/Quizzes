@@ -122,7 +122,7 @@ class QuizzesAppController extends AppController {
  */
 	public function isAbleToAnswer($quiz) {
 		if ($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED) {
-			return true;
+			return false;
 		}
 		// 繰り返し回答を許していないのにすでに回答済みか
 		if ($quiz['Quiz']['is_repeat_allow'] == QuizzesComponent::PERMISSION_NOT_PERMIT) {
