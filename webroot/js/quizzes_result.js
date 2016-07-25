@@ -50,7 +50,7 @@ NetCommonsApp.controller('QuizResult',
 NetCommonsApp.controller('QuizResultView',
     ['$scope', '$window', '$sce', '$timeout', '$log', 'quizzesMessages',
       function($scope, $window, $sce, $timeout, $log, quizzesMessages) {
-        $scope.initialize = function(scoreHistory) {
+        $scope.initialize = function(scoreHistory, perfectScore) {
           $scope.opt = {
             chart: {
               'type': 'lineChart',
@@ -69,7 +69,8 @@ NetCommonsApp.controller('QuizResultView',
               },
               'yAxis': {
                 'axisLabel': quizzesMessages.resultScoreLabel
-              }
+              },
+              'forceY': [0, perfectScore]
               //'title': {
               //  'enable': true,
               //  'text': 'あなたのこれまでの成績履歴'

@@ -23,9 +23,13 @@ if ($scoreHistory) {
 } else {
 	$jsScoreHistory = array();
 }
+$perfectScore = $quiz['Quiz']['perfect_score'];
 ?>
 
-<article ng-controller="QuizResultView" ng-init="initialize(<?php echo h(json_encode($jsScoreHistory)); ?>)">
+<article
+		ng-controller="QuizResultView"
+		ng-init="initialize(<?php echo h(json_encode($jsScoreHistory)); ?>,
+		<?php echo $perfectScore; ?>)">
 	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
 
 	<?php echo $this->element('Quizzes.QuizResult/overall_performance'); ?>
