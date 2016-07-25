@@ -39,7 +39,10 @@ class Quiz extends QuizzesAppModel {
 		// 自動でメールキューの登録, 削除。ワークフロー利用時はWorkflow.Workflowより下に記述する
 		'Mails.MailQueue' => array(
 			'embedTags' => array(
-				'X-SUBJECT' => 'Questionnaire.title',
+				'X-SUBJECT' => 'Quiz.title',
+				'X-URL' => array(
+					'controller' => 'quiz_answers'
+				)
 			),
 		),
 		'Mails.MailQueueDelete',

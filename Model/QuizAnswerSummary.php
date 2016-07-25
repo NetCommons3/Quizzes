@@ -30,7 +30,6 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		// 自動でメールキューの登録, 削除。ワークフロー利用時はWorkflow.Workflowより下に記述する
 		'Mails.MailQueue' => array(
 			'embedTags' => array(
-				'X-SUBJECT' => 'Quiz.title',
 			),
 			'keyField' => 'id',
 			'typeKey' => MailSettingFixedPhrase::ANSWER_TYPE,
@@ -176,7 +175,6 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			'conditions' => $condition,
 			'recursive' => -1
 		));
-		$this->log( $this->getDataSource()->getLog(), LOG_DEBUG);
 		return $ret;
 	}
 
@@ -360,13 +358,13 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			$url = NetCommonsUrl::actionUrl(array(
 				'controller' => 'quiz_answers',
 				'action' => 'grading',
-				Current::read('Block.id'),
+				'block_id' => Current::read('Block.id'),
 				'key' => $quiz['Quiz']['key'],
 				'frame_id' => Current::read('Frame.id'),
-				$summary['QuizAnswerSummary']['answer_number'],
+				$summaryId,
 			), true);
 			$this->setAddEmbedTagValue('X-URL', $url);
-
+			$this->setAddEmbedTagValue('X-SUBJECT', $quiz['Quiz']['title']);
 			$score = $this->QuizAnswer->getScore($quiz, $summaryId);
 
 			$data['id'] = $summaryId;
