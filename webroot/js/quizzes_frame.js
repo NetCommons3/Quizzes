@@ -15,46 +15,47 @@
  */
 
 NetCommonsApp.controller('QuizzesFrame',
-    function($scope, $filter, $sce, $log, $attrs, $timeout) {
-      /**
-       * Initialize
-       *
-       * @return {void}
-       */
-      $scope.initialize = function(quizzes, quizFrameSettings) {
-        $scope.quizzes = quizzes;
-        $scope.quizFrameSettings = quizFrameSettings;
-        $scope.WinBuf = {allCheck: false};
-        $scope.isDisplay = new Array();
-        for (var i = 0; i < $scope.quizzes.length; i++) {
-          if ($scope.quizzes[i].quizFrameDisplayQuiz.id) {
-            $scope.isDisplay[i] = true;
-          } else {
-            $scope.isDisplay[i] = false;
+    ['$scope', '$filter', '$sce', '$log', '$attrs', '$timeout',
+      function($scope, $filter, $sce, $log, $attrs, $timeout) {
+        /**
+         * Initialize
+         *
+         * @return {void}
+         */
+        $scope.initialize = function(quizzes, quizFrameSettings) {
+          $scope.quizzes = quizzes;
+          $scope.quizFrameSettings = quizFrameSettings;
+          $scope.WinBuf = {allCheck: false};
+          $scope.isDisplay = new Array();
+          for (var i = 0; i < $scope.quizzes.length; i++) {
+            if ($scope.quizzes[i].quizFrameDisplayQuiz.id) {
+              $scope.isDisplay[i] = true;
+            } else {
+              $scope.isDisplay[i] = false;
+            }
           }
-        }
-      };
-      /**
-       * Quiz Frame Setting AllCheckbox clicked
-       *
-       * @return {void}
-       */
-      $scope.allCheckClicked = function() {
-        for (var i = 0; i < $scope.quizzes.length; i++) {
-          if ($scope.WinBuf.allCheck == true) {
-            $scope.isDisplay[i] = true;
-          } else {
-            $scope.isDisplay[i] = false;
+        };
+        /**
+         * Quiz Frame Setting AllCheckbox clicked
+         *
+         * @return {void}
+         */
+        $scope.allCheckClicked = function() {
+          for (var i = 0; i < $scope.quizzes.length; i++) {
+            if ($scope.WinBuf.allCheck == true) {
+              $scope.isDisplay[i] = true;
+            } else {
+              $scope.isDisplay[i] = false;
+            }
           }
-        }
-      };
-      /**
-       * Quiz Frame Setting quiz list sort
-       *
-       * @return {void}
-       */
-      $scope.sort = function(fieldName, direction) {
-        $scope.quizzes = $filter('orderBy')($scope.quizzes, fieldName, direction);
-      };
-    }
+        };
+        /**
+         * Quiz Frame Setting quiz list sort
+         *
+         * @return {void}
+         */
+        $scope.sort = function(fieldName, direction) {
+          $scope.quizzes = $filter('orderBy')($scope.quizzes, fieldName, direction);
+        };
+      }]
 );

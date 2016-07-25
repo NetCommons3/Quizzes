@@ -15,7 +15,7 @@
  */
 
 NetCommonsApp.controller('QuizzesEdit',
-    function($scope, $timeout) {
+    ['$scope', '$timeout', function($scope, $timeout) {
 
       /**
        * Initialize
@@ -89,4 +89,4 @@ NetCommonsApp.controller('QuizzesEdit',
           $('#answer_end_period').data('DateTimePicker').minDate(minDate);
         }
       };
-    });
+    }]);

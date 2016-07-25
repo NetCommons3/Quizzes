@@ -13,76 +13,78 @@ NetCommonsApp.requires.push('nvd3');
  * @param {function($scope)} Controller
  */
 NetCommonsApp.controller('QuizResult',
-    function($scope, $window, $sce, $timeout, $log, quizzesMessages) {
-      $scope.initialize = function(scoreDistribution) {
-        $scope.opt = {
-          chart: {
-            'type': 'multiBarChart',
-            'height': 250,
-            'showControls': false,
-            'showValues': true,
-            'duration': 500,
-            'margin' : {top: 10, right: 0, bottom: 50, left: 100},
-            x: function(d) {return d.label;},
-            y: function(d) {return parseInt(d.value);},
-            'xAxis': {
-              'axisLabel': quizzesMessages.resultScoreLabel,
-              'showMaxMin': false
-            },
-            'yAxis': {
-              'axisLabel': quizzesMessages.resultPersonsLabel
+    ['$scope', '$window', '$sce', '$timeout', '$log', 'quizzesMessages',
+      function($scope, $window, $sce, $timeout, $log, quizzesMessages) {
+        $scope.initialize = function(scoreDistribution) {
+          $scope.opt = {
+            chart: {
+              'type': 'multiBarChart',
+              'height': 250,
+              'showControls': false,
+              'showValues': true,
+              'duration': 500,
+              'margin' : {top: 10, right: 0, bottom: 50, left: 100},
+              x: function(d) {return d.label;},
+              y: function(d) {return parseInt(d.value);},
+              'xAxis': {
+                'axisLabel': quizzesMessages.resultScoreLabel,
+                'showMaxMin': false
+              },
+              'yAxis': {
+                'axisLabel': quizzesMessages.resultPersonsLabel
+              }
             }
-          }
+          };
+          $scope.data = [
+            {
+              'key': quizzesMessages.resultPersonsLabel,
+              'color': '#777'
+            }
+          ];
+          $scope.data[0]['values'] = new Array();
+          angular.forEach(scoreDistribution, function(obj) {
+            $scope.data[0]['values'].push(obj);
+          });
         };
-        $scope.data = [
-          {
-            'key': quizzesMessages.resultPersonsLabel,
-            'color': '#777'
-          }
-        ];
-        $scope.data[0]['values'] = new Array();
-        angular.forEach(scoreDistribution, function(obj) {
-          $scope.data[0]['values'].push(obj);
-        });
-      };
-    });
+      }]);
 NetCommonsApp.controller('QuizResultView',
-    function($scope, $window, $sce, $timeout, $log, quizzesMessages) {
-      $scope.initialize = function(scoreHistory) {
-        $scope.opt = {
-          chart: {
-            'type': 'lineChart',
-            'height': 250,
-            'defined': function(d, i) { return d.isGradeFinished; },
-            'showControls': false,
-            'showLegend': false,
-            'showValues': true,
-            'duration': 500,
-            'margin' : {top: 10, right: 80, bottom: 50, left: 80},
-            x: function(d) {return parseInt(d.answerNumber);},
-            y: function(d) {return parseInt(d.summaryScore);},
-            'xAxis': {
-              'axisLabel': quizzesMessages.resultNumberLabel,
-              'showMaxMin': false
-            },
-            'yAxis': {
-              'axisLabel': quizzesMessages.resultScoreLabel
+    ['$scope', '$window', '$sce', '$timeout', '$log', 'quizzesMessages',
+      function($scope, $window, $sce, $timeout, $log, quizzesMessages) {
+        $scope.initialize = function(scoreHistory) {
+          $scope.opt = {
+            chart: {
+              'type': 'lineChart',
+              'height': 250,
+              'defined': function(d, i) { return d.isGradeFinished; },
+              'showControls': false,
+              'showLegend': false,
+              'showValues': true,
+              'duration': 500,
+              'margin' : {top: 10, right: 80, bottom: 50, left: 80},
+              x: function(d) {return parseInt(d.answerNumber);},
+              y: function(d) {return parseInt(d.summaryScore);},
+              'xAxis': {
+                'axisLabel': quizzesMessages.resultNumberLabel,
+                'showMaxMin': false
+              },
+              'yAxis': {
+                'axisLabel': quizzesMessages.resultScoreLabel
+              }
+              //'title': {
+              //  'enable': true,
+              //  'text': 'あなたのこれまでの成績履歴'
+              //}
             }
-            //'title': {
-            //  'enable': true,
-            //  'text': 'あなたのこれまでの成績履歴'
-            //}
-          }
+          };
+          $scope.data = [
+            {
+              'key': quizzesMessages.resultScoreLabel,
+              'color': '#777'
+            }
+          ];
+          $scope.data[0]['values'] = new Array();
+          angular.forEach(scoreHistory, function(obj) {
+            $scope.data[0]['values'].push(obj);
+          });
         };
-        $scope.data = [
-          {
-            'key': quizzesMessages.resultScoreLabel,
-            'color': '#777'
-          }
-        ];
-        $scope.data[0]['values'] = new Array();
-        angular.forEach(scoreHistory, function(obj) {
-          $scope.data[0]['values'].push(obj);
-        });
-      };
-    });
+      }]);

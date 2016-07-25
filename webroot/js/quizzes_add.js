@@ -15,7 +15,7 @@
  */
 
 NetCommonsApp.controller('QuizzesAdd',
-    function($scope) {
+    ['$scope', function($scope) {
       /**
        * Initialize
        *
@@ -36,5 +36,5 @@ NetCommonsApp.controller('QuizzesAdd',
         var el = jQuery('#templateFile');
         $scope.templateFile = el[0].value;
       };
-    }
+    }]
 );
