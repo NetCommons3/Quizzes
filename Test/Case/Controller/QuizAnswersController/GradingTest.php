@@ -382,5 +382,4 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 		));
 		return $results;
 	}
-
 }

@@ -232,6 +232,8 @@ class QuizQuestion extends QuizzesAppModel {
 				if (isset($question['QuizCorrect'])) {
 					$question['QuizQuestion']['QuizCorrect'] = $question['QuizCorrect'];
 				}
+				// 万が一ShufflePageComponentを通らなかったときのための保険
+				$question['QuizQuestion']['serial_number'] = $question['QuizQuestion']['question_sequence'];
 				$page['QuizQuestion'][] = $question['QuizQuestion'];
 				$quiz['Quiz']['question_count']++;
 			}
