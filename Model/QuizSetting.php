@@ -10,27 +10,20 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 
-App::uses('QuizzesAppModel', 'Quizzes.Model');
+App::uses('BlockBaseModel', 'Blocks.Model');
+App::uses('BlockSettingBehavior', 'Blocks.Model/Behavior');
 
 /**
  * Summary for QuizBlockSetting Model
  */
-class QuizSetting extends QuizzesAppModel {
+class QuizSetting extends BlockBaseModel {
 
 /**
- * Validation rules
+ * Custom database table name
  *
- * @var array
+ * @var string
  */
-	public $validate = array(
-		'block_key' => array(
-			'notBlank' => array(
-				'rule' => array('notBlank'),
-				'allowEmpty' => false,
-				'required' => true,
-			),
-		),
-	);
+	public $useTable = false;
 
 /**
  * use behaviors
@@ -39,6 +32,9 @@ class QuizSetting extends QuizzesAppModel {
  */
 	public $actsAs = array(
 		'Blocks.BlockRolePermission',
+		'Blocks.BlockSetting' => array(
+			BlockSettingBehavior::FIELD_USE_WORKFLOW,
+		),
 	);
 
 /**
@@ -63,25 +59,11 @@ class QuizSetting extends QuizzesAppModel {
 /**
  * getSetting
  *
- * @return mix QuizSetting data
+ * @return array QuizSetting data
  */
 	public function getSetting() {
 		$blockSetting = $this->Block->find('all', array(
 			'recursive' => -1,
-			'fields' => array(
-				$this->Block->alias . '.*',
-				$this->alias . '.*',
-			),
-			'joins' => array(
-				array(
-					'table' => $this->table,
-					'alias' => $this->alias,
-					'type' => 'LEFT',
-					'conditions' => array(
-						$this->Block->alias . '.key' . ' = ' . $this->alias . ' .block_key',
-					),
-				),
-			),
 			'conditions' => array(
 				'Block.id' => Current::read('Block.id')
 			),
@@ -89,7 +71,7 @@ class QuizSetting extends QuizzesAppModel {
 		if (! $blockSetting) {
 			return $blockSetting;
 		}
-		return $blockSetting[0];
+		return Hash::merge($blockSetting[0], $this->getBlockSetting());
 	}
 
 /**
@@ -109,9 +91,8 @@ class QuizSetting extends QuizzesAppModel {
 		}
 
 		try {
-			if (! $this->save(null, false)) {
-				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
-			}
+			// useTable = falseでsaveすると必ずfalseになるので、throwしない
+			$this->save(null, false);
 
 			$this->commit();
 
@@ -186,13 +167,12 @@ class QuizSetting extends QuizzesAppModel {
  */
 	public function saveSetting() {
 		// block settingはあるか
-		$setting = $this->getSetting();
-		if (! empty($setting['QuizSetting']['id'])) {
+		if ($this->isExsistBlockSetting()) {
 			return true;
 		}
+
 		// ないときは作る
-		$blockSetting = $this->create();
-		$blockSetting['QuizSetting']['block_key'] = Current::read('Block.key');
+		$blockSetting = $this->createBlockSetting();
 		$ret = $this->saveQuizSetting($blockSetting);
 		return $ret;
 	}

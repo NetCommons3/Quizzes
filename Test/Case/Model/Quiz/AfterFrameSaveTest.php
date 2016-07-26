@@ -37,7 +37,7 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
 		'plugin.quizzes.quiz_frame_setting',
 		'plugin.quizzes.quiz_page',
 		'plugin.quizzes.quiz_question',
-		'plugin.quizzes.quiz_setting',
+		'plugin.quizzes.block_setting_for_quiz',
 		'plugin.workflow.workflow_comment',
 		'plugin.authorization_keys.authorization_keys',
 	);
@@ -75,6 +75,8 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
 		$this->Block = ClassRegistry::init('Blocks' . '.' . 'Block');
 		$this->QuizSetting = ClassRegistry::init('Quizzes' . '.' . 'QuizSetting');
 		$this->QuizFrameSetting = ClassRegistry::init('Quizzes' . '.' . 'QuizFrameSetting');
+
+		Current::write('Plugin.key', $this->plugin);
 	}
 
 /**
@@ -132,10 +134,7 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
 		$actualBlockKey = $block['Block']['key'];
 
 		// 小テストのフレーム設定情報もできていること
-		$setting = $this->QuizSetting->find('first', array(
-			'recursive' => -1,
-			'conditions' => array('block_key' => $actualBlockKey),
-		));
+		$setting = $this->QuizSetting->getBlockSetting($actualBlockKey);
 		$this->assertNotEmpty($setting);
 	}
 
@@ -145,7 +144,7 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
  * ### 戻り値
  *  - data 登録データ
  *
- * @return void
+ * @return array
  */
 	public function dataProviderSave() {
 		return array(
@@ -164,7 +163,7 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
 		$method = $this->_methodName;
 
 		$data = $this->__getData(16, null, 4);
-		$this->_mockForReturnFalse($model, 'Quizzes.QuizSetting', 'save');
+		$this->_mockForReturnFalse($model, 'Blocks.BlockSetting', 'saveMany');
 		$this->setExpectedException('InternalErrorException');
 
 		$this->$model->$method($data);
