@@ -34,7 +34,7 @@ class QuizSettingGetSettingTest extends NetCommonsGetTest {
 		'plugin.quizzes.quiz_frame_setting',
 		'plugin.quizzes.quiz_page',
 		'plugin.quizzes.quiz_question',
-		'plugin.quizzes.quiz_setting',
+		'plugin.quizzes.block_setting_for_quiz',
 		'plugin.workflow.workflow_comment',
 	);
 
@@ -73,6 +73,7 @@ class QuizSettingGetSettingTest extends NetCommonsGetTest {
 
 		//データ生成
 		Current::$current['Block']['id'] = $blockId;
+		Current::$current['Room']['need_approval'] = '1'; // ルーム承認する
 
 		//テスト実施
 		$result = $this->$model->$methodName();
@@ -81,7 +82,7 @@ class QuizSettingGetSettingTest extends NetCommonsGetTest {
 		$expected = Hash::flatten($expected);
 		//チェック
 		foreach ($expected as $key => $value) {
-			$this->assertEqual($result[$key], $value);
+			$this->assertEquals($result[$key], $value);
 		}
 	}
 /**
@@ -100,7 +101,7 @@ class QuizSettingGetSettingTest extends NetCommonsGetTest {
 					'id' => 2
 				),
 				'QuizSetting' => array(
-					'use_workflow' => true
+					'use_workflow' => '1'
 				)
 			)),
 			array(999, array(

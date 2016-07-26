@@ -37,7 +37,7 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
 		'plugin.quizzes.quiz_frame_setting',
 		'plugin.quizzes.quiz_page',
 		'plugin.quizzes.quiz_question',
-		'plugin.quizzes.quiz_setting',
+		'plugin.quizzes.block_setting_for_quiz',
 		'plugin.workflow.workflow_comment',
 		'plugin.authorization_keys.authorization_keys',
 	);
@@ -132,10 +132,7 @@ class QuizAfterFrameSaveTest extends NetCommonsModelTestCase {
 		$actualBlockKey = $block['Block']['key'];
 
 		// 小テストのフレーム設定情報もできていること
-		$setting = $this->QuizSetting->find('first', array(
-			'recursive' => -1,
-			'conditions' => array('block_key' => $actualBlockKey),
-		));
+		$setting = $this->QuizSetting->getBlockSetting($actualBlockKey);
 		$this->assertNotEmpty($setting);
 	}
 

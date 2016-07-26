@@ -10,7 +10,6 @@
  */
 
 App::uses('NetCommonsSaveTest', 'NetCommons.TestSuite');
-App::uses('QuizSettingFixture', 'Quizzes.Test/Fixture');
 
 /**
  * QuizSetting::saveQuizSetting()のテスト
@@ -35,7 +34,7 @@ class QuizSettingSaveQuizSettingTest extends NetCommonsSaveTest {
 		'plugin.quizzes.quiz_frame_setting',
 		'plugin.quizzes.quiz_page',
 		'plugin.quizzes.quiz_question',
-		'plugin.quizzes.quiz_setting',
+		'plugin.quizzes.block_setting_for_quiz',
 		'plugin.workflow.workflow_comment',
 	);
 
@@ -68,6 +67,8 @@ class QuizSettingSaveQuizSettingTest extends NetCommonsSaveTest {
 	public function setUp() {
 		parent::setUp();
 		Current::$current['Frame']['key'] = 'frame_3';
+		Current::write('Plugin.key', $this->plugin);
+		Current::write('Block.key', 'block_1');
 	}
 
 /**
@@ -79,18 +80,35 @@ class QuizSettingSaveQuizSettingTest extends NetCommonsSaveTest {
  * @return array テストデータ
  */
 	public function dataProviderSave() {
-		$data['QuizSetting'] = (new QuizSettingFixture())->records[0];
+		$data['QuizSetting'] = array('use_workflow' => 1);
 
 		$results = array();
 		// * 編集の登録処理
 		$results[0] = array($data);
-		// * 新規の登録処理
-		$results[1] = array($data);
-		$results[1] = Hash::insert($results[1], '0.QuizSetting.id', null);
-		$results[1] = Hash::remove($results[1], '0.QuizSetting.created_user');
-		$results[1] = Hash::remove($results[1], '0.QuizSetting.created');
 
 		return $results;
+	}
+
+/**
+ * Saveのテスト
+ *
+ * @param array $data 登録データ
+ * @dataProvider dataProviderSave
+ * @return void
+ */
+	public function testSave($data) {
+		$model = $this->_modelName;
+		$method = $this->_methodName;
+
+		//テスト実行
+		$result = $this->$model->$method($data);
+		$this->assertNotEmpty($result);
+
+		//登録データ取得
+		$actual = $this->$model->getBlockSetting();
+		$expected = $data;
+
+		$this->assertEquals($expected, $actual);
 	}
 
 /**
@@ -107,7 +125,7 @@ class QuizSettingSaveQuizSettingTest extends NetCommonsSaveTest {
 		$data = $this->dataProviderSave()[0][0];
 
 		return array(
-			array($data, 'Quizzes.QuizSetting', 'save'),
+			array($data[$this->_modelName], 'Blocks.BlockSetting', 'saveMany'),
 		);
 	}
 

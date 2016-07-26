@@ -10,7 +10,6 @@
  */
 
 App::uses('NetCommonsModelTestCase', 'NetCommons.TestSuite');
-App::uses('QuizSettingFixture', 'Quizzes.Test/Fixture');
 
 /**
  * QuizSetting::saveSetting()のテスト
@@ -35,7 +34,7 @@ class QuizSettingSaveSettingTest extends NetCommonsModelTestCase {
 		'plugin.quizzes.quiz_frame_setting',
 		'plugin.quizzes.quiz_page',
 		'plugin.quizzes.quiz_question',
-		'plugin.quizzes.quiz_setting',
+		'plugin.quizzes.block_setting_for_quiz',
 		'plugin.workflow.workflow_comment',
 	);
 
@@ -67,6 +66,8 @@ class QuizSettingSaveSettingTest extends NetCommonsModelTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+
+		Current::write('Plugin.key', $this->plugin);
 	}
 
 /**
@@ -99,7 +100,10 @@ class QuizSettingSaveSettingTest extends NetCommonsModelTestCase {
 		//Current::$current['Block']['key'] = '';
 
 		$result = $this->$model->$method();
-		$this->assertFalse($result);
+
+		// Current::$current['Block']['id'] = null のため、検索結果=空によりtrue
+		//$this->assertFalse($result);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -114,7 +118,7 @@ class QuizSettingSaveSettingTest extends NetCommonsModelTestCase {
 		Current::$current['Frame']['key'] = 'frame_3';
 		Current::$current['Block']['key'] = 'block_1';
 
-		$this->_mockForReturnFalse($model, 'Quizzes.QuizSetting', 'save');
+		$this->_mockForReturnFalse($model, 'Blocks.BlockSetting', 'saveMany');
 		$this->setExpectedException('InternalErrorException');
 
 		$result = $this->$model->$method();
