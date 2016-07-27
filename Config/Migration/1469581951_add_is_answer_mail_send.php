@@ -34,7 +34,6 @@ class AddIsAnswerMailSend extends CakeMigration {
 			'create_table' => array(
 			),
 			'drop_field' => array(
-				'quiz_choices' => array('choice_count'),
 			),
 			'create_field' => array(
 				'quizzes' => array(
@@ -46,9 +45,6 @@ class AddIsAnswerMailSend extends CakeMigration {
 			'drop_table' => array(
 			),
 			'create_field' => array(
-				'quiz_choices' => array(
-					'choice_count' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
-				),
 			),
 			'drop_field' => array(
 				'quizzes' => array('is_answer_mail_send'),
