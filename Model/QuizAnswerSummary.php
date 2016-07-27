@@ -406,6 +406,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * @param array $summary 回答サマリ情報
  * @param array $score 得点情報
  * @param array &$data 今回保存するためのサマリデータ更新情報
+ * @return void
  */
 	protected function _setupPassInfo($quiz, $summary, $score, &$data) {
 		$netCommonsTime = new NetCommonsTime();
