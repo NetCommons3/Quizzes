@@ -63,16 +63,18 @@ class QuizSettingGetSettingTest extends NetCommonsGetTest {
  * getSetting()のテスト
  *
  * @param int $blockId ブロックID
+ * @param string $blockKey ブロックKey
  * @param array $expected 期待値（取得したキー情報）
  * @dataProvider dataProviderGet
  * @return void
  */
-	public function testGetSetting($blockId, $expected) {
+	public function testGetSetting($blockId, $blockKey, $expected) {
 		$model = $this->_modelName;
 		$methodName = $this->_methodName;
 
 		//データ生成
 		Current::$current['Block']['id'] = $blockId;
+		Current::$current['Block']['key'] = $blockKey;
 		Current::$current['Room']['need_approval'] = '1'; // ルーム承認する
 
 		//テスト実施
@@ -89,14 +91,15 @@ class QuizSettingGetSettingTest extends NetCommonsGetTest {
  * testGetSettingのDataProvider
  *
  * #### 戻り値
- *  - array 取得するキー情報
+ *  - int ブロックID
+ *  - string ブロックKey
  *  - array 期待値 （取得したキー情報）
  *
  * @return array
  */
 	public function dataProviderGet() {
 		return array(
-			array(2, array(
+			array(2, 'block_1', array(
 				'Block' => array(
 					'id' => 2
 				),
@@ -104,7 +107,7 @@ class QuizSettingGetSettingTest extends NetCommonsGetTest {
 					'use_workflow' => '1'
 				)
 			)),
-			array(999, array(
+			array(999, 'block_xxx', array(
 			)),
 		);
 	}
