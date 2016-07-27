@@ -64,17 +64,17 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 						<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/add_question_button'); ?>
 						<div class="clearfix"></div>
 
-							<uib-accordion ng-cloak close-others="true">
-								<uib-accordion-group
-										class="form-horizontal"
+							<div uib-accordion ng-cloak close-others="true">
+								<div uib-accordion-group
+										class="form-horizontal panel-default"
 										ng-repeat="(qIndex, question) in page.quizQuestion"
 										is-open="question.isOpen">
 
-									<uib-accordion-heading>
+									<div uib-accordion-heading>
 										<?php /* 質問ヘッダーセット（移動ボタン、削除ボタンなどの集合体 */
 											echo $this->element('Quizzes.QuizEdit/EditQuestion/accordion_heading'); ?>
 										<div class="clearfix"></div>
-									</uib-accordion-heading>
+									</div>
 									<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/hidden_question_info_set'); ?>
 									<?php /* ここから質問本体設定 */
 
@@ -138,8 +138,8 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 											</div>
 										</div>
 									</div >
-							</uib-accordion-group>
-						</uib-accordion>
+							</div>
+						</div>
 
 
 						<?php echo $this->element('Quizzes.QuizEdit/EditQuestion/add_question_button'); ?>
