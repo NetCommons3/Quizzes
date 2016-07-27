@@ -204,6 +204,12 @@ class Quiz extends QuizzesAppModel {
 					'message' => __d('net_commons', 'Invalid request.'),
 				),
 			),
+			'is_answer_mail_send' => array(
+				'boolean' => array(
+					'rule' => array('boolean'),
+					'message' => __d('net_commons', 'Invalid request.'),
+				),
+			),
 			'is_no_member_allow' => array(
 				'boolean' => array(
 					'rule' => array('boolean'),

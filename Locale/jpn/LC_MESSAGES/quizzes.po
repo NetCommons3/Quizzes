@@ -708,6 +708,10 @@ msgstr "形式の設定"
 #: View/QuizEdit/edit.ctp:47
 msgid "Setting method of implementation"
 msgstr "実施方法の設定"
+msgid "Answer mail send"
+msgstr "回答通知メールを送る"
+msgid "notice that there was an answer to the editor of this test."
+msgstr "回答があったことをこのテストの編集者に通知します。"
 
 #: View/QuizEdit/edit_question.ctp:80
 msgid "Allotment"

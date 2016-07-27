@@ -342,8 +342,6 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * @throws InternalErrorException
  */
 	public function saveEndSummary($quiz, $summaryId) {
-		$netCommonsTime = new NetCommonsTime();
-		$nowTime = $netCommonsTime->getNowDatetime();
 		$this->loadModels([
 			'QuizAnswer' => 'Quizzes.QuizAnswer',
 		]);
@@ -354,6 +352,15 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			if (! $summary) {
 				return $summary;
 			}
+			// 得点計算
+			$score = $this->QuizAnswer->getScore($quiz, $summaryId);
+
+			$data['id'] = $summaryId;
+			$data['answer_status'] = QuizzesComponent::ACTION_ACT;
+
+			// 合格判定周りの情報を設定
+			$this->_setupPassInfo($quiz, $summary, $score, $data);
+
 			// メールのembed のURL設定を行っておく
 			$url = NetCommonsUrl::actionUrl(array(
 				'controller' => 'quiz_answers',
@@ -365,42 +372,12 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			), true);
 			$this->setAddEmbedTagValue('X-URL', $url);
 			$this->setAddEmbedTagValue('X-SUBJECT', $quiz['Quiz']['title']);
-			$score = $this->QuizAnswer->getScore($quiz, $summaryId);
 
-			$data['id'] = $summaryId;
-			$data['answer_status'] = QuizzesComponent::ACTION_ACT;
-			$data['answer_finish_time'] = $nowTime;
-			$data['elapsed_second'] =
-				strtotime($nowTime) - strtotime($summary[$this->alias]['answer_start_time']);
-			$data['summary_score'] = $score['graded'];
+			// 回答メール送らない設定なのでメールBehaviorを外す
+			if (! $quiz['Quiz']['is_answer_mail_send']) {
+				$this->Behaviors->unload('Mails.MailQueue');
+			}
 
-			//
-			// 得点から判定
-			//
-			// 未採点が残っていないなら
-			// 得点からの合格不合格判定を行う
-			if ($score['ungraded'] == 0) {
-				$data['is_grade_finished'] = true;
-				$data['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
-				if ($quiz['Quiz']['passing_grade'] > 0) {
-					if ($score['graded'] < $quiz['Quiz']['passing_grade']) {
-						$data['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
-					}
-				}
-			} else {
-				// 未採点が残っているときは
-				$data['is_grade_finished'] = false;
-				$data['passing_status'] = QuizzesComponent::STATUS_GRADE_YET;
-			}
-			//
-			// 経過時間から判定
-			//
-			$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_PASS;
-			if ($quiz['Quiz']['estimated_time'] > 0) {
-				if ($data['elapsed_second'] > $quiz['Quiz']['estimated_time'] * 60) {
-					$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
-				}
-			}
 			if (! $this->save($data, false, array(
 				'answer_status',
 				'summary_score',
@@ -418,6 +395,52 @@ class QuizAnswerSummary extends QuizzesAppModel {
 			throw $ex;
 		}
 		return $data;
+	}
+
+/**
+ * _setupPassInfo
+ *
+ * 合格判定周りの情報をセットアップ
+ *
+ * @param array $quiz 小テスト情報
+ * @param array $summary 回答サマリ情報
+ * @param array $score 得点情報
+ * @param array &$data 今回保存するためのサマリデータ更新情報
+ */
+	protected function _setupPassInfo($quiz, $summary, $score, &$data) {
+		$netCommonsTime = new NetCommonsTime();
+		$nowTime = $netCommonsTime->getNowDatetime();
+		$data['answer_finish_time'] = $nowTime;
+		$data['elapsed_second'] =
+			strtotime($nowTime) - strtotime($summary[$this->alias]['answer_start_time']);
+		$data['summary_score'] = $score['graded'];
+		//
+		// 得点から判定
+		//
+		// 未採点が残っていないなら
+		// 得点からの合格不合格判定を行う
+		if ($score['ungraded'] == 0) {
+			$data['is_grade_finished'] = true;
+			$data['passing_status'] = QuizzesComponent::STATUS_GRADE_PASS;
+			if ($quiz['Quiz']['passing_grade'] > 0) {
+				if ($score['graded'] < $quiz['Quiz']['passing_grade']) {
+					$data['passing_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
+				}
+			}
+		} else {
+			// 未採点が残っているときは
+			$data['is_grade_finished'] = false;
+			$data['passing_status'] = QuizzesComponent::STATUS_GRADE_YET;
+		}
+		//
+		// 経過時間から判定
+		//
+		$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_PASS;
+		if ($quiz['Quiz']['estimated_time'] > 0) {
+			if ($data['elapsed_second'] > $quiz['Quiz']['estimated_time'] * 60) {
+				$data['within_time_status'] = QuizzesComponent::STATUS_GRADE_FAIL;
+			}
+		}
 	}
 
 /**

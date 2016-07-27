@@ -715,6 +715,10 @@ msgstr ""
 #: View/QuizEdit/edit.ctp:47
 msgid "Setting method of implementation"
 msgstr ""
+msgid "Answer mail send"
+msgstr ""
+msgid "notice that there was an answer to the editor of this test."
+msgstr ""
 
 #: View/QuizEdit/edit_question.ctp:80
 msgid "Allotment"
