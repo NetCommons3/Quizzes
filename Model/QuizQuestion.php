@@ -33,6 +33,9 @@ class QuizQuestion extends QuizzesAppModel {
 	public $actsAs = array(
 		'NetCommons.OriginalKey',
 		'Quizzes.QuizQuestionValidate',
+		'Wysiwyg.Wysiwyg' => array(
+			'fields' => array('question_value', 'commentary'),
+		),
 	);
 
 /**
