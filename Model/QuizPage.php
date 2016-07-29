@@ -27,6 +27,9 @@ class QuizPage extends QuizzesAppModel {
  */
 	public $actsAs = array(
 		'NetCommons.OriginalKey',
+		'Wysiwyg.Wysiwyg' => array(
+			'fields' => array('page_description'),
+		),
 	);
 
 /**
