@@ -62,4 +62,16 @@ class QuizMailSettingsController extends MailSettingsController {
 
 		$this->backUrl = NetCommonsUrl::backToPageUrl(true);
 	}
+
+/**
+ * メール設定 登録,編集
+ *
+ * @return mixed
+ */
+	public function edit() {
+		parent::edit();
+		// 回答メール - 通知する権限 - 編者者を表示
+		$this->request->data = Hash::insert(
+			$this->request->data, 'BlockRolePermission.mail_answer_receivable.editor.fixed', false);
+	}
 }
