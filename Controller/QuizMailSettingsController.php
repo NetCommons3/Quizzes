@@ -58,6 +58,10 @@ class QuizMailSettingsController extends MailSettingsController {
 		// afterFrameSaveが呼ばれないような状況の想定
 		$Quiz = ClassRegistry::init('Quizzes.Quiz');
 		$frame['Frame'] = Current::read('Frame');
+		// 設定系画面でフレームが存在しないということはない、ということを前提にする
+		if (! $frame['Frame']) {
+			throw new NotFoundException();
+		}
 		$Quiz->afterFrameSave($frame);
 
 		$this->backUrl = NetCommonsUrl::backToPageUrl(true);
