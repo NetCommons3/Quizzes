@@ -32,6 +32,7 @@ class QuizEditController extends QuizzesAppController {
  * @var array
  */
 	public $uses = array(
+		'Mails.MailSetting'
 	);
 
 /**
@@ -377,6 +378,16 @@ class QuizEditController extends QuizzesAppController {
 
 		$this->set('questionTypeOptions', $this->Quizzes->getQuestionTypeOptionsWithLabel());
 		$this->set('isPublished', $isPublished);
+
+		$isMailSetting = $this->MailSetting->getMailSetting(
+			array(
+				'plugin_key' => 'quizzes',
+				'block_key' => Current::read('Block.key')
+			)
+		);
+		$isMailSetting = Hash::get($isMailSetting, 'MailSetting.is_mail_send');
+		$this->set('isMailSetting', $isMailSetting);
+
 		$this->request->data = $Quiz;
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
