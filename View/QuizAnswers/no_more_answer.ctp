@@ -10,6 +10,7 @@
  */
 ?>
 <article>
+	<?php echo $this->element('Quizzes.QuizAnswers/answer_header'); ?>
 	<p>
 		<?php echo __d('quizzes', 'you will not be able to answer this quiz.'); ?>
 		<?php echo $this->QuizResultButton->getResultButtons($quiz, array(
