@@ -200,31 +200,6 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 	}
 /**
  * gradingアクションのテスト
- * 一般ログイン：自分が作成者じゃない小テスト：サマリID未指定：Forbidden
- *
- * @return void
- */
-	public function testViewGeneralLoginViewNoCreator() {
-		//ログイン
-		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
-
-		$data = $this->__urlOption();
-		$urlOptions = Hash::insert($data, 'key', '64f129efa1cc9f1f21feaa7052f3b86c');
-		//テスト実行
-		$url = Hash::merge(array(
-			'plugin' => $this->plugin,
-			'controller' => $this->_controller,
-			'action' => 'grading',
-			0 => '11',
-		), $urlOptions);
-		$this->setExpectedException('BadRequestException');
-		$this->_testGetAction($url, null);
-
-		//ログアウト
-		TestAuthGeneral::logout($this);
-	}
-/**
- * gradingアクションのテスト
  * 一般ログイン：自分が作成者小テスト：サマリID未指定：Forbidden
  *
  * @return void
@@ -263,6 +238,43 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 		TestAuthGeneral::logout($this);
 	}
 /**
+ * gradingアクションのテスト
+ * 管理者ログイン：サマリID未指定：Forbidden
+ *
+ * @return void
+ */
+	public function testView() {
+		//ログイン
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_CHIEF_EDITOR);
+
+		// 一般がつくったことにしておく
+		// なおかつ、正解や統計表示にもしておく
+		$this->Quiz = ClassRegistry::init('Quizzes.Quiz');
+		$this->Quiz->updateAll(
+			['Quiz.created_user' => 4,
+				'Quiz.is_correct_show' => true,
+				'Quiz.is_total_show' => true
+			],
+			['Quiz.key' => '64f129efa1cc9f1f21feaa7052f3b86c']);
+
+		$data = $this->__urlOption();
+		$urlOptions = Hash::insert($data, 'key', '64f129efa1cc9f1f21feaa7052f3b86c');
+		//テスト実行
+		$url = Hash::merge(array(
+			'plugin' => $this->plugin,
+			'controller' => $this->_controller,
+			'action' => 'grading',
+			0 => '11',
+		), $urlOptions);
+
+		$result = $this->_testGetAction($url, null);
+		$this->assertTextContains('<form ', $result);
+
+		//ログアウト
+		TestAuthGeneral::logout($this);
+	}
+
+/**
  * アクションのPOSTテスト
  * 採点POST
  *
@@ -295,34 +307,6 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 		$data = $this->__data();
 
 		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_ROOM_ADMINISTRATOR);
-
-		$this->_testPostAction('post', $data, array(
-			'action' => 'grading',
-			'frame_id' => 6,
-			'block_id' => 2,
-			'key' => '83b294e176a8c8026d4fbdb07ad2ed7f',
-			0 => 31));
-
-		TestAuthGeneral::logout($this);
-	}
-/**
- * アクションのPOSTテスト
- * 採点POST
- * 一般会員が自分の回答に対して採点をPOST
- * でもテスト作成者は管理者だから編集（＝採点）は不可能
- *
- * @return void
- */
-	public function testGradingPostNG() {
-		$data = $this->__data();
-
-		$this->_targetController->QuizzesOwnAnswer->expects($this->any())
-			->method('checkOwnAnsweredSummaryId')
-			->will($this->returnValue(true));
-
-		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
-
-		$this->setExpectedException('BadRequestException');
 
 		$this->_testPostAction('post', $data, array(
 			'action' => 'grading',
