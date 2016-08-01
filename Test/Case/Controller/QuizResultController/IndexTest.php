@@ -124,6 +124,8 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
  * @return array
  */
 	public function dataProviderIndexByCreatable() {
+		//どんなものでも一般では見ることができなくなりました
+
 		// 公開されているけど自分が作ったんじゃないやつ
 		$data = $this->__data('83b294e176a8c8026d4fbdb07ad2ed7f');
 		// 自分が作ったもの（一時保存 回答なし
@@ -135,15 +137,17 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
 		$results[0] = array(
 			'urlOptions' => $data,
 			'assert' => null,
-			'exception' => 'BadRequestException'
+			'exception' => 'ForbiddenException'
 		);
 		$results[1] = array(
 			'urlOptions' => $myData1,
-			'assert' => array('method' => 'assertNotEmpty'),
+			'assert' => null,
+			'exception' => 'ForbiddenException'
 		);
 		$results[2] = array(
 			'urlOptions' => $myData2,
-			'assert' => array('method' => 'assertNotEmpty'),
+			'assert' => null,
+			'exception' => 'ForbiddenException'
 		);
 		return $results;
 	}
@@ -165,7 +169,7 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
 		//チェック
 		// ここの試験では対象の小テストは回答のない小テストだけなので
 		// 「採点の終わった解答がまだないため表示できません。 」の確認
-		$this->assertTextContains(__d('quizzes', 'Answer that ended the scoring is not yet.'), $this->view);
+		//$this->assertTextContains(__d('quizzes', 'Answer that ended the scoring is not yet.'), $this->view);
 	}
 /**
  * indexアクションのテスト(編集権限あり)用DataProvider
@@ -185,7 +189,8 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
 		$results = array();
 		$results[0] = array(
 			'urlOptions' => $data,
-			'assert' => array('method' => 'assertNotEmpty'),
+			'assert' => null,
+			'exception' => 'ForbiddenException'
 		);
 		return $results;
 	}
@@ -203,6 +208,51 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
 	public function testIndexByEditable($urlOptions, $assert, $exception = null, $return = 'view') {
 		//テスト実行
 		parent::testIndexByEditable($urlOptions, $assert, $exception, $return);
+	}
+/**
+ * indexアクションのテスト(編集権限あり)用DataProvider
+ *
+ * ### 戻り値
+ *  - urlOptions: URLオプション
+ *  - assert: テストの期待値
+ *  - exception: Exception
+ *  - return: testActionの実行後の結果
+ *
+ * @return array
+ */
+	public function dataProviderIndexByPublishable() {
+		// 公開されている 回答あり
+		$data = $this->__data('83b294e176a8c8026d4fbdb07ad2ed7f');
+
+		$results = array();
+		$results[0] = array(
+			'urlOptions' => $data,
+			'assert' => array('method' => 'assertNotEmpty'),
+		);
+		return $results;
+	}
+/**
+ * indexアクションのテスト(編集権限あり)
+ *
+ * @param array $urlOptions URLオプション
+ * @param array $assert テストの期待値
+ * @param string|null $exception Exception
+ * @param string $return testActionの実行後の結果
+ * @dataProvider dataProviderIndexByPublishable
+ * @return void
+ */
+	public function testIndexByPublishable($urlOptions, $assert, $exception = null, $return = 'view') {
+		//ログイン
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_CHIEF_EDITOR);
+
+		//テスト実施
+		$url = Hash::merge(array(
+			'plugin' => $this->plugin,
+			'controller' => $this->_controller,
+			'action' => 'index',
+		), $urlOptions);
+
+		$this->_testGetAction($url, $assert, $exception, $return);
 
 		//チェック
 		$this->assertTextNotContains(
@@ -215,15 +265,18 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
 		$this->assertTextContains(
 			'/quizzes/quiz_result/view/2/83b294e176a8c8026d4fbdb07ad2ed7f/33', $this->view
 		);
+
+		//ログアウト
+		TestAuthGeneral::logout($this);
 	}
 
 /**
- * testIndexByEditableWithPassLine
+ * testIndexByPublishableWithPassLine
  *
  * 合格判定付きの結果画面の場合
  * @return void
  */
-	public function testIndexByEditableWithPassLine() {
+	public function testIndexByPublishableWithPassLine() {
 		// 公開されている 回答あり
 		$urlOptions = $this->__data('83b294e176a8c8026d4fbdb07ad2ed7f');
 		$assert = array('method' => 'assertNotEmpty');
@@ -234,8 +287,17 @@ class QuizResultControllerIndexTest extends WorkflowControllerIndexTest {
 			['Quiz.passing_grade' => 5, 'Quiz.estimated_time' => 1],
 			['Quiz.key' => '83b294e176a8c8026d4fbdb07ad2ed7f']
 		);
-		//テスト実行
-		parent::testIndexByEditable($urlOptions, $assert);
+		//ログイン
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_CHIEF_EDITOR);
+
+		//テスト実施
+		$url = Hash::merge(array(
+			'plugin' => $this->plugin,
+			'controller' => $this->_controller,
+			'action' => 'index',
+		), $urlOptions);
+
+		$this->_testGetAction($url, $assert);
 
 		//チェック
 		$this->assertRegExp(

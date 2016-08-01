@@ -228,8 +228,11 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * @return array 採点権限を持つ採点可能な回答サマリを返す
  */
 	public function getCanGradingSummary() {
+		if (! Current::permission('content_publishable')) {
+			return array();
+		}
 		$conditions = $this->Quiz->getBaseCondition();
-		$conditions = Hash::merge($conditions, array('created_user' => Current::read('User.id')));
+		//$conditions = Hash::merge($conditions, array('created_user' => Current::read('User.id')));
 		$quizKeys = $this->Quiz->find('list', array(
 			'conditions' => $conditions,
 			'fields' => array('key'),

@@ -387,15 +387,15 @@ class QuizAnswersController extends QuizzesAppController {
 		// 自分の回答したサマリか確認
 		// 編集者は何でも見せてよい
 		// 自分のならば採点結果を出してもよい
-		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
+		$canGrade = $this->canGrade($quiz);
 		$isMineAnswer = $this->QuizzesOwnAnswer->checkOwnAnsweredSummaryId($summaryId);
-		if (!$canEdit && !$isMineAnswer) {
+		if (!$canGrade && !$isMineAnswer) {
 			$this->setAction('throwBadRequest');
 		}
 		// 採点?
 		if ($this->request->is('post') || $this->request->is('put')) {
 			// 編集権限のない人が採点できないからチェック
-			if (! $canEdit) {
+			if (! $canGrade) {
 				$this->setAction('throwBadRequest');
 			}
 			$grade = $this->request->data['QuizAnswerGrade'];
@@ -420,7 +420,7 @@ class QuizAnswersController extends QuizzesAppController {
 		$this->set('isMineAnswer', $isMineAnswer);
 		$this->NetCommons->handleValidationError($this->QuizAnswerGrade->validationErrors);
 
-		if ($canEdit) {
+		if ($canGrade) {
 			$this->view = 'grading_form';
 		}
 	}

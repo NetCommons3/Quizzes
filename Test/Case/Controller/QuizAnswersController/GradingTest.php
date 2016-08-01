@@ -252,10 +252,37 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 			'action' => 'grading',
 			0 => '11',
 		), $urlOptions);
-		$result = $this->_testGetAction($url, null);
-		$this->assertTextContains('<form ', $result);
+
+		// 自分がつくったテストでも一般は採点ができないことになりました
+		$this->setExpectedException('BadRequestException');
+
+		$this->_testGetAction($url, null);
+		//$this->assertTextContains('<form ', $result);
 
 		//ログアウト
+		TestAuthGeneral::logout($this);
+	}
+/**
+ * アクションのPOSTテスト
+ * 採点POST
+ *
+ * @return void
+ */
+	public function testGradingPostEditor() {
+		$data = $this->__data();
+
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_EDITOR);
+
+		// 編集者では採点ができないことになりました
+		$this->setExpectedException('BadRequestException');
+
+		$this->_testPostAction('post', $data, array(
+			'action' => 'grading',
+			'frame_id' => 6,
+			'block_id' => 2,
+			'key' => '83b294e176a8c8026d4fbdb07ad2ed7f',
+			0 => 31));
+
 		TestAuthGeneral::logout($this);
 	}
 /**
@@ -267,7 +294,7 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 	public function testGradingPost() {
 		$data = $this->__data();
 
-		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_EDITOR);
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_ROOM_ADMINISTRATOR);
 
 		$this->_testPostAction('post', $data, array(
 			'action' => 'grading',

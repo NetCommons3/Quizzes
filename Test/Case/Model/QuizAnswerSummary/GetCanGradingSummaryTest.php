@@ -86,7 +86,7 @@ class QuizAnswerSummaryGetCanGradingSummaryTest extends NetCommonsGetTest {
  * 一般の人対象：
  * 管理者の人が作ったテストに回答がある（Fixtureで作成済み）
  * 一般の人が作成したテストに回答がある（ここでinsert）
- * 返ってくるのは一般の作ったテストのものだけ
+ * 返ってくるのは空配列（一般の人に採点権限ありません）
  *
  * @return void
  */
@@ -103,7 +103,7 @@ class QuizAnswerSummaryGetCanGradingSummaryTest extends NetCommonsGetTest {
 		$result = $this->$model->$methodName();
 
 		//チェック
-		$this->assertEqual($result, array(36 => 36));
+		$this->assertEqual($result, array());
 	}
 /**
  * getCanGradingSummary()のテスト

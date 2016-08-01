@@ -75,7 +75,8 @@ class QuizGradeLinkHelperGetGradePageLinkTest extends NetCommonsHelperTestCase {
 				'key' => 'test_data_key',
 			)
 		);
-		Current::$current['Permission']['content_editable']['value'] = true;
+		Current::$current['Permission']['content_publishable']['value'] = true;
+		//Current::$current['Permission']['content_editable']['value'] = true;
 		//テスト実施
 		$result = $this->QuizGradeLink->getGradePageLink($quiz);
 

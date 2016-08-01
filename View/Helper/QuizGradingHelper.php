@@ -26,11 +26,12 @@ class QuizGradingHelper extends AppHelper {
 		'NetCommons.NetCommonsForm',
 		'NetCommons.TitleIcon',
 		'Form',
-		'Quizzes.QuizAnswerCorrect'
+		'Quizzes.QuizAnswerCorrect',
+		'Quizzes.QuizGradeLink'
 	);
 
 /**
- * 採点時のの回答、正解表示
+ * 採点時の回答、正解表示
  *
  * @param array $quiz 小テストデータ
  * @param int $pageIndex ページインデックス
@@ -150,7 +151,7 @@ class QuizGradingHelper extends AppHelper {
 		if ($question['question_type'] != QuizzesComponent::TYPE_TEXT_AREA) {
 			return '';
 		}
-		if (! $this->_View->Workflow->canEdit('Quiz', $quiz)) {
+		if (! $this->QuizGradeLink->canGrade($quiz)) {
 			return '';
 		}
 		$fieldNameBase = 'QuizAnswerGrade.' . $answer['id'] . '.';

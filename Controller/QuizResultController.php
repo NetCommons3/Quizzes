@@ -39,7 +39,7 @@ class QuizResultController extends QuizzesAppController {
 		'NetCommons.Permission' => array(
 			//アクセスの権限
 			'allow' => array(
-				'index' => 'content_creatable',
+				'index' => 'content_publishable',
 			),
 		),
 		'Quizzes.QuizzesOwnAnswerQuiz',	// 回答済み小テスト管理
@@ -58,7 +58,8 @@ class QuizResultController extends QuizzesAppController {
 		'NetCommons.TitleIcon',
 		'NetCommons.TableList',
 		'Workflow.Workflow',
-		'Quizzes.QuizResult'
+		'Quizzes.QuizResult',
+		'Quizzes.QuizGradeLink',
 	];
 
 /**
@@ -100,11 +101,7 @@ class QuizResultController extends QuizzesAppController {
  */
 	public function index() {
 		$quiz = $this->__quiz;
-		// 権限が編集者でないなら ここに来てはダメでViewに転送する
-		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
-		if (! $canEdit) {
-			$this->setAction('throwBadRequest');
-		}
+
 		// 集計処理モデル初期設定処理
 		$this->QuizResult->initResult($quiz);
 
@@ -152,8 +149,6 @@ class QuizResultController extends QuizzesAppController {
  */
 	public function view() {
 		$quiz = $this->__quiz;
-		// 編集権限状態を取得
-		$canEdit = $this->Quiz->canEditWorkflowContent($quiz);
 
 		// 基本的には自分の履歴を見ようとしていることが前提
 		// 初期表示のテスト一覧から結果を見ようとしている＝つまり編集権限は無し、自分のデータを見るパターン
@@ -179,8 +174,9 @@ class QuizResultController extends QuizzesAppController {
 			$handleName = __d('quizzes', 'Guest');
 		}
 
-		// 権限が編集者でないなら 自分自身のデータであることが必要
-		if (! $canEdit && $summaryId) {
+		// 採点する権限を持っていないなら 自分自身のデータであることが必要
+		$canGrade = $this->canGrade($quiz);
+		if (! $canGrade && $summaryId) {
 			// 自分の？
 			if (! $this->QuizzesOwnAnswer->checkOwnAnsweredSummaryId($summaryId)) {
 				$this->setAction('throwBadRequest');

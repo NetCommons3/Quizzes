@@ -143,6 +143,17 @@ class QuizzesAppController extends AppController {
 	}
 
 /**
+ * canGrade
+ *
+ * 採点できるかどうか
+ *
+ * @param array $quiz 対象となる小テスト
+ * @return bool
+ */
+	public function canGrade($quiz) {
+		return Current::permission('content_publishable');
+	}
+/**
  * _sorted method
  * to sort a given array by key
  *

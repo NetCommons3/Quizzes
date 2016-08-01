@@ -233,9 +233,10 @@ class QuizResultControllerViewTest extends WorkflowControllerViewTest {
 
 		// サマリID指定あり
 		// 自分がつくったテストで解答者他人
+		// 一般では見ることができなくなりました
 		$results[8] = array(
 			'urlOptions' => Hash::insert($this->__data('83b294e176a8c8026d4fbdb07ad2ed7f'), 0, '26'),
-			'assert' => array('method' => 'assertNotEmpty'),
+			'assert' => null, 'exception' => 'BadRequestException'
 		);
 		// 他人がつくったテストで解答者自分
 		$results[9] = array(
@@ -297,10 +298,11 @@ class QuizResultControllerViewTest extends WorkflowControllerViewTest {
  */
 	public function dataProviderViewByEditable() {
 		//テストデータ
+		// 編集者では見ることができなくなりました
 		$results = array();
 		$results[0] = array(
 			'urlOptions' => Hash::insert($this->__data('83b294e176a8c8026d4fbdb07ad2ed7f'), 0, '33'),
-			'assert' => array('method' => 'assertNotEmpty'),
+			'assert' => null, 'exception' => 'BadRequestException'
 		);
 
 		return $results;

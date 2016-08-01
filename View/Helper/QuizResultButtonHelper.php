@@ -25,6 +25,7 @@ class QuizResultButtonHelper extends AppHelper {
  */
 	public $helpers = array(
 		'NetCommons.NetCommonsHtml',
+		'Quizzes.QuizGradeLink',
 		'Html'
 	);
 
@@ -43,8 +44,8 @@ class QuizResultButtonHelper extends AppHelper {
 		// 成績ボタン
 		// (not editor)でかつ
 		// 小テスト自体が公開状態にないまたはまだ回答日がきてないときは表示しない
-		$canEdit = $this->_View->Workflow->canEdit('Quiz', $quiz);
-		if (! $canEdit &&
+		$canGrade = $this->QuizGradeLink->canGrade($quiz);
+		if (! $canGrade &&
 			($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED ||
 			$quiz['Quiz']['period_range_stat'] == QuizzesComponent::QUIZ_PERIOD_STAT_BEFORE)) {
 			return '';
@@ -53,8 +54,8 @@ class QuizResultButtonHelper extends AppHelper {
 		$key = $quiz['Quiz']['key'];
 
 		//　編集できる人かどうかで見に行くアクションが異なる
-		// 総合情報（index）は一般の人は見ることができません
-		if ($this->_View->Workflow->canEdit('Quiz', $quiz)) {
+		// 総合情報（index）は公開権限の人しか見ることができません
+		if ($canGrade) {
 			$action = 'index';
 		} else {
 			$action = 'view';

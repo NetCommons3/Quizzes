@@ -37,7 +37,7 @@ class QuizGradeLinkHelper extends AppHelper {
  * @return string
  */
 	public function getGradePageLink($quiz) {
-		if ($this->Workflow->canEdit('Quiz', $quiz)) {
+		if ($this->canGrade($quiz)) {
 			$gradingUrl = NetCommonsUrl::actionUrl(array(
 				'controller' => 'quiz_result',
 				'action' => 'index',
@@ -63,5 +63,16 @@ class QuizGradeLinkHelper extends AppHelper {
 
 		$ret = $this->NetCommonsHtml->link($text, $gradingUrl, array('escape' => false));
 		return $ret;
+	}
+/**
+ * canGrade
+ *
+ * 採点できるかどうか
+ *
+ * @param array $quiz 対象となる小テスト
+ * @return bool
+ */
+	public function canGrade($quiz) {
+		return Current::permission('content_publishable');
 	}
 }
