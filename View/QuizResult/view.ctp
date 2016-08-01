@@ -134,7 +134,7 @@ $perfectScore = $quiz['Quiz']['perfect_score'];
 	<?php endif; ?>
 
 	<div class="text-center">
-		<?php echo $this->BackTo->indexLinkButton(__d('quizzes', 'Back to the quiz top')); ?>
+		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to top')); ?>
 		<?php if ($this->QuizGradeLink->canGrade($quiz)) : ?>
 			<?php echo
 			$this->BackTo->linkButton(

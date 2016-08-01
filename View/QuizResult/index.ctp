@@ -115,7 +115,7 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 	</section>
 
 	<div class="text-center">
-		<?php echo $this->BackTo->indexLinkButton(__d('quizzes', 'Back to the quiz top')); ?>
+		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to top')); ?>
 	</div>
 
 </article>
