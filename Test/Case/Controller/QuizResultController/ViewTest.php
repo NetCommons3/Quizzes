@@ -335,6 +335,63 @@ class QuizResultControllerViewTest extends WorkflowControllerViewTest {
 	}
 
 /**
+ * viewアクションのテスト用DataProvider
+ *
+ * ### 戻り値
+ *  - urlOptions: URLオプション
+ *  - assert: テストの期待値
+ *  - exception: Exception
+ *  - return: testActionの実行後の結果
+ *
+ * @return array
+ */
+	public function dataProviderViewByPublishable() {
+		//テストデータ
+		$results = array();
+		$results[0] = array(
+			'urlOptions' => Hash::insert($this->__data('83b294e176a8c8026d4fbdb07ad2ed7f'), 0, '33'),
+			'assert' => array('method' => 'assertNotEmpty')
+		);
+
+		return $results;
+	}
+/**
+ * viewアクションのテスト(公開権限あり)
+ *
+ * @param array $urlOptions URLオプション
+ * @param array $assert テストの期待値
+ * @param string|null $exception Exception
+ * @param string $return testActionの実行後の結果
+ * @dataProvider dataProviderViewByPublishable
+ * @return void
+ */
+	public function testViewByPublishable($urlOptions, $assert, $exception = null, $return = 'view') {
+		//ログイン
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_CHIEF_EDITOR);
+
+		$this->Quiz = ClassRegistry::init('Quizzes.Quiz');
+		$this->Quiz->updateAll(
+			array('passing_grade' => '5', 'estimated_time' => 1),
+			array('Quiz.key' => '83b294e176a8c8026d4fbdb07ad2ed7f')
+		);
+
+		//テスト実施
+		$url = Hash::merge(array(
+			'plugin' => $this->plugin,
+			'controller' => $this->_controller,
+			'action' => 'view',
+		), $urlOptions);
+
+		$this->_testGetAction($url, $assert, $exception, $return);
+
+		//チェック
+		$this->__assertView($urlOptions['key'], true);
+
+		//ログアウト
+		TestAuthGeneral::logout($this);
+	}
+
+/**
  * view()のassert
  *
  * @param string $contentKey コンテンツキー
