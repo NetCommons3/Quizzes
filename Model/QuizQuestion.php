@@ -262,6 +262,8 @@ class QuizQuestion extends QuizzesAppModel {
 			// 小テストは履歴を取っていくタイプのコンテンツデータなのでSave前にはID項目はカット
 			// （そうしないと既存レコードのUPDATEになってしまうから）
 			$question = Hash::remove($question, 'QuizQuestion.id');
+			$question['QuizQuestion'] = $question;
+			$question['Block'] = Current::read('Block');
 
 			$this->create();
 			if (! $this->save($question, false)) {

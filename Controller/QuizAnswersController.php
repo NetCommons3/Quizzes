@@ -104,6 +104,7 @@ class QuizAnswersController extends QuizzesAppController {
 		);
 		$this->__quiz = $this->Quiz->find('first', array(
 			'conditions' => $conditions,
+			'recursive' => -1,
 		));
 		if (! $this->__quiz) {
 			$this->setAction('throwBadRequest');

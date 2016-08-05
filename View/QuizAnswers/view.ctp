@@ -38,9 +38,11 @@
 		echo $this->NetCommonsForm->hidden('QuizAnswerSummary.id');
 	?>
 
+	<?php if ($quizPage['is_page_description']): ?>
 	<div>
 		<?php echo $quizPage['page_description']; ?>
 	</div>
+	<?php endif; ?>
 
 	<?php foreach($quizPage['QuizQuestion'] as $index => $question): ?>
 	<div class="form-group

@@ -217,6 +217,8 @@ class QuizPage extends QuizzesAppModel {
 			// アンケートは履歴を取っていくタイプのコンテンツデータなのでSave前にはID項目はカット
 			// （そうしないと既存レコードのUPDATEになってしまうから）
 			$page = Hash::remove($page, 'QuizPage.id');
+			$page['QuizPage'] = $page;
+			$page['Block'] = Current::read('Block');
 			$this->create();
 			if (! $this->save($page, false)) {	// validateは上位のquizで済んでいるはず
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));

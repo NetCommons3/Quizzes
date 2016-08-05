@@ -567,6 +567,7 @@ class Quiz extends QuizzesAppModel {
 		$this->begin();
 
 		try {
+			$quiz['Block'] = Current::read('Block');
 			$quiz['Quiz']['block_id'] = Current::read('Frame.block_id');
 			$status = $quiz['Quiz']['status'];
 			$this->create();
