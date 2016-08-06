@@ -17,6 +17,7 @@ App::uses('QuizPageFixture', 'Quizzes.Test/Fixture');
 App::uses('QuizQuestionFixture', 'Quizzes.Test/Fixture');
 App::uses('QuizChoiceFixture', 'Quizzes.Test/Fixture');
 App::uses('QuizCorrectFixture', 'Quizzes.Test/Fixture');
+App::uses('QuizzesComponent', 'Quizzes.Controller/Component');
 
 /**
  * Quizテストのためのデータ取得
