@@ -29,7 +29,7 @@ $jsQuizzes = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController:
 		<?php echo $this->element('Blocks.edit_form', array(
 			'model' => 'QuizFrameSetting',
 			'callback' => 'Quizzes.QuizFrameSettings/edit_form',
-			'cancelUrl' => NetCommonsUrl::backToPageUrl(),
+			'cancelUrl' => NetCommonsUrl::backToPageUrl(true),
 			)); ?>
 
 	</div>
