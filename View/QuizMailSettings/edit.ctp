@@ -25,7 +25,7 @@
 		'mailBodyPopoverMessage' => __d('mails', 'MailSetting.mail_fixed_phrase_body.popover.answer'),
 		),
 		),
-		NetCommonsUrl::backToPageUrl(true),
+		NetCommonsUrl::backToPageUrl(true)
 		); ?>
 	</div>
 </div>

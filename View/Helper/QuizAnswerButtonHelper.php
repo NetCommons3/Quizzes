@@ -63,23 +63,23 @@ class QuizAnswerButtonHelper extends AppHelper {
 		if ($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED) {
 			$answerButtonClass = 'info';
 			$answerButtonLabel = __d('quizzes', 'Test');
-			$url = NetCommonsUrl::actionUrl(array(
+			$url = Router::url(NetCommonsUrl::actionUrl(array(
 				'controller' => 'quiz_answers',
 				'action' => 'test_mode',
 				Current::read('Block.id'),
 				$key,
 				'frame_id' => Current::read('Frame.id'),
-			));
+			)));
 			return sprintf($buttonStr, $answerButtonClass, '', '', $url, $answerButtonLabel);
 		}
 
-		$url = NetCommonsUrl::actionUrl(array(
+		$url = Router::url(NetCommonsUrl::actionUrl(array(
 			'controller' => 'quiz_answers',
 			'action' => 'view',
 			Current::read('Block.id'),
 			$key,
 			'frame_id' => Current::read('Frame.id'),
-		));
+		)));
 
 		$answerButtonClass = 'success';
 		$answerButtonDisabled = '';

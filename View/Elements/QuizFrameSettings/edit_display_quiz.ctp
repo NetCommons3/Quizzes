@@ -20,6 +20,8 @@
 				<div class="text-center" ng-if="quizFrameSettings.displayType == <?php echo QuizzesComponent::DISPLAY_TYPE_LIST; ?>">
 					<?php echo $this->NetCommonsForm->checkbox('all_check', array(
 					'options' => array(true => ''),
+					'label' => false,
+					'div' => 'form-inline',
 					'ng-model' => 'WinBuf.allCheck',
 					'ng-change' => 'allCheckClicked()',
 					'div' => 'form-inline'

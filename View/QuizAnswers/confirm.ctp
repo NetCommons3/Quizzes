@@ -52,11 +52,11 @@
 
 	<div class="text-center">
 
-		<a class="btn btn-default" href="<?php echo NetCommonsUrl::actionUrl(array(
+		<a class="btn btn-default" href="<?php echo $this->NetCommonsHtml->url(array(
 																	'controller' => 'quiz_answers',
 																	'action' => 'view',
-																	Current::read('Block.id'),
-																	$quiz['Quiz']['key'],
+																	'block_id' => Current::read('Block.id'),
+																	'key' => $quiz['Quiz']['key'],
 																	'frame_id' => Current::read('Frame.id'))); ?>">
 			<span class="glyphicon glyphicon-chevron-left"></span>
 			<?php echo __d('quizzes', 'Start over'); ?>
