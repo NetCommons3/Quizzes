@@ -17,7 +17,7 @@
 	));
 ?>
 <div class="row" uib-collapse="createOption != '<?php echo QuizzesComponent::QUIZ_CREATE_OPT_NEW; ?>'">
-	<div class="col-lg-11 col-lg-offset-1">
+	<div class="col-xs-11 col-xs-offset-1">
 		<?php echo $this->NetCommonsForm->input('title', array(
 		'label' => __d('quizzes', 'Quiz title'),
 		'required' => true,
