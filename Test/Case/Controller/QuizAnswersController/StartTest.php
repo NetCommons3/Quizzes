@@ -135,7 +135,8 @@ class QuizAnswersControllerStartTest extends WorkflowControllerViewTest {
 		// 存在しない
 		$results[6] = array(
 			'urlOptions' => Hash::insert($data, 'key', 'content_key_999'),
-			'assert' => null, 'exception' => 'BadRequestException'
+			'assert' => array('method' => 'assertTextContains',
+				'expected' => __d('quizzes', 'not found this quiz.'))
 		);
 
 		return $results;
@@ -228,7 +229,8 @@ class QuizAnswersControllerStartTest extends WorkflowControllerViewTest {
 		//   他人の一時保存
 		$results[5] = array(
 			'urlOptions' => Hash::insert($data, 'key', 'e9329d3567b76c1b880e1a80a74c12f5'),
-			'assert' => null, 'exception' => 'BadRequestException'
+			'assert' => array('method' => 'assertTextContains',
+				'expected' => __d('quizzes', 'not found this quiz.'))
 		);
 
 		return $results;
@@ -256,7 +258,8 @@ class QuizAnswersControllerStartTest extends WorkflowControllerViewTest {
 		}
 
 		//チェック
-		if ($urlOptions['key'] === 'c389a74ef01516f9b3e477afcf3dfa02') {
+		if ($urlOptions['key'] === 'c389a74ef01516f9b3e477afcf3dfa02' ||
+		$urlOptions['key'] == 'e9329d3567b76c1b880e1a80a74c12f5') {
 			$this->__assertView($urlOptions['key'], true);
 
 		} else {

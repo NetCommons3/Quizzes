@@ -935,3 +935,6 @@ msgid "no answer history."
 msgstr ""
 msgid "! Answer has not been completed will not be able to see the details ."
 msgstr ""
+
+msgid "not found this quiz."
+msgstr ""

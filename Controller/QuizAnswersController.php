@@ -89,10 +89,17 @@ class QuizAnswersController extends QuizzesAppController {
  */
 	public function beforeFilter() {
 		// ゲストアクセスOKのアクションを設定
-		$this->Auth->allow('start', 'view', 'confirm', 'grading', 'no_more_answer');
+		$this->Auth->allow(
+			'start', 'view', 'confirm', 'grading', 'not_found_answer', 'no_more_answer');
 
 		// 親クラスのbeforeFilterを済ませる
 		parent::beforeFilter();
+
+		// 現在の表示形態を調べておく
+		list($this->__displayType) = $this->QuizFrameSetting->getQuizFrameSetting(
+			Current::read('Frame.key')
+		);
+		$this->set('displayType', $this->__displayType);
 
 		// NetCommonsお約束：編集画面へのURLに編集対象のコンテンツキーが含まれている
 		// まずは、そのキーを取り出す
@@ -107,13 +114,9 @@ class QuizAnswersController extends QuizzesAppController {
 			'recursive' => -1,
 		));
 		if (! $this->__quiz) {
-			$this->setAction('throwBadRequest');
+			$this->setAction('not_found_answer');
+			return;
 		}
-		// 現在の表示形態を調べておく
-		list($this->__displayType) = $this->QuizFrameSetting->getQuizFrameSetting(
-			Current::read('Frame.key')
-		);
-		$this->set('displayType', $this->__displayType);
 
 		// 以下のisAbleto..の内部関数にてNetCommonsお約束である編集権限、参照権限チェックを済ませています
 		// 閲覧可能か
@@ -434,6 +437,15 @@ class QuizAnswersController extends QuizzesAppController {
  */
 	public function no_more_answer() {
 		$this->set('quiz', $this->__quiz);
+	}
+
+/**
+ * not_found_answer method
+ * 小テストがみつからないときに表示
+ *
+ * @return void
+ */
+	public function not_found_answer() {
 	}
 
 /**

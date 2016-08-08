@@ -933,3 +933,6 @@ msgstr "「%s」が公開されました。"
 
 msgid "Content creatable roles"
 msgstr "小テストを作成できる権限"
+
+msgid "not found this quiz."
+msgstr "指定された小テストはありません。"

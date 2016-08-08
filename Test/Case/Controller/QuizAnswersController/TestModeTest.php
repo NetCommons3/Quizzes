@@ -150,7 +150,8 @@ class QuizAnswersControllerTestModeTest extends WorkflowControllerViewTest {
 		// 一時保存のデータのとき(偉い人
 		$results[2] = array(
 			'urlOptions' => Hash::insert($data, 'key', '257b711744f8fb6ba8313a688a9de52f'),
-			'assert' => null, 'exception' => 'BadRequestException'
+			'assert' => array('method' => 'assertTextContains',
+				'expected' => __d('quizzes', 'not found this quiz.'))
 		);
 
 		return $results;
