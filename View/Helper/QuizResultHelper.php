@@ -147,7 +147,7 @@ class QuizResultHelper extends AppHelper {
 		} else {
 			$second = $summary['Statistics']['avg_elapsed_second'];
 		}
-		$ret = sprintf('%01.1f分', round($second / 60, 1));
+		$ret = sprintf('%01.1 min.', round($second / 60, 1));
 		return $ret;
 	}
 /**

@@ -938,3 +938,6 @@ msgstr ""
 
 msgid "not found this quiz."
 msgstr ""
+
+msgid "%01.1 min."
+msgstr ""
