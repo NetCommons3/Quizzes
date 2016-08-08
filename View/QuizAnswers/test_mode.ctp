@@ -26,9 +26,9 @@ echo $this->element('Quizzes.scripts');
 		<div class="col-xs-12">
 			<h3><?php echo __d('quizzes', 'Quiz answer period'); ?></h3>
 			<?php if ($quiz['Quiz']['answer_timing'] == QuizzesComponent::USES_USE): ?>
-			<?php echo date('Y/m/d H:i', strtotime($quiz['Quiz']['answer_start_period'])); ?>
+			<?php echo $this->Date->dateFormat($quiz['Quiz']['answer_start_period'], 'Y/m/d H:i'); ?>
 			<?php echo __d('quizzes', ' - '); ?>
-			<?php echo date('Y/m/d H:i', strtotime($quiz['Quiz']['answer_end_period'])); ?>
+			<?php echo $this->Date->dateFormat($quiz['Quiz']['answer_end_period'], 'Y/m/d H:i'); ?>
 			<?php else: ?>
 			<?php echo __d('quizzes', 'do not set the answer period'); ?>
 			<?php endif; ?>
