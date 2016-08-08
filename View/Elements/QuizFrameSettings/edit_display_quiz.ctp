@@ -24,6 +24,7 @@
 					'div' => 'form-inline',
 					'ng-model' => 'WinBuf.allCheck',
 					'ng-change' => 'allCheckClicked()',
+					'div' => 'form-inline'
 					)); ?>
 					<?php $this->NetCommonsForm->unlockField('all_check'); ?>
 				</div>
