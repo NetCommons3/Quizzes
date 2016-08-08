@@ -162,7 +162,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 			</uib-tabset>
 		</div>
 		<div class="panel-footer text-center">
-			<?php echo $this->Wizard->buttons('edit_question', $cancelUrl); ?>
+			<?php echo $this->Wizard->buttons('edit_question', $cancelUrl, [], [], true); ?>
 		</div>
 		<?php echo $this->NetCommonsForm->end(); ?>
 	</div>

@@ -8,15 +8,12 @@
  * @license http://www.netcommons.org/license.txt NetCommons License
  * @copyright Copyright 2014, NetCommons Project
  */
-$url = NetCommonsUrl::actionUrlAsArray(Hash::merge(array(
-		'plugin' => 'quizzes',
-		'controller' => 'quiz_result',
-		'action' => 'index',
-		'block_id' => Current::read('Block.id'),
-		'key' => $quiz['Quiz']['key'],
-		'frame_id' => Current::read('Frame.id'),
-	),
-	$this->Paginator->params['named']));
+$url = array(
+	'plugin' => 'quizzes',
+	'controller' => 'quiz_result',
+	'action' => 'index',
+	'key' => $quiz['Quiz']['key'],
+);
 ?>
 
 <span class="btn-group">
