@@ -257,20 +257,21 @@ class QuizEditController extends QuizzesAppController {
 			if ($this->layout == 'NetCommons.setting') {
 				$this->redirect(NetCommonsUrl::backToIndexUrl('default_setting_action'));
 			} else {
-				// 回答画面（詳細）へリダイレクト
+				// 回答画面（詳細）へリダイレクト×
+				// 発行したときはページの最初に戻るべきとの指摘アリ
 				if ($saveQuiz['Quiz']['status'] == WorkflowComponent::STATUS_PUBLISHED) {
-					$action = 'view';
+					$this->redirect(NetCommonsUrl::backToPageUrl());
 				} else {
 					$action = 'test_mode';
+					$urlArray = array(
+						'controller' => 'quiz_answers',
+						'action' => $action,
+						Current::read('Block.id'),
+						$this->_getQuizKey($saveQuiz),
+						'frame_id' => Current::read('Frame.id'),
+					);
+					$this->redirect(NetCommonsUrl::actionUrl($urlArray));
 				}
-				$urlArray = array(
-					'controller' => 'quiz_answers',
-					'action' => $action,
-					Current::read('Block.id'),
-					$this->_getQuizKey($saveQuiz),
-					'frame_id' => Current::read('Frame.id'),
-				);
-				$this->redirect(NetCommonsUrl::actionUrl($urlArray));
 			}
 		} else {
 			// 指定されて取り出したアンケートデータをセッションキャッシュに書く
