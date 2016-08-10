@@ -11,11 +11,11 @@
 ?>
 <?php if ($isMineAnswer): ?>
 	<?php if ($gradePass === QuizzesComponent::STATUS_GRADE_FAIL): ?>
-		<a class="btn btn-primary" href="<?php echo NetCommonsUrl::actionUrl(array(
+		<a class="btn btn-primary" href="<?php echo $this->NetCommonsHtml->url(array(
 																			'controller' => 'quiz_answers',
 																			'action' => 'view',
-																			Current::read('Block.id'),
-																			$quiz['Quiz']['key'],
+																			'block_id' => Current::read('Block.id'),
+																			'key' => $quiz['Quiz']['key'],
 																			'frame_id' => Current::read('Frame.id'))); ?>">
 			<span class="glyphicon glyphicon-chevron-left"></span>
 			<?php echo __d('quizzes', 'Challenge once again'); /* この問題にもう一度挑戦する */ ?>
@@ -27,11 +27,11 @@
 	<?php endif; ?>
 <?php endif; ?>
 
-<a class="btn btn-default" href="<?php echo NetCommonsUrl::actionUrl(array(
+<a class="btn btn-default" href="<?php echo $this->NetCommonsHtml->url(array(
 																				'controller' => 'quiz_result',
 																				'action' => 'view',
-																				Current::read('Block.id'),
-																				$quiz['Quiz']['key'],
+																				'block_id' => Current::read('Block.id'),
+																				'key' => $quiz['Quiz']['key'],
 																				'frame_id' => Current::read('Frame.id'),
 																				$summary['QuizAnswerSummary']['id'])); ?>">
 	<?php echo __d('quizzes', 'Results confirmed'); /* 成績確認 */ ?>

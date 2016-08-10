@@ -45,7 +45,7 @@ class QuizResultController extends QuizzesAppController {
 		'Quizzes.QuizzesOwnAnswerQuiz',	// 回答済み小テスト管理
 		'Quizzes.QuizzesOwnAnswer',		// 回答ID管理
 		'Quizzes.QuizzesPassQuiz',		// 合格小テスト管理
-		'Paginator',
+		'Paginator' => array('className' => 'NetCommons.AppPaginator'),
 	);
 
 /**
