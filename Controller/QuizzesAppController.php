@@ -169,7 +169,7 @@ class QuizzesAppController extends AppController {
 		$obj['QuizPage'] = Hash::sort($obj['QuizPage'], '{n}.page_sequence', 'asc', 'numeric');
 
 		foreach ($obj['QuizPage'] as &$page) {
-			if (!Hash::check($page, 'QuizQuestion.{n}')) {
+			if (Hash::check($page, 'QuizQuestion.{n}')) {
 				$page['QuizQuestion'] = Hash::sort(
 					$page['QuizQuestion'],
 					'{n}.question_sequence',
@@ -178,7 +178,7 @@ class QuizzesAppController extends AppController {
 				);
 
 				foreach ($page['QuizQuestion'] as &$question) {
-					if (!Hash::check($question, 'QuizChoice.{n}')) {
+					if (Hash::check($question, 'QuizChoice.{n}')) {
 						$question['QuizChoice'] = Hash::sort(
 							$question['QuizChoice'],
 							'{n}.choice_sequence',
