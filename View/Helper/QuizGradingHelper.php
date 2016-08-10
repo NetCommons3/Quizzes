@@ -226,8 +226,7 @@ class QuizGradingHelper extends AppHelper {
 		if (! isset($answer['correct_status'])) {
 			$class = 'default';
 			$label = __d('quizzes', 'Unanswered'); // 未回答
-		}
-		if ($answer['correct_status'] == QuizzesComponent::STATUS_GRADE_YET) {
+		} elseif ($answer['correct_status'] == QuizzesComponent::STATUS_GRADE_YET) {
 			$class = 'danger';
 			$label = __d('quizzes', 'Ungraded'); // 未採点
 		} elseif ($answer['correct_status'] == QuizzesComponent::STATUS_GRADE_FAIL) {
