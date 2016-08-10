@@ -939,3 +939,8 @@ msgstr "指定された小テストはありません。"
 
 msgid "%01.1 min."
 msgstr "%01.1f分"
+
+msgid "Number of questions that can be created is up %d . Already it has become %d ."
+msgstr "作成できる質問の数は１テストにつき%dまでです。%d個を超えようとしています。"
+msgid "Number of choices that can be created is up %d per question. Already it has become %d ."
+msgstr "作成できる選択肢、単語回答の数は１質問につき%dまでです。%d個を超えようとしています。"

@@ -88,7 +88,9 @@ NetCommonsApp.controller('QuizzesEditQuestion',
          TYPE_MULTIPLE_WORD: '5',
 
          ANSWER_DELIMITER: '#||||||#',
-         DEFAULT_ITEM_COUNT: 3
+         DEFAULT_ITEM_COUNT: 3,
+         MAX_QUESTION_COUNT: 50,
+         MAX_CHOICE_COUNT: 20
        };
 
        /**
@@ -266,6 +268,11 @@ NetCommonsApp.controller('QuizzesEditQuestion',
         * @return {void}
         */
        $scope.addPage = function($event) {
+         // 既に質問数が上限に達している
+         if ($scope.checkMaxQuestion() == false) {
+           alert(quizzesMessages.maxQuestionWarningMsg);
+           return;
+         }
          var page = new Object();
          page['pageTitle'] = ($scope.quiz.quizPage.length + 1).toString(10);
          page['pageSequence'] = $scope.quiz.quizPage.length;
@@ -318,6 +325,11 @@ NetCommonsApp.controller('QuizzesEditQuestion',
         * @return {void}
         */
        $scope.addQuestion = function($event, pageIndex) {
+         // 既に質問数が上限に達している
+         if ($scope.checkMaxQuestion() == false) {
+           alert(quizzesMessages.maxQuestionWarningMsg);
+           return;
+         }
          var question = new Object();
          if (!$scope.quiz.quizPage[pageIndex].quizQuestion) {
            $scope.quiz.quizPage[pageIndex].quizQuestion = new Array();
@@ -384,6 +396,11 @@ NetCommonsApp.controller('QuizzesEditQuestion',
         * @return {void}
         */
        $scope.copyQuestionToAnotherPage = function($event, pageIndex, qIndex, copyPageIndex) {
+         // 既に質問数が上限に達している
+         if ($scope.checkMaxQuestion() == false) {
+           alert(quizzesMessages.maxQuestionWarningMsg);
+           return;
+         }
          var tmpQ = angular.copy($scope.quiz.quizPage[pageIndex].quizQuestion[qIndex]);
          $scope.quiz.quizPage[copyPageIndex].quizQuestion.push(tmpQ);
 
@@ -443,6 +460,12 @@ NetCommonsApp.controller('QuizzesEditQuestion',
            $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizChoice = new Array();
          }
          var newIndex = question.quizChoice.length;
+
+         // 選択肢設置数上限
+         if (newIndex == variables.MAX_CHOICE_COUNT) {
+           alert(quizzesMessages.maxChoiceWarningMsg);
+           return;
+         }
 
          choice['choiceSequence'] = newIndex;
          choice['choiceLabel'] = quizzesMessages.newChoiceLabel + (choiceCount + 1);
@@ -504,6 +527,12 @@ NetCommonsApp.controller('QuizzesEditQuestion',
            $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizCorrect = new Array();
          }
          var newIndex = question.quizCorrect.length;
+
+         // 回答単語欄設置数上限
+         if (newIndex == variables.MAX_CHOICE_COUNT) {
+           alert(quizzesMessages.maxChoiceWarningMsg);
+           return;
+         }
 
          correct['correctSequence'] = newIndex;
          correct['correct'] = new Array();
@@ -586,4 +615,20 @@ NetCommonsApp.controller('QuizzesEditQuestion',
            }
          }
        };
+        /**
+         * 現在の質問数に＋１したらMAXを超えてしまうかどうかのガード
+         *
+         * @return {bool}
+         */
+        $scope.checkMaxQuestion = function() {
+          var ct = 0;
+          var pageArr = $scope.quiz.quizPage;
+          for (var i = 0; i < pageArr.length; i++) {
+            ct += pageArr[i].quizQuestion.length;
+          }
+          if (ct + 1 > variables.MAX_QUESTION_COUNT) {
+            return false;
+          }
+          return true;
+        };
      }]);

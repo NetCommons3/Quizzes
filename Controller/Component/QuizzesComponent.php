@@ -62,6 +62,14 @@ class QuizzesComponent extends Component {
 	const ACTION_ACT = '2';
 
 /**
+ * question, choice max count
+ *
+ * @var integer
+ */
+	const MAX_QUESTION_COUNT = 50;
+	const MAX_CHOICE_COUNT = 20;
+
+/**
  * type. selection
  *
  * @var string

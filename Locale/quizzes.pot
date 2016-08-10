@@ -941,3 +941,7 @@ msgstr ""
 
 msgid "%01.1 min."
 msgstr ""
+msgid "Number of questions that can be created is up %d . Already it has become %d ."
+msgstr ""
+msgid "Number of choices that can be created is up %d per question. Already it has become %d ."
+msgstr ""
