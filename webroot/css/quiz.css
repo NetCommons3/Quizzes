@@ -1,3 +1,7 @@
+/*--一覧画面での表示域余白調節---*/
+.quiz-index-title {
+    padding-top: 1em;
+}
 /*--時間目安、合格点などサブ説明のテキスト表示---*/
 .quiz-passing-text {
     margin-right:1.5em;
@@ -14,6 +18,14 @@
 .quiz-editor-dl dd {
     float:left;
     margin-right:4em;
+}
+@media screen and (max-width:767px) {
+    .quiz-editor-dl dt {
+        min-width:5em;
+    }
+    .quiz-editor-dl dd {
+        float:none;
+    }
 }
 /*--小テスト追加画面の過去の小テストセレクトリスト用---*/
 .quiz-select-box {

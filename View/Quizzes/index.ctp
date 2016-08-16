@@ -12,7 +12,7 @@
 echo $this->element('Quizzes.scripts');
 ?>
 
-<article id="nc-quizzes-<?php echo Current::read('Frame.id'); ?>" >
+<article id="nc-quizzes-<?php echo Current::read('Frame.id'); ?>" class="nc-content-list">
 
 	<?php echo $this->element('Quizzes.Quizzes/add_button'); ?>
 
@@ -22,11 +22,10 @@ echo $this->element('Quizzes.scripts');
 
 	<div class="clearfix"></div>
 
-	<table class="table nc-content-list">
 		<?php foreach($quizzes as $quiz): ?>
-			<tr><td>
+			<article>
 				<div class="row">
-					<div class="col-md-9 col-xs-12">
+					<div class="col-md-9 col-xs-12 quiz-index-title">
 
 						<?php echo $this->QuizStatusLabel->statusLabel($quiz);?>
 
@@ -62,9 +61,8 @@ echo $this->element('Quizzes.scripts');
 				<?php if ($this->Workflow->canEdit('Quiz', $quiz)) : ?>
 					<?php echo $this->element('Quizzes.Quizzes/detail_for_editor', array('quiz' => $quiz)); ?>
 				<?php endif ?>
-			</td></tr>
+			</article>
 		<?php endforeach; ?>
-	</table>
 
 	<?php echo $this->element('NetCommons.paginator'); ?>
 
