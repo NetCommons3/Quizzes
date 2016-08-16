@@ -57,7 +57,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 					<div class="tab-body">
 						<?php echo $this->QuestionEdit->quizNgError('page.pagePickupError'); ?>
 
-						<div class="row pull-left">
+						<div class="row">
 							<?php echo $this->element($elementFolder . 'page_lead'); ?>
 						</div>
 

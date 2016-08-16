@@ -11,6 +11,5 @@
 ?>
 
 <div class="col-xs-12" ng-show="page.isPageDescription == <?php echo QuizzesComponent::USES_USE; ?>">
-    <p ng-bind-html="page.pageDescription"></p>
-    {{page.pageDescription}}
+    <p class="well well-sm" ng-bind-html="page.pageDescription | ncHtmlContent"></p>
 </div>
