@@ -25,6 +25,7 @@ class QuizResultButtonHelper extends AppHelper {
  */
 	public $helpers = array(
 		'NetCommons.NetCommonsHtml',
+		'Workflows.Workflow',
 		'Quizzes.QuizGradeLink',
 		'Html'
 	);
@@ -44,8 +45,11 @@ class QuizResultButtonHelper extends AppHelper {
 		// 成績ボタン
 		// (not editor)でかつ
 		// 小テスト自体が公開状態にないまたはまだ回答日がきてないときは表示しない
+		// これでいくと一般が作成したときの小テスト、承認待ちのあいだは見に行けなくなってしまう
+		// なので、やはりEditableかどうかに判断を変更することにした
 		$canGrade = $this->QuizGradeLink->canGrade($quiz);
-		if (! $canGrade &&
+		$canEdit = $this->Workflow->canEdit('Quiz', $quiz);
+		if (! $canEdit &&
 			($quiz['Quiz']['status'] != WorkflowComponent::STATUS_PUBLISHED ||
 			$quiz['Quiz']['period_range_stat'] == QuizzesComponent::QUIZ_PERIOD_STAT_BEFORE)) {
 			return '';

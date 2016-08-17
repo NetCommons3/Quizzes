@@ -150,7 +150,7 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		$conditions = array(
 			'user_id' => Current::read('User.id'),
 			'answer_status' => QuizzesComponent::ACTION_ACT,
-			'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM,
+			//2016.08.17'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM,
 		);
 		$ownAnsweredKeys = $answerSummary->find(
 			'all',
