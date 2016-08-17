@@ -404,9 +404,17 @@ NetCommonsApp.controller('QuizzesEditQuestion',
          var tmpQ = angular.copy($scope.quiz.quizPage[pageIndex].quizQuestion[qIndex]);
          tmpQ.key = '';
          tmpQ.id = '';
-         for (var i = 0; i < tmpQ.quizChoice.length; i++) {
-           tmpQ.quizChoice[i].key = '';
-           tmpQ.quizChoice[i].id = '';
+         if (tmpQ.quizChoice) {
+           for (var i = 0; i < tmpQ.quizChoice.length; i++) {
+             tmpQ.quizChoice[i].key = '';
+             tmpQ.quizChoice[i].id = '';
+           }
+         }
+         if (tmpQ.quizCorrect) {
+           for (var i = 0; i < tmpQ.quizCorrect.length; i++) {
+             tmpQ.quizCorrect[i].key = '';
+             tmpQ.quizCorrect[i].id = '';
+           }
          }
          $scope.quiz.quizPage[copyPageIndex].quizQuestion.push(tmpQ);
 
