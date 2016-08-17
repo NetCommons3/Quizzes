@@ -402,6 +402,12 @@ NetCommonsApp.controller('QuizzesEditQuestion',
            return;
          }
          var tmpQ = angular.copy($scope.quiz.quizPage[pageIndex].quizQuestion[qIndex]);
+         tmpQ.key = '';
+         tmpQ.id = '';
+         for (var i = 0; i < tmpQ.quizChoice.length; i++) {
+           tmpQ.quizChoice[i].key = '';
+           tmpQ.quizChoice[i].id = '';
+         }
          $scope.quiz.quizPage[copyPageIndex].quizQuestion.push(tmpQ);
 
          $scope._resetQuizQuestionSequence(copyPageIndex);
