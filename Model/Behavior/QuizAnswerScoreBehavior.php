@@ -102,7 +102,7 @@ class QuizAnswerScoreBehavior extends ModelBehavior {
 		$answerArr = $answer['QuizAnswer']['answer_value'];
 		sort($answerArr);
 		sort($correctArr);
-		if (Hash::contains($correctArr, $answerArr)) {
+		if ($answerArr == $correctArr) {
 			return QuizzesComponent::STATUS_GRADE_PASS;
 		}
 		return QuizzesComponent::STATUS_GRADE_FAIL;
