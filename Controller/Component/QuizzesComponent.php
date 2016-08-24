@@ -215,11 +215,11 @@ class QuizzesComponent extends Component {
  */
 	public function getQuestionTypeOptionsWithLabel() {
 		return array(
-			self::TYPE_SELECTION => __d('quizzes', 'Single choice'),
-			self::TYPE_MULTIPLE_SELECTION => __d('quizzes', 'Multiple choice'),
+			self::TYPE_SELECTION => __d('net_commons', 'Single choice'),
+			self::TYPE_MULTIPLE_SELECTION => __d('net_commons', 'Multiple choice'),
 			self::TYPE_WORD => __d('quizzes', 'Word'),
 			self::TYPE_MULTIPLE_WORD => __d('quizzes', 'Multiple word'),
-			self::TYPE_TEXT_AREA => __d('quizzes', 'Free style'),
+			self::TYPE_TEXT_AREA => __d('net_commons', 'Free style'),
 		);
 	}
 
