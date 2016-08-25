@@ -187,14 +187,17 @@ class QuizEditController extends QuizzesAppController {
 			// （質問作成画面では質問データ属性全てをPOSTしているのですり替えでOK）
 			$Quiz = $this->_quiz;
 			$Quiz['Quiz'] = Hash::merge($this->_quiz['Quiz'], $postQuiz['Quiz']);
-			// 発行後のアンケートは質問情報は書き換えない
-			// 未発行の場合はPostデータを上書き設定して
+
 			if ($this->Quiz->hasPublished($Quiz) == 0) {
+				// 未発行の場合はPostデータを上書き設定
 				$Quiz['QuizPage'] = $postQuiz['QuizPage'];
 			} else {
+				// 発行後の小テストは質問情報を書き換えない。ただし解説文を除く。
 				// booleanの値がPOST時と同じようになるように調整
 				$this->Quiz->clearQuizId($Quiz, true);
 				$Quiz['QuizPage'] = QuizzesAppController::changeBooleansToNumbers($Quiz['QuizPage']);
+				// 解説文だけは上書きOKなので後設定
+				$this->_setCommentary($Quiz['QuizPage'], $postQuiz['QuizPage']);
 			}
 
 			// バリデート
@@ -392,5 +395,23 @@ class QuizEditController extends QuizzesAppController {
 		$this->request->data = $Quiz;
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
+	}
+
+/**
+ * _setCommentary
+ *
+ * 発行後のPOSTデータから解説文だけ設定する
+ * dstとsrcのページ構成、質問構成は全く同じであることを前提とする
+ *
+ * @param array &$dst 設定さき
+ * @param array $src 設定ソース
+ * @return void
+ */
+	protected function _setCommentary(&$dst, $src) {
+		foreach ($src as $pageIndex => $page) {
+			foreach($page['QuizQuestion'] as $qIndex => $question) {
+				$dst[$pageIndex]['QuizQuestion'][$qIndex]['commentary'] = $question['commentary'];
+			}
+		}
 	}
 }
