@@ -95,28 +95,22 @@ class QuizzesOwnAnswerQuizComponent extends Component {
 		$session->delete('Quizzes.progressiveSummary.' . $quizKey);
 	}
 /**
- * 指定された小テストに対応する回答中サマリを作成
+ * 指定された小テストに対応するサマリを作成
  *
  * @param array $quiz 小テスト
  * @return progressive Answer Summary data
  */
 	public function forceGetProgressiveSummaryOfThisUser($quiz) {
-		// とりあえず現在　回答中のデータがないか調べて
-		$summary = $this->getProgressiveSummaryOfThisUser($quiz['Quiz']['key']);
-		// 無いようだったら新たに作成する
-		if (! $summary) {
-			$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
-			// スタート
-			$summaryId = $answerSummary->saveStartSummary($quiz);
-			if ($summaryId) {
-				$this->saveProgressiveSummaryOfThisUser(
-					$quiz['Quiz']['key'],
-					$summaryId
-				);
-				$summary = $answerSummary->findById($summaryId);
-			}
+		$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
+		// スタート
+		$summaryId = $answerSummary->saveStartSummary($quiz);
+		if ($summaryId) {
+			$this->saveProgressiveSummaryOfThisUser(
+				$quiz['Quiz']['key'],
+				$summaryId
+			);
+			$summary = $answerSummary->findById($summaryId);
 		}
-
 		return $summary;
 	}
 
