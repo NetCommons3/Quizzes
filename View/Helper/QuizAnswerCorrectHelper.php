@@ -36,14 +36,14 @@ class QuizAnswerCorrectHelper extends AppHelper {
  */
 	public function getCorrect($question, $answer) {
 		// 長文記述に正解はない
-		if ($question['question_type'] == QuizzesComponent::TYPE_TEXT_AREA) {
-			return '';
+		$ret = '';
+		if ($question['question_type'] != QuizzesComponent::TYPE_TEXT_AREA) {
+			$ret .= '<dt class="quiz-grading-correct bg-success">';
+			$ret .= __d('quizzes', 'Correct answer') . '</dt>';
+			$ret .= '<dd class="quiz-grading-correct bg-success">';
+			$ret .= $this->_getCorrect($question['question_type'], $question['QuizCorrect']);
+			$ret .= '</dd>';
 		}
-		$ret = '<dt class="quiz-grading-correct bg-success">';
-		$ret .= __d('quizzes', 'Correct answer') . '</dt>';
-		$ret .= '<dd class="quiz-grading-correct bg-success">';
-		$ret .= $this->_getCorrect($question['question_type'], $question['QuizCorrect']);
-		$ret .= '</dd>';
 		if (! empty($question['commentary'])) {
 			$ret .= '<dt class="quiz-grading-correct bg-success">' . __d('quizzes', 'Commentary') . '</dt>';
 			$ret .= '<dd class="quiz-grading-correct bg-success">' . $question['commentary'] . '</dd>';
