@@ -15,12 +15,12 @@
  */
 
 angular.module('numfmt-error-module', [])
-.run(function($rootScope) {
+    .run(function($rootScope) {
       $rootScope.typeOf = function(value) {
         return typeof value;
       };
     })
-.directive('stringToNumber', function() {
+    .directive('stringToNumber', function() {
       return {
         require: 'ngModel',
         link: function(scope, element, attrs, ngModel) {
@@ -40,12 +40,11 @@ NetCommonsApp.requires.push('numfmt-error-module');
  * html tag strip
  */
 angular.module('html-to-plaintext-module', [])
-.filter('htmlToPlaintext', function() {
+    .filter('htmlToPlaintext', function() {
       return function(text, limit) {
         return String(text).replace(/<[^>]+>/gm, '').slice(0, limit);
       }
-    }
-    );
+    });
 NetCommonsApp.requires.push('html-to-plaintext-module');
 
 NetCommonsApp.controller('QuizzesEditQuestion',
