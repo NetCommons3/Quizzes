@@ -18,7 +18,7 @@ $jsPastQuizzes = NetCommonsAppController::camelizeKeyRecursive($pastQuizzes);
 
 <div ng-controller="QuizzesAdd"
 	 ng-init="initialize(
-	 	'<?php echo $this->data['ActionQuizAdd']['create_option']; ?>',
+	 	'<?php echo h($this->data['ActionQuizAdd']['create_option']); ?>',
 	 	<?php echo h(json_encode($jsPastQuizzes)); ?>)">
 	<div class="row">
 
