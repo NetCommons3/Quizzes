@@ -409,7 +409,7 @@ class QuizEditController extends QuizzesAppController {
  */
 	protected function _setCommentary(&$dst, $src) {
 		foreach ($src as $pageIndex => $page) {
-			foreach($page['QuizQuestion'] as $qIndex => $question) {
+			foreach ($page['QuizQuestion'] as $qIndex => $question) {
 				$dst[$pageIndex]['QuizQuestion'][$qIndex]['commentary'] = $question['commentary'];
 			}
 		}
