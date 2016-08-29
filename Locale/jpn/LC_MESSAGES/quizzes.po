@@ -937,8 +937,8 @@ msgstr "小テストを作成できる権限"
 msgid "not found this quiz."
 msgstr "指定された小テストはありません。"
 
-msgid "%01.1 min."
-msgstr "%01.1f分"
+msgid "%01.1f min."
+msgstr "%01.1f 分"
 
 msgid "Number of questions that can be created is up %d . Already it has become %d ."
 msgstr "作成できる質問の数は１テストにつき%dまでです。%d個を超えようとしています。"

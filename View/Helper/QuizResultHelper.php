@@ -144,10 +144,10 @@ class QuizResultHelper extends AppHelper {
 		if (is_null($summary['Statistics']['avg_elapsed_second'])) {
 			//$second = $summary['QuizAnswerSummary']['elapsed_second'];
 			return '-';
-		} else {
-			$second = $summary['Statistics']['avg_elapsed_second'];
 		}
-		$ret = sprintf('%01.1 min.', round($second / 60, 1));
+		$second = $summary['Statistics']['avg_elapsed_second'];
+
+		$ret = sprintf(__d('quizzes', '%01.1f min.'), round($second / 60, 1));
 		return $ret;
 	}
 /**

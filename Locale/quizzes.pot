@@ -939,7 +939,7 @@ msgstr ""
 msgid "not found this quiz."
 msgstr ""
 
-msgid "%01.1 min."
+msgid "%01.1f min."
 msgstr ""
 msgid "Number of questions that can be created is up %d . Already it has become %d ."
 msgstr ""
