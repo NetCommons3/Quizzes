@@ -34,10 +34,6 @@ echo $this->element('Quizzes.scripts');
 				<?php /* これから小テストを始めます。用意ができたら下の「テストを開始する」ボタンを押して、テストを開始してください。*/
 				echo __d('quizzes', 'Start quiz. When you are ready , press the "Start the quiz" button and  start the quiz .'); ?>
 			</p>
-			<p>
-				<?php /* ※回答中のデータが残っている場合には、テストは再開となります。*/
-				echo __d('quizzes', 'If you still have the data in the answer , the test will be resumed.'); ?>
-			</p>
 			<?php if ($quiz['Quiz']['is_image_authentication'] == QuizzesComponent::USES_USE): ?>
 				<?php echo $this->element('VisualCaptcha.visual_captcha', array()); ?>
 			<?php endif; ?>
