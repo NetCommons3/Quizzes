@@ -45,7 +45,7 @@ class QuizResultHelper extends AppHelper {
 			$summary['QuizAnswerSummary']['id'],
 			'frame_id' => Current::read('Frame.id')));
 		if (isset($summary['User']['handlename'])) {
-			$userName = h($summary['User']['handlename']);
+			$userName = $summary['User']['handlename'];
 		} else {
 			$userName = __d('quizzes', 'Guest');
 		}

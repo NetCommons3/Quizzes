@@ -52,7 +52,7 @@ class QuizGradingHelper extends AppHelper {
 		$summary = $answers['QuizAnswerSummary'];
 		$ret = $this->getScoreLabel($question, $answer);
 		$ret .= $this->getQuestionLabel($serialIndex, $question, $answer);
-		$ret .= h($question['question_value']);
+		$ret .= $question['question_value']; // wysiwygではh不要
 		$ret .= '<dl class="quiz-grading-data">';
 		$ret .= $this->getAnswer($question, $answer);
 		if ($quiz['Quiz']['is_correct_show'] == true) {
