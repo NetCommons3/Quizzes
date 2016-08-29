@@ -115,7 +115,13 @@ $jsScoreDistribute = NetCommonsAppController::camelizeKeyRecursive($general['sco
 	</section>
 
 	<div class="text-center">
-		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to top')); ?>
+		<?php
+		if ($displayType == QuizzesComponent::DISPLAY_TYPE_SINGLE) {
+			echo $this->LinkButton->toList(__d('quizzes', 'Finished'), null, array('icon' => 'remove'));
+		} else {
+		echo $this->LinkButton->toList(__d('quizzes', 'Back to the quiz list'));
+		}
+		?>
 	</div>
 
 </article>

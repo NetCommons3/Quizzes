@@ -28,6 +28,7 @@ class QuizResultController extends QuizzesAppController {
 		'Quizzes.QuizAnswerSummary',
 		'Quizzes.QuizAnswer',
 		'Quizzes.QuizResult',
+		'Quizzes.QuizFrameSetting'
 	);
 
 /**
@@ -91,6 +92,10 @@ class QuizResultController extends QuizzesAppController {
 		if (! $this->__quiz) {
 			$this->setAction('throwBadRequest');
 		}
+		// 表示方法設定値取得
+		list($displayType) =
+			$this->QuizFrameSetting->getQuizFrameSetting(Current::read('Frame.key'));
+		$this->set('displayType', $displayType);
 	}
 
 /**

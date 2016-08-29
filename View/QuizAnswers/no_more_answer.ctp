@@ -19,7 +19,7 @@
 		)); ?>
 		<?php if ($displayType == QuizzesComponent::DISPLAY_TYPE_LIST): ?>
 			<div class="text-center">
-				<?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to Top'), array('icon' => 'chevron-left')); ?>
+				<?php echo $this->LinkButton->toList(__d('quizzes', 'Back to the quiz list')); ?>
 			</div>
 		<?php endif; ?>
 	</p>

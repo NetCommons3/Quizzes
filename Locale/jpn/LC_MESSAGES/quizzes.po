@@ -799,10 +799,6 @@ msgstr "採点"
 msgid "! not logged answer in has been treated as a solution of the only all once because it is impossible to history management ."
 msgstr "※非会員の回答は履歴管理が不可能なため全て１度だけの解答として扱われています。"
 
-#: View/QuizResult/index.ctp:139 View/QuizResult/view.ctp:120
-msgid "Back to the quiz top"
-msgstr "戻る"
-
 #: View/QuizResult/view.ctp:36
 msgid "%s 's grade"
 msgstr "%sさんの成績"
@@ -944,3 +940,8 @@ msgid "Number of questions that can be created is up %d . Already it has become 
 msgstr "作成できる質問の数は１テストにつき%dまでです。%d個を超えようとしています。"
 msgid "Number of choices that can be created is up %d per question. Already it has become %d ."
 msgstr "作成できる選択肢、単語回答の数は１質問につき%dまでです。%d個を超えようとしています。"
+
+msgid "Back to the quiz list"
+msgstr "小テスト一覧へ"
+msgid "Finished"
+msgstr "終了"

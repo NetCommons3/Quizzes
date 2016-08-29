@@ -811,11 +811,6 @@ msgstr ""
 msgid "! not logged answer in has been treated as a solution of the only all once because it is impossible to history management ."
 msgstr ""
 
-#: View/QuizResult/index.ctp:139
-#: View/QuizResult/view.ctp:120
-msgid "Back to the quiz top"
-msgstr ""
-
 #: View/QuizResult/view.ctp:36
 msgid "%s 's grade"
 msgstr ""
@@ -944,4 +939,9 @@ msgstr ""
 msgid "Number of questions that can be created is up %d . Already it has become %d ."
 msgstr ""
 msgid "Number of choices that can be created is up %d per question. Already it has become %d ."
+msgstr ""
+
+msgid "Back to the quiz list"
+msgstr ""
+msgid "Finished"
 msgstr ""

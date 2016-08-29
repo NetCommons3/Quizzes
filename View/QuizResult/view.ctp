@@ -134,7 +134,13 @@ $perfectScore = $quiz['Quiz']['perfect_score'];
 	<?php endif; ?>
 
 	<div class="text-center">
-		<?php echo $this->BackTo->pageLinkButton(__d('quizzes', 'Back to top')); ?>
+		<?php
+		if ($displayType == QuizzesComponent::DISPLAY_TYPE_SINGLE) {
+			echo $this->LinkButton->toList(__d('quizzes', 'Finished'), null, array('icon' => 'remove'));
+		} else {
+			echo $this->LinkButton->toList(__d('quizzes', 'Back to the quiz list'));
+		}
+		?>
 		<?php if ($this->QuizGradeLink->canGrade($quiz)) : ?>
 			<?php echo
 			$this->BackTo->linkButton(
@@ -144,7 +150,8 @@ $perfectScore = $quiz['Quiz']['perfect_score'];
 			'block_id' => Current::read('Block.id'),
 			'key' => $quiz['Quiz']['key'],
 			'frame_id' => Current::read('Frame.id')
-			))); ?>
+			)),
+			array('icon' => 'arrow-left')); ?>
 		<?php endif; ?>
 	</div>
 
