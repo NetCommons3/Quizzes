@@ -65,7 +65,7 @@ echo $this->NetCommonsHtml->script(array(
 
 					<?php echo $this->BlockIndex->tableData(
 						'',
-				$quiz['Quiz']['title'],
+				h($quiz['Quiz']['title']),
 						array(
 						'escape' => false,
 						'editUrl' => array(

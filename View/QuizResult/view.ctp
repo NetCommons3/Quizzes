@@ -38,7 +38,7 @@ $perfectScore = $quiz['Quiz']['perfect_score'];
 		<?php echo
 				sprintf(
 					__d('quizzes', '%s \'s grade'), // %sさんの成績
-					$handleName
+					h($handleName)
 				); ?>
 	</h2>
 	<?php if ($scoreHistory): ?>
