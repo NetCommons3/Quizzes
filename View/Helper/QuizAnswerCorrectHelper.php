@@ -76,7 +76,7 @@ class QuizAnswerCorrectHelper extends AppHelper {
  * @return string 正解の文字列
  */
 	protected function _getSingleSelectCorrect($correct) {
-		return $correct['correct'][0];
+		return h($correct['correct'][0]);
 	}
 /**
  * 複数選択正解表示
@@ -85,7 +85,7 @@ class QuizAnswerCorrectHelper extends AppHelper {
  * @return string 正解の文字列
  */
 	protected function _getMultipleSelectCorrect($correct) {
-		return implode(',', $correct['correct']);
+		return h(implode(',', $correct['correct']));
 	}
 /**
  * 単語正解表示
@@ -97,11 +97,12 @@ class QuizAnswerCorrectHelper extends AppHelper {
 		$words = $correct['correct'];
 
 		$ret = array_shift($words);
+		$ret = h($ret);
 		if (! empty($words) && count($words) > 0) {
 			$ret .= ' <button type="button" class="btn btn-default btn-sm" ';
 			$ret .= 'popover-placement="right" uib-popover="';
 			foreach ($words as $word) {
-				$ret .= $word . ',';
+				$ret .= h($word) . ',';
 			}
 			//他に認められる解答
 			$ret .= '">' . __d('quizzes', 'Answer found in other') . '</button>';

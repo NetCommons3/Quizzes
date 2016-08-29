@@ -67,7 +67,7 @@
 		</label>
 
 		<p >
-			<?php echo $question['question_value']; ?>
+			<?php echo h($question['question_value']); ?>
 		</p>
 
 		<?php echo $this->QuizAnswer->answer($question); ?>

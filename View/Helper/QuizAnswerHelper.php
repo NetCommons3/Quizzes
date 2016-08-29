@@ -80,6 +80,7 @@ class QuizAnswerHelper extends AppHelper {
 		if (isset($question['QuizChoice'])) {
 			$choices = $question['QuizChoice'];
 			$options = $this->_getChoiceOptionElement($choices);
+/*
 			$setting = array(
 				'type' => 'radio',
 				'options' => $options,
@@ -100,6 +101,15 @@ class QuizAnswerHelper extends AppHelper {
 				));
 			}
 			$ret = $this->Form->input($fieldName, $setting);
+*/
+			$setting = array(
+				'disabled' => $readonly,
+				'error' => false,
+			);
+			if ($question['is_choice_horizon'] == QuizzesComponent::USES_USE) {
+				$setting['inline'] = true;
+			}
+			$ret = $this->NetCommonsForm->radio($fieldName, $options, $setting);
 		}
 		return $ret;
 	}
@@ -116,7 +126,6 @@ class QuizAnswerHelper extends AppHelper {
 	public function multipleChoice($index, $fieldName, $question, $readonly) {
 		$ret = '';
 		if (isset($question['QuizChoice'])) {
-			$afterLabel = '';
 			$options = $this->_getChoiceOptionElement($question['QuizChoice']);
 
 			$checkboxClass = 'checkbox';
@@ -134,9 +143,8 @@ class QuizAnswerHelper extends AppHelper {
 				'disabled' => $readonly,
 				'hiddenField' => !$readonly,
 				'error' => false,
+				'escape' => false,
 			));
-
-			$ret .= $afterLabel;
 		}
 		return $ret;
 	}
@@ -153,7 +161,7 @@ class QuizAnswerHelper extends AppHelper {
 	public function singleWord($index, $fieldName, $question, $readonly) {
 		$ret = '';
 		if ($readonly) {
-			$ret = $this->value($fieldName);
+			$ret = h($this->value($fieldName));
 			return $ret;
 		}
 		$ret = $this->NetCommonsForm->input($fieldName, array(
@@ -176,7 +184,7 @@ class QuizAnswerHelper extends AppHelper {
  */
 	public function textArea($index, $fieldName, $question, $readonly) {
 		if ($readonly) {
-			$ret = nl2br($this->value($fieldName));
+			$ret = h(nl2br($this->value($fieldName)));
 			return $ret;
 		}
 		$ret = $this->NetCommonsForm->textarea($fieldName, array(
@@ -203,7 +211,7 @@ class QuizAnswerHelper extends AppHelper {
 		$correctCnt = count($question['QuizCorrect']);
 		for ($iCnt = 0; $iCnt < $correctCnt; $iCnt++) {
 			if ($readonly) {
-				$ret .= sprintf('(%d) ', $iCnt + 1) . $this->value($fieldName . '.' . $iCnt) . '<br />';
+				$ret .= sprintf('(%d) ', $iCnt + 1) . h($this->value($fieldName . '.' . $iCnt)) . '<br />';
 			} else {
 				$ret .= $this->NetCommonsForm->input($fieldName . '.' . $iCnt, array(
 					'div' => 'form-inline',
@@ -238,7 +246,7 @@ class QuizAnswerHelper extends AppHelper {
 	protected function _getChoiceOptionElement($choices) {
 		$ret = array();
 		foreach ($choices as $choice) {
-			$ret[$choice['choice_label']] = $choice['choice_label'];
+			$ret[$choice['choice_label']] = h($choice['choice_label']);
 		}
 		return $ret;
 	}

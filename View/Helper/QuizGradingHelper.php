@@ -52,7 +52,7 @@ class QuizGradingHelper extends AppHelper {
 		$summary = $answers['QuizAnswerSummary'];
 		$ret = $this->getScoreLabel($question, $answer);
 		$ret .= $this->getQuestionLabel($serialIndex, $question, $answer);
-		$ret .= $question['question_value'];
+		$ret .= h($question['question_value']);
 		$ret .= '<dl class="quiz-grading-data">';
 		$ret .= $this->getAnswer($question, $answer);
 		if ($quiz['Quiz']['is_correct_show'] == true) {
@@ -102,13 +102,13 @@ class QuizGradingHelper extends AppHelper {
 		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
 			foreach ($answer['answer_value'] as $index => $ans) {
 				$ret .= sprintf('%s (%d) %s <br />',
-					$this->_getMark($answer, $index), $index + 1, $ans);
+					$this->_getMark($answer, $index), $index + 1, h($ans));
 			}
 		} else {
 			$yourAns = '';
 			foreach ($answer['answer_value'] as $index => $ans) {
 				$yourAns .= sprintf(' %s %s /',
-					$this->_getMark($answer, $index), $ans);
+					$this->_getMark($answer, $index), h($ans));
 			}
 			$ret .= trim($yourAns, '/');
 
