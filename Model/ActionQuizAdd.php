@@ -376,6 +376,9 @@ class ActionQuizAdd extends QuizzesAppModel {
 		// ファイル内容から算出されるハッシュ値と指定されたフットプリント値を比較し
 		// 同一であれば正当性が保証されたと判断する（フォーマットチェックなどは行わない）
 		$quizZipFile = $folderPath . DS . QuizzesComponent::QUIZ_TEMPLATE_FILENAME;
+		if (! file_exists($quizZipFile)) {
+			return false;
+		}
 		if (sha1_file($quizZipFile, false) != $fingerPrint) {
 			return false;
 		}
