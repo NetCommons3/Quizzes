@@ -80,7 +80,6 @@ class QuizAnswerHelper extends AppHelper {
 		if (isset($question['QuizChoice'])) {
 			$choices = $question['QuizChoice'];
 			$options = $this->_getChoiceOptionElement($choices);
-			/*
 			$setting = array(
 				'type' => 'radio',
 				'options' => $options,
@@ -101,15 +100,6 @@ class QuizAnswerHelper extends AppHelper {
 				));
 			}
 			$ret = $this->Form->input($fieldName, $setting);
-			*/
-			$setting = array(
-				'disabled' => $readonly,
-				'error' => false,
-			);
-			if ($question['is_choice_horizon'] == QuizzesComponent::USES_USE) {
-				$setting['inline'] = true;
-			}
-			$ret = $this->NetCommonsForm->radio($fieldName, $options, $setting);
 		}
 		return $ret;
 	}
