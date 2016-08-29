@@ -172,7 +172,7 @@ class QuizBlocksController extends QuizzesAppSettingController {
 		$this->autoRender = false;
 		// ダウンロードファイル名決定 アンケート名称をつける
 		$zipFileName = $quiz['Quiz']['title'] . '.zip';
-		$downloadFileName = $quiz['Quiz']['title'] . '.csv';
+		$downloadFileName = trim($quiz['Quiz']['title']) . '.csv';
 		// 出力
 		return $csvFile->zipDownload(rawurlencode($zipFileName), $downloadFileName, $zipPassword);
 	}
