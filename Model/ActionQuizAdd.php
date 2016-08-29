@@ -279,19 +279,19 @@ class ActionQuizAdd extends QuizzesAppModel {
 			$temporaryFolder = $unZip->extract();
 			// エラーチェック
 			if (! $temporaryFolder) {
-				$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
+				$this->validationErrors['template_file'][] = __d('quizzes', 'illegal import file.');
 				return null;
 			}
 			// フィンガープリント確認
 			$fingerPrint = $this->__checkFingerPrint($temporaryFolder->path);
 			if ($fingerPrint === false) {
-				$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
+				$this->validationErrors['template_file'][] = __d('quizzes', 'illegal import file.');
 				return null;
 			}
 			// テンプレートファイル本体をテンポラリフォルダに展開する。
 			$quizZip = new UnZip($temporaryFolder->path . DS . QuizzesComponent::QUIZ_TEMPLATE_FILENAME);
 			if (! $quizZip->extract()) {
-				$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'illegal import file.');
+				$this->validationErrors['template_file'][] = __d('quizzes', 'illegal import file.');
 				return null;
 			}
 			// jsonファイルを読み取り、PHPオブジェクトに変換
@@ -307,7 +307,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 		// 初めにファイルに記載されている小テストプラグインのバージョンと
 		// 現サイトの小テストプラグインのバージョンを突合し、差分がある場合はインポート処理を中断する。
 		if ($this->_checkVersion($jsonQuiz) === false) {
-			$this->validationErrors['Quiz']['template_file'] = __d('quizzes', 'version is different.');
+			$this->validationErrors['template_file'][] = __d('quizzes', 'version is different.');
 			return null;
 		}
 		// バージョンが一致した場合、データをメモリ上に構築
