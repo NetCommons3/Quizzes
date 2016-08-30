@@ -21,7 +21,8 @@
 		<?php echo $this->NetCommonsForm->input('title', array(
 		'label' => __d('quizzes', 'Quiz title'),
 		'required' => true,
-		'placeholder' => __d('quizzes', 'Please input quiz title')
+		'placeholder' => __d('quizzes', 'Please input quiz title'),
+		'nc-focus' => '{{createOption == \'' . QuizzesComponent::QUIZ_CREATE_OPT_NEW . '\'}}'
 		)); ?>
 	</div>
 </div>

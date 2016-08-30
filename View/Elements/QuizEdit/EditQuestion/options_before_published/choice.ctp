@@ -13,6 +13,7 @@
 	   name="data[QuizPage][{{pageIndex}}][QuizQuestion][{{qIndex}}][QuizChoice][{{choice.choiceSequence}}][choice_label]"
 	   class="form-control input-sm"
 	   ng-model="choice.choiceLabel"
+	   nc-focus = "true"
 		/>
 
 <?php echo $this->element(
