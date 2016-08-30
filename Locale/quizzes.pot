@@ -945,3 +945,6 @@ msgid "Back to the quiz list"
 msgstr ""
 msgid "Finished"
 msgstr ""
+
+msgid "Please input template file."
+msgstr ""

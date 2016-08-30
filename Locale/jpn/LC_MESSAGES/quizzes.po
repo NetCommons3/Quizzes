@@ -945,3 +945,6 @@ msgid "Back to the quiz list"
 msgstr "小テスト一覧へ"
 msgid "Finished"
 msgstr "終了"
+
+msgid "Please input template file."
+msgstr "ファイルを指定してください。"
