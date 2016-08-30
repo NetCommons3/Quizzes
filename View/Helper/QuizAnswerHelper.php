@@ -99,7 +99,7 @@ class QuizAnswerHelper extends AppHelper {
 					'after' => '</label>',
 				));
 			}
-			$ret = $this->Form->input($fieldName, $setting);
+			$ret = $this->NetCommonsForm->input($fieldName, $setting);
 		}
 		return $ret;
 	}
@@ -133,7 +133,7 @@ class QuizAnswerHelper extends AppHelper {
 				'disabled' => $readonly,
 				'hiddenField' => !$readonly,
 				'error' => false,
-				'escape' => false,
+				//'escape' => false,
 			));
 		}
 		return $ret;
@@ -236,7 +236,7 @@ class QuizAnswerHelper extends AppHelper {
 	protected function _getChoiceOptionElement($choices) {
 		$ret = array();
 		foreach ($choices as $choice) {
-			$ret[$choice['choice_label']] = h($choice['choice_label']);
+			$ret[$choice['choice_label']] = $choice['choice_label'];
 		}
 		return $ret;
 	}
