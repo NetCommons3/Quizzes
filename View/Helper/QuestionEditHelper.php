@@ -148,7 +148,7 @@ class QuestionEditHelper extends AppHelper {
  * @param array $options オプション
  * @return string HTML
  */
-	public function quizAttributeDatetime($fieldName, $options) {
+	public function quizAttributeDatetime($fieldName, $options, $help = '') {
 		$ngModel = 'quiz.quiz.' . Inflector::variable($fieldName);
 
 		$defaultOptions = array(
