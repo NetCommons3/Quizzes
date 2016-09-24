@@ -23,6 +23,7 @@ class QuestionEditHelper extends AppHelper {
  * @var array
  */
 	public $helpers = array(
+		'NetCommons.Token',
 		'NetCommons.NetCommonsForm',
 		'NetCommons.NetCommonsHtml',
 		'Form'
@@ -169,5 +170,52 @@ class QuestionEditHelper extends AppHelper {
 			$ret .= '<span class="help-block">' . $help . '</span>';
 		}
 		return $ret;
+	}
+/**
+ * quizGetFinallySubmit
+ *
+ * 小テストは質問編集画面では分割送信をする
+ * 分割送信後、最終POSTをする時に使用するFormを作成する
+ *
+ * @param array $postUrl POST先URL情報
+ * @return string HTML
+ */
+	public function quizGetFinallySubmit($postUrl) {
+		$html = '';
+		$html .= $this->NetCommonsForm->create('QuizQuestion',
+			Hash::merge(array('id' => 'finallySubmitForm'), $postUrl)
+		);
+		$html .= $this->NetCommonsForm->hidden('Frame.id');
+		$html .= $this->NetCommonsForm->hidden('Block.id');
+		$html .= $this->NetCommonsForm->hidden('Quiz.key');
+		$this->NetCommonsForm->unlockField('QuizPage');
+		$html .= $this->NetCommonsForm->end();
+		return $html;
+	}
+
+/**
+ * getJsPostData
+ *
+ * 小テストは分割送信をAjaxで行う
+ * AjaxでPostを行うときにtoken含みの配列を取得する
+ *
+ * @param string $quizKey 小テストキー（Postデータの一つとして必要）
+ * @param string $ajaxPostUrl Post先URL（セッション保存キーが含まれるためコントローラーからもらわないとわからない）
+ * @return array
+ */
+	public function getJsPostData($quizKey, $ajaxPostUrl) {
+		$postData = array(
+			'Frame' => array('id' => Current::read('Frame.id')),
+			'Block' => array('id' => Current::read('Block.id')),
+			'Quiz' => array('key' => $quizKey),
+		);
+		$tokenFields = Hash::flatten($postData);
+		$hiddenFields = $tokenFields;
+		$hiddenFields = array_keys($hiddenFields);
+		$this->Token->unlockField('QuizPage');
+
+		$tokens = $this->Token->getToken('Quiz', $ajaxPostUrl, $tokenFields, $hiddenFields);
+		$postData += $tokens;
+		return $postData;
 	}
 }

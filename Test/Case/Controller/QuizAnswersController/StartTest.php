@@ -343,7 +343,7 @@ class QuizAnswersControllerStartTest extends WorkflowControllerViewTest {
 	private function __assertView($contentKey, $isNoMoreAnswer = false) {
 		// 解答不可
 		if ($isNoMoreAnswer) {
-			$this->assertTextContains(__d('quizzes', 'Back to Top'), $this->view);
+			$this->assertTextContains(__d('quizzes', 'Back to the quiz list'), $this->view);
 		} else {
 			// 認証キーのinputが出ているか
 			if ($contentKey === 'a916437af184b4a185f685a93099adca') {

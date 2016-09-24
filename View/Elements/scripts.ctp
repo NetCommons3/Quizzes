@@ -22,6 +22,7 @@ echo $this->NetCommonsHtml->scriptBlock(
 		'"resultNumberLabel": "' . __d('quizzes', 'Number') . '",' .
 		'"maxQuestionWarningMsg": "' . $maxQuestionWarningMsg . '",' .
 		'"maxChoiceWarningMsg": "' . $maxChoiceWarningMsg . '",' .
+		'"sendingErrorMsg": "' . __d('quizzes', 'Failed to send data.') . '",' .
 	'});'
 );
 echo $this->NetCommonsHtml->css('/quizzes/css/quiz.css');

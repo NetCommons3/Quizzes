@@ -77,22 +77,22 @@ class QuizAnswerHelperSingleChoiceTest extends NetCommonsHelperTestCase {
 		);
 		$readonly = false;
 
-		$expected = '<label class="radio-inline">' .
-			'<input type="hidden" name="data[QuizAnswer][1][0][answer_value]" ' .
+		$expected = '<div class="radio radio-inline"><label class="control-label">' .
+		'<input type="hidden" name="data[QuizAnswer][1][0][answer_value]" ' .
 			'id="QuizAnswer10AnswerValue_" value=""/>' .
-			'<input type="radio" name="data[QuizAnswer][1][0][answer_value]" ' .
-			'id="QuizAnswer10AnswerValueTest1" value="test1" />test1</label>' .
-			'<label class="radio-inline"><input type="radio" ' .
-			'name="data[QuizAnswer][1][0][answer_value]" id="QuizAnswer10AnswerValueTest2" ' .
-			'value="test2" />test2</label><label class="radio-inline">' .
-			'<input type="radio" name="data[QuizAnswer][1][0][answer_value]" ' .
-			'id="QuizAnswer10AnswerValueTest3" value="test3" />test3</label>';
+		'<input type="radio" name="data[QuizAnswer][1][0][answer_value]" ' .
+			'id="QuizAnswer10AnswerValueTest1" value="test1" />test1</label></div>' .
+		'<div class="radio radio-inline"><label class="control-label">' .
+		'<input type="radio" name="data[QuizAnswer][1][0][answer_value]" ' .
+			'id="QuizAnswer10AnswerValueTest2" value="test2" />test2</label></div>' .
+		'<div class="radio radio-inline"><label class="control-label">' .
+		'<input type="radio" name="data[QuizAnswer][1][0][answer_value]" ' .
+			'id="QuizAnswer10AnswerValueTest3" value="test3" />test3</label></div>';
 
 		//テスト実施
 		$result = $this->QuizAnswer->singleChoice($index, $fieldName, $question, $readonly);
-
 		//チェック
-		$this->assertTextEquals($result, $expected);
+		$this->assertTextEquals($expected, $result);
 	}
 
 }

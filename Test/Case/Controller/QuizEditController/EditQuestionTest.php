@@ -63,17 +63,79 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 		$this->Quiz = ClassRegistry::init('Quizzes.Quiz');
 		$this->Quiz->Behaviors->unload('AuthorizationKey');
 
+		// for validation error
+		$errs = array(
+			array(
+				'field' => 'QuizPage.0.QuizQuestion.0.allotment',
+				'value' => '',
+			),
+			array(
+				'field' => 'QuizPage.0.QuizQuestion.0.question_value',
+				'value' => '',
+			),
+			array(
+				'field' => 'QuizPage.0.QuizQuestion.0.question_type',
+				'value' => 'aaaaaa',
+			),
+			array(
+				'field' => 'QuizPage.0.QuizQuestion.0.question_type',
+				'value' => 'aaaaaa',
+			),
+			array(
+				'field' => 'QuizPage.0.QuizQuestion.0.QuizChoice.0.choice_label',
+				'value' => '',
+			),
+			array(
+				'field' => 'QuizPage.0.QuizQuestion.0.QuizCorrect.0.correct',
+				'value' => '',
+			),
+		);
+
 		$this->controller->Session->expects($this->any())
 			->method('check')
 			->will($this->returnValueMap([
 				['Quizzes.quizEdit.' . 'testSession', true],
-				['Quizzes.quizEdit.' . 'testGeneralSession', true]
+				['Quizzes.quizEdit.' . 'testGeneralSession', true],
+				['Quizzes.postQuizQuestion.' . 'testSession', true],
+				['Quizzes.postQuizQuestion.' . 'testGeneralSession', true],
+				['Quizzes.quizEdit.' . 'testSessionErr_1', true],
+				['Quizzes.quizEdit.' . 'testSessionErr_2', true],
+				['Quizzes.quizEdit.' . 'testSessionErr_3', true],
+				['Quizzes.quizEdit.' . 'testSessionErr_4', true],
+				['Quizzes.quizEdit.' . 'testSessionErr_5', true],
+				['Quizzes.quizEdit.' . 'testSessionErr_6', true],
 			]));
 		$this->controller->Session->expects($this->any())
 			->method('read')
 			->will($this->returnValueMap([
 				['Quizzes.quizEdit.' . 'testSession', $this->__data()],
-				['Quizzes.quizEdit.' . 'testGeneralSession', $this->__data(Role::ROOM_ROLE_KEY_GENERAL_USER)]
+				['Quizzes.quizEdit.' . 'testGeneralSession', $this->__data(Role::ROOM_ROLE_KEY_GENERAL_USER)],
+				['Quizzes.postQuizQuestion.' . 'testSession', $this->__data()],
+				['Quizzes.postQuizQuestion.' . 'testGeneralSession', $this->__data(Role::ROOM_ROLE_KEY_GENERAL_USER)],
+				['Quizzes.quizEdit.' . 'testSessionErr_1',
+					Hash::insert($this->__data(), $errs[0]['field'], $errs[0]['value'])],
+				['Quizzes.quizEdit.' . 'testSessionErr_2',
+					Hash::insert($this->__data(), $errs[1]['field'], $errs[1]['value'])],
+				['Quizzes.quizEdit.' . 'testSessionErr_3',
+					Hash::insert($this->__data(), $errs[2]['field'], $errs[2]['value'])],
+				['Quizzes.quizEdit.' . 'testSessionErr_4',
+					Hash::insert($this->__data(), $errs[3]['field'], $errs[3]['value'])],
+				['Quizzes.quizEdit.' . 'testSessionErr_5',
+					Hash::insert($this->__data(), $errs[4]['field'], $errs[4]['value'])],
+				['Quizzes.quizEdit.' . 'testSessionErr_6',
+					Hash::insert($this->__data(), $errs[5]['field'], $errs[5]['value'])],
+				['Quizzes.postQuizQuestion.' . 'testSessionErr_1',
+					Hash::insert($this->__data(), $errs[0]['field'], $errs[0]['value'])],
+				['Quizzes.postQuizQuestion.' . 'testSessionErr_2',
+					Hash::insert($this->__data(), $errs[1]['field'], $errs[1]['value'])],
+				['Quizzes.postQuizQuestion.' . 'testSessionErr_3',
+					Hash::insert($this->__data(), $errs[2]['field'], $errs[2]['value'])],
+				['Quizzes.postQuizQuestion.' . 'testSessionErr_4',
+					Hash::insert($this->__data(), $errs[3]['field'], $errs[3]['value'])],
+				['Quizzes.postQuizQuestion.' . 'testSessionErr_5',
+					Hash::insert($this->__data(), $errs[4]['field'], $errs[4]['value'])],
+				['Quizzes.postQuizQuestion.' . 'testSessionErr_6',
+					Hash::insert($this->__data(), $errs[5]['field'], $errs[5]['value'])],
 			]));
 
 		$this->Plugin = ClassRegistry::init('PluginManager.Plugin');
@@ -366,6 +428,45 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 	}
 
 /**
+ * editアクションのPOSTテスト
+ *
+ * @param array $data POSTデータ
+ * @param string $role ロール
+ * @param array $urlOptions URLオプション
+ * @param string|null $exception Exception
+ * @param string $return testActionの実行後の結果
+ * @dataProvider dataProviderEditPost
+ * @return void
+ */
+	public function testEditPost($data, $role, $urlOptions, $exception = null, $return = 'view') {
+		//ログイン
+		if (isset($role)) {
+			TestAuthGeneral::login($this, $role);
+		}
+
+		//テスト実施
+		$this->_testPostAction(
+			'put', $data, Hash::merge(array('action' => 'edit'), $urlOptions), $exception, $return
+		);
+
+		//正常の場合、リダイレクト
+		if (! $exception) {
+			if ($return != 'json') {
+				$header = $this->controller->response->header();
+				$this->assertNotEmpty($header['Location']);
+			} else {
+				$result = json_decode($this->contents, true);
+				$this->assertArrayHasKey('code', $result);
+			}
+		}
+
+		//ログアウト
+		if (isset($role)) {
+			TestAuthGeneral::logout($this);
+		}
+	}
+
+/**
  * editアクションのPOSTテスト用DataProvider
  *
  * ### 戻り値
@@ -379,14 +480,17 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
  */
 	public function dataProviderEditPost() {
 		$data = $this->__data();
+		$data['QuizPage'] = array();
+		$dataGene = $this->__data(Role::ROOM_ROLE_KEY_GENERAL_USER);
+		$dataGene['QuizPage'] = array();
+		$dataGene2 = $this->__data(Role::ROOM_ROLE_KEY_GENERAL_USER, '41e2b809108edead2f30adc37f51e979');
+		$dataGene2['QuizPage'] = array();
 
 		//テストデータ
 		$results = array();
 		// * ログインなし
 		$contentKey = '257b711744f8fb6ba8313a688a9de52f';
-		array_push($results, array(
-			'data' => $data,
-			'role' => null,
+		array_push($results, array('data' => $data, 'role' => null,
 			'urlOptions' => array(
 				'frame_id' => $data['Frame']['id'],
 				'block_id' => $data['Block']['id'],
@@ -398,9 +502,7 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 		// * 作成権限のみ
 		// ** 他人の記事
 		$contentKey = '257b711744f8fb6ba8313a688a9de52f';
-		array_push($results, array(
-			'data' => $data,
-			'role' => Role::ROOM_ROLE_KEY_GENERAL_USER,
+		array_push($results, array(	'data' => $data, 'role' => Role::ROOM_ROLE_KEY_GENERAL_USER,
 			'urlOptions' => array(
 				'frame_id' => $data['Frame']['id'],
 				'block_id' => $data['Block']['id'],
@@ -411,9 +513,7 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 		));
 		// ** 自分の記事
 		$contentKey = 'e3eee47e033eccc3f42c02d75678235b';
-		array_push($results, array(
-			'data' => $this->__data(Role::ROOM_ROLE_KEY_GENERAL_USER),
-			'role' => Role::ROOM_ROLE_KEY_GENERAL_USER,
+		array_push($results, array('data' => $dataGene, 'role' => Role::ROOM_ROLE_KEY_GENERAL_USER,
 			'urlOptions' => array(
 				'frame_id' => $data['Frame']['id'],
 				'block_id' => $data['Block']['id'],
@@ -424,9 +524,7 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 		));
 		// ** 自分の記事発行済み
 		$contentKey = '41e2b809108edead2f30adc37f51e979';
-		array_push($results, array(
-			'data' => $this->__data(Role::ROOM_ROLE_KEY_GENERAL_USER, '41e2b809108edead2f30adc37f51e979'),
-			'role' => Role::ROOM_ROLE_KEY_GENERAL_USER,
+		array_push($results, array('data' => $dataGene2, 'role' => Role::ROOM_ROLE_KEY_GENERAL_USER,
 			'urlOptions' => array(
 				'frame_id' => $data['Frame']['id'],
 				'block_id' => $data['Block']['id'],
@@ -438,9 +536,7 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 		// * 編集権限あり
 		// ** コンテンツあり
 		$contentKey = '257b711744f8fb6ba8313a688a9de52f';
-		array_push($results, array(
-			'data' => $data,
-			'role' => Role::ROOM_ROLE_KEY_EDITOR,
+		array_push($results, array('data' => $data, 'role' => Role::ROOM_ROLE_KEY_EDITOR,
 			'urlOptions' => array(
 				'frame_id' => $data['Frame']['id'],
 				'block_id' => $data['Block']['id'],
@@ -451,9 +547,7 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 		));
 		// ** フレームID指定なしテスト
 		$contentKey = '257b711744f8fb6ba8313a688a9de52f';
-		array_push($results, array(
-			'data' => $data,
-			'role' => Role::ROOM_ROLE_KEY_ROOM_ADMINISTRATOR,
+		array_push($results, array('data' => $data, 'role' => Role::ROOM_ROLE_KEY_ROOM_ADMINISTRATOR,
 			'urlOptions' => array(
 				'frame_id' => null,
 				'block_id' => $data['Block']['id'],
@@ -461,6 +555,18 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 				'key' => $contentKey,
 				's_id' => 'testSession'
 			),
+		));
+		// ** 途中投稿
+		$contentKey = '257b711744f8fb6ba8313a688a9de52f';
+		array_push($results, array('data' => $this->__data(), 'role' => Role::ROOM_ROLE_KEY_EDITOR,
+			'urlOptions' => array(
+				'frame_id' => $data['Frame']['id'],
+				'block_id' => $data['Block']['id'],
+				'action' => 'edit_question',
+				'key' => $contentKey,
+				's_id' => 'testSession'
+			),
+			'exception' => null, 'return' => 'json'
 		));
 
 		return $results;
@@ -478,6 +584,8 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
  */
 	public function dataProviderEditValidationError() {
 		$data = $this->__data();
+		$data['QuizPage'] = array();
+
 		$result = array(
 			'data' => $data,
 			'urlOptions' => array(
@@ -487,7 +595,10 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 				'key' => '257b711744f8fb6ba8313a688a9de52f',
 				's_id' => 'testSession'
 			),
-			'validationError' => array(),
+			'validationError' => array(
+				'field' => '',
+				'value' => '',
+			),
 		);
 
 		//テストデータ
@@ -495,44 +606,62 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 		// そうでした。Angularでエラーメッセージを展開しているから、直接的な文字列ではなく
 		// Angular変数名を書くしかないんだった
 		array_push($results, Hash::merge($result, array(
+			'urlOptions' => array(
+				's_id' => 'testSessionErr_1'
+			),
 			'validationError' => array(
-				'field' => 'QuizPage.0.QuizQuestion.0.allotment',
-				'value' => '',
+				//'field' => 'QuizPage.0.QuizQuestion.0.allotment',
+				//'value' => '',
 				'message' => 'question.errorMessages.allotment'
 			)
 		)));
 		array_push($results, Hash::merge($result, array(
+			'urlOptions' => array(
+				's_id' => 'testSessionErr_2'
+			),
 			'validationError' => array(
-				'field' => 'QuizPage.0.QuizQuestion.0.question_value',
-				'value' => '',
+				//'field' => 'QuizPage.0.QuizQuestion.0.question_value',
+				//'value' => '',
 				'message' => 'question.errorMessages.questionValue'
 			)
 		)));
 		array_push($results, Hash::merge($result, array(
+			'urlOptions' => array(
+				's_id' => 'testSessionErr_3'
+			),
 			'validationError' => array(
-				'field' => 'QuizPage.0.QuizQuestion.0.question_type',
-				'value' => 'aaaaaa',
+				//'field' => 'QuizPage.0.QuizQuestion.0.question_type',
+				//'value' => 'aaaaaa',
 				'message' => 'question.errorMessages.questionType'
 			)
 		)));
 		array_push($results, Hash::merge($result, array(
+			'urlOptions' => array(
+				's_id' => 'testSessionErr_4'
+			),
 			'validationError' => array(
-				'field' => 'QuizPage.0.QuizQuestion.0.question_type',
-				'value' => 'aaaaaa',
+				//'field' => 'QuizPage.0.QuizQuestion.0.question_type',
+				//'value' => 'aaaaaa',
 				'message' => 'question.errorMessages.questionType'
 			)
 		)));
 		array_push($results, Hash::merge($result, array(
+			'urlOptions' => array(
+				's_id' => 'testSessionErr_5'
+			),
 			'validationError' => array(
-				'field' => 'QuizPage.0.QuizQuestion.0.QuizChoice.0.choice_label',
-				'value' => '',
+				//'field' => 'QuizPage.0.QuizQuestion.0.QuizChoice.0.choice_label',
+				//'value' => '',
 				'message' => 'choice.errorMessages.choiceLabel',
 			)
 		)));
 		array_push($results, Hash::merge($result, array(
+			'urlOptions' => array(
+				's_id' => 'testSessionErr_6'
+			),
 			'validationError' => array(
-				'field' => 'QuizPage.0.QuizQuestion.0.QuizCorrect.0.correct',
-				'value' => '',
+				//'field' => 'QuizPage.0.QuizQuestion.0.QuizCorrect.0.correct',
+				//'value' => '',
 				'message' => 'question.errorMessages.questionPickupError',
 			)
 		)));
