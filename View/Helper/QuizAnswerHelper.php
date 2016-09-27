@@ -88,13 +88,15 @@ class QuizAnswerHelper extends AppHelper {
 				'label' => false,
 				'disabled' => $readonly,
 				'error' => false,
+				'hiddenField' => false,
 			);
 			if ($question['is_choice_horizon'] == QuizzesComponent::USES_USE) {
 				$setting = Hash::merge($setting, array(
 					'inline' => true
 				));
 			}
-			$ret = $this->NetCommonsForm->input($fieldName, $setting);
+			$ret = $this->NetCommonsForm->hidden($fieldName, array('value' => ''));
+			$ret .= $this->NetCommonsForm->input($fieldName, $setting);
 		}
 		return $ret;
 	}
