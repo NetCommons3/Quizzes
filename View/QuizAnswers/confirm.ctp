@@ -33,11 +33,11 @@
 				<div class="well form-control-static">
 					<div class="form-group">
 					<label class="pull-right text-muted">
-						<?php echo sprintf(__d('quizzes', '(Allotment %3d)'), $question['allotment']); ?>
+						<?php echo __d('quizzes', '(Allotment %3d)', $question['allotment']); ?>
 					</label>
 
 					<label class="control-label">
-						<?php echo sprintf(__d('quizzes', 'Question %2d :'), $question['serial_number'] + 1); ?>
+						<?php echo __d('quizzes', 'Question %2d :', $question['serial_number'] + 1); ?>
 					</label>
 
 					<p >

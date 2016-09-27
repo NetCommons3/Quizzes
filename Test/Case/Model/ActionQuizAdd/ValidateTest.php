@@ -84,7 +84,7 @@ class ActionQuizAddValidateTest extends NetCommonsValidateTest {
 			array('data' => $data, 'field' => 'create_option', 'value' => 'aaa',
 				'message' => __d('quizzes', 'Please choose create option.')),
 			array('data' => $data, 'field' => 'title', 'value' => '',
-				'message' => sprintf(__d('net_commons', 'Please input %s.'), __d('quizzes', 'Title'))),
+				'message' => __d('net_commons', 'Please input %s.', __d('quizzes', 'Title'))),
 			array('data' => $data, 'field' => 'past_quiz_id', 'value' => '',
 				'message' => __d('quizzes', 'Please select past quiz.'),
 				'overwrite' => array(

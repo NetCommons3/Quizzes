@@ -83,7 +83,7 @@ class QuizValidateTest extends NetCommonsValidateTest {
 			array('data' => $data, 'field' => 'block_id', 'value' => 'aa',
 				'message' => __d('net_commons', 'Invalid request.')),
 			array('data' => $data, 'field' => 'title', 'value' => '',
-				'message' => sprintf(__d('net_commons', 'Please input %s.'), __d('quizzes', 'Title'))),
+				'message' => __d('net_commons', 'Please input %s.', __d('quizzes', 'Title'))),
 			array('data' => $data, 'field' => 'passing_grade', 'value' => '-1',
 				'message' => __d('quizzes', 'Please input natural number.')),
 			array('data' => $data, 'field' => 'passing_grade', 'value' => '0.4',
@@ -127,8 +127,8 @@ class QuizValidateTest extends NetCommonsValidateTest {
 				'message' => __d('net_commons', 'Invalid request.'),
 			),
 			array('data' => $data, 'field' => 'answer_start_period', 'value' => 'aaaaa',
-				'message' => sprintf(
-				__d('net_commons', 'Unauthorized pattern for %s. Please input the data in %s format.'),
+				'message' => __d('net_commons',
+					'Unauthorized pattern for %s. Please input the data in %s format.',
 				__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
 			),
 			array('data' => $data, 'field' => 'answer_end_period', 'value' => '2015-01-01 00:00:00',
