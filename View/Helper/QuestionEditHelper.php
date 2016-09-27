@@ -146,6 +146,7 @@ class QuestionEditHelper extends AppHelper {
  *
  * @param string $fieldName フィールド名
  * @param array $options オプション
+ * @param string $help 追加説明文
  * @return string HTML
  */
 	public function quizAttributeDatetime($fieldName, $options, $help = '') {
