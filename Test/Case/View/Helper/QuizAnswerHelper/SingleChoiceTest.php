@@ -78,7 +78,7 @@ class QuizAnswerHelperSingleChoiceTest extends NetCommonsHelperTestCase {
 		$readonly = false;
 
 		$expected = '<input type="hidden" name="data[QuizAnswer][1][0][answer_value]" ' .
-			'id="QuizAnswer10AnswerValue_" value=""/>' .
+			'value="" id="QuizAnswer10AnswerValue"/>' .
 			'<div class="radio radio-inline"><label class="control-label">' .
 		'<input type="radio" name="data[QuizAnswer][1][0][answer_value]" ' .
 			'id="QuizAnswer10AnswerValueTest1" value="test1" />test1</label></div>' .
