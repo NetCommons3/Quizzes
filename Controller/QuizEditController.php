@@ -27,6 +27,13 @@ class QuizEditController extends QuizzesAppController {
 	const	QUIZ_EDIT_SESSION_INDEX = 'Quizzes.quizEdit.';
 
 /**
+ * post QuizQuestions session key
+ *
+ * @var int
+ */
+	const	QUIZ_POST_QUESTION_SESSION_INDEX = 'Quizzes.postQuizQuestion.';
+
+/**
  * use model
  *
  * @var array
@@ -55,6 +62,7 @@ class QuizEditController extends QuizzesAppController {
  *
  */
 	public $helpers = array(
+		'NetCommons.Token',
 		'Workflow.Workflow',
 		'Wysiwyg.Wysiwyg',
 		'NetCommons.Wizard' => array(
@@ -85,6 +93,12 @@ class QuizEditController extends QuizzesAppController {
  *
  */
 	protected $_quiz = null;
+
+/**
+ * post QuizQuestions　
+ *
+ */
+	protected $_postQuiz = null;
 
 /**
  * session index
@@ -182,44 +196,117 @@ class QuizEditController extends QuizzesAppController {
 		if ($this->request->is('post') || $this->request->is('put')) {
 
 			$postQuiz = $this->request->data;
-
-			// アンケートデータに作成されたPost質問データをかぶせる
-			// （質問作成画面では質問データ属性全てをPOSTしているのですり替えでOK）
-			$Quiz = $this->_quiz;
-			$Quiz['Quiz'] = Hash::merge($this->_quiz['Quiz'], $postQuiz['Quiz']);
-
-			if ($this->Quiz->hasPublished($Quiz) == 0) {
-				// 未発行の場合はPostデータを上書き設定
-				$Quiz['QuizPage'] = $postQuiz['QuizPage'];
+			if (! empty($postQuiz['QuizPage'])) {
+				if ($this->request->is('ajax')) {
+					$this->_postPage($postQuiz);
+					$this->view = 'edit_json';
+					return;
+				}
 			} else {
-				// 発行後の小テストは質問情報を書き換えない。ただし解説文を除く。
-				// booleanの値がPOST時と同じようになるように調整
+				$Quiz = $this->_quiz;
+
+				// 質問編集画面からのPOSTは、発行後は書き換えない 未発行の場合はPostデータを上書き設定
+				// ただし解説は上書きする
+				$accumSessName =
+					self::QUIZ_POST_QUESTION_SESSION_INDEX . $this->_getQuizEditSessionIndex();
+				$accumulationPost = $this->Session->read($accumSessName);
+
+				// 蓄積データは消す
+				$this->Session->delete($accumSessName);
+
+				if ($this->Quiz->hasPublished($Quiz) == 0) {
+					// 未発行の場合はPostデータをまるごとすり替え
+					$Quiz['QuizPage'] = $accumulationPost['QuizPage'];
+				} else {
+					// 解説はいつでも上書きする
+					$this->_setCommentary($Quiz['QuizPage'], $accumulationPost['QuizPage']);
+				}
 				$this->Quiz->clearQuizId($Quiz, true);
+
 				$Quiz['QuizPage'] = QuizzesAppController::changeBooleansToNumbers($Quiz['QuizPage']);
-				// 解説文だけは上書きOKなので後設定
-				$this->_setCommentary($Quiz['QuizPage'], $postQuiz['QuizPage']);
+
+				// バリデート
+				$this->Quiz->set($Quiz);
+				if (!$this->Quiz->validates(
+					array('validate' => Quiz::QUIZ_VALIDATE_TYPE))
+				) {
+					$this->__setupViewParameters($Quiz, '');
+					return;
+				}
+
+				// バリデートがOKであればPOSTで出来上がったデータをセッションキャッシュに書く
+				$this->Session->write(self::QUIZ_EDIT_SESSION_INDEX . $this->_sessionIndex, $Quiz);
+
+				// 次の画面へリダイレクト
+				$this->redirect($this->_getActionUrl('edit'));
 			}
-
-			// バリデート
-			$this->Quiz->set($Quiz);
-			if (! $this->Quiz->validates(
-				array('validate' => Quiz::QUIZ_VALIDATE_TYPE))) {
-				$this->__setupViewParameters($Quiz, '');
-				return;
-			}
-
-			// バリデートがOKであればPOSTで出来上がったデータをセッションキャッシュに書く
-			$this->Session->write(self::QUIZ_EDIT_SESSION_INDEX . $this->_sessionIndex, $Quiz);
-
-			// 次の画面へリダイレクト
-			$this->redirect($this->_getActionUrl('edit'));
 		} else {
 			// アンケートデータが取り出せている場合、それをキャッシュに書く
 			$this->Session->write(
 				self::QUIZ_EDIT_SESSION_INDEX . $this->_getQuizEditSessionIndex(),
 				$this->_sorted($this->_quiz));
 			$this->__setupViewParameters($this->_quiz, '');
+
+			// Getの場合、蓄積データは消す
+			$accumSessName =
+				self::QUIZ_POST_QUESTION_SESSION_INDEX . $this->_getQuizEditSessionIndex();
+			$this->Session->delete($accumSessName);
 		}
+	}
+
+/**
+ * _postPage
+ *
+ * 分割送信されている編集された質問情報をまとめ上げる
+ *
+ * @param array $postPage 分割送信された質問情報（１質問ずつ送信）
+ * @return void
+ */
+	protected function _postPage($postPage) {
+		// 小テストデータに作成されたPost質問データをかぶせる
+		// （質問作成画面では質問データ属性全てをPOSTしているのですり替えでOK）
+		$sessionName = self::QUIZ_POST_QUESTION_SESSION_INDEX . $this->_getQuizEditSessionIndex();
+		$accumulationPost = $this->Session->read($sessionName);
+		if (! $accumulationPost) {
+			$accumulationPost = array();
+		}
+
+		$postPage = $this->_changeBoolean($postPage);
+
+		// マージ
+		$accumulationPost = Hash::merge($accumulationPost, $postPage);
+
+		// マージ結果をセッションに記録
+		$this->Session->write(
+			self::QUIZ_POST_QUESTION_SESSION_INDEX . $this->_sessionIndex, $accumulationPost);
+	}
+
+/**
+ * _changeBoolean
+ *
+ * JSから送られるデータはbooleanの値のものがtrueとかfalseの文字列データで来てしまうので
+ * 正式なbool値に変換しておく
+ *
+ * @param array $orig 元データ
+ * @return array 変換後の配列データ
+ */
+	protected function _changeBoolean($orig) {
+		$new = [];
+
+		foreach ($orig as $key => $value) {
+			if (is_array($value)) {
+				$new[$key] = $this->_changeBoolean($value);
+			} else {
+				if ($value === 'true') {
+					$value = true;
+				}
+				if ($value === 'false') {
+					$value = false;
+				}
+				$new[$key] = $value;
+			}
+		}
+		return $new;
 	}
 
 /**
@@ -283,7 +370,7 @@ class QuizEditController extends QuizzesAppController {
 				$this->_quiz);
 			$this->__setupViewParameters($this->_quiz, $this->_getActionUrl('edit_question'));
 		}
-		$comments = $this->Quiz->getCommentsByContentKey($this->_quiz['Quiz']['key']);
+		$comments = $this->Quiz->getCommentsByContentKey(Hash::get($this->_quiz, 'Quiz.key'));
 		$this->set('comments', $comments);
 	}
 
@@ -372,6 +459,11 @@ class QuizEditController extends QuizzesAppController {
 		$Quiz = Hash::merge($Quiz, Hash::expand($newFlatError));
 
 		$this->set('backUrl', $backUrl);
+
+		$ajaxPostUrl = $this->_getActionUrl($this->action);
+		$this->set('ajaxPostUrl', $ajaxPostUrl);
+		$this->set('postUrl', array('url' => $ajaxPostUrl));
+
 		$this->set('formOptions', array('url' => $this->_getActionUrl($this->action), 'type' => 'post'));
 		if ($this->layout == 'NetCommons.setting') {
 			$this->set('cancelUrl', array('url' => NetCommonsUrl::backToIndexUrl('default_setting_action')));
@@ -382,6 +474,8 @@ class QuizEditController extends QuizzesAppController {
 
 		$this->set('questionTypeOptions', $this->Quizzes->getQuestionTypeOptionsWithLabel());
 		$this->set('isPublished', $isPublished);
+
+		$this->set('quizKey', Hash::get($Quiz, 'Quiz.key'));
 
 		$isMailSetting = $this->MailSetting->getMailSetting(
 			array(

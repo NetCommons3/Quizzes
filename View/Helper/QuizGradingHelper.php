@@ -75,13 +75,11 @@ class QuizGradingHelper extends AppHelper {
 	public function getScoreLabel($question, $answer) {
 		$ret = '<label class="pull-right text-muted">';
 		if ($answer['correct_status'] != QuizzesComponent::STATUS_GRADE_YET) {
-			$ret .= sprintf(
-				__d('quizzes', '(%3d / %3d)'),	// '(%3d点 / 配点%3d点)'
+			$ret .= __d('quizzes', '(%3d / %3d)',	// '(%3d点 / 配点%3d点)'
 				$answer['score'],
 				$question['allotment']);
 		} else {
-			$ret .= sprintf(
-				__d('quizzes', '(Ungraded / %3d)'),	// (未採点 / 配点%3d点)
+			$ret .= __d('quizzes', '(Ungraded / %3d)',	// (未採点 / 配点%3d点)
 				$question['allotment']
 			);
 		}
@@ -175,7 +173,7 @@ class QuizGradingHelper extends AppHelper {
 			'type' => 'number',
 			'max' => $question['allotment'],
 			'min' => 0,
-			'after' => sprintf(__d('quizzes', ' / %d '), $question['allotment']) //  / %d 点
+			'after' => __d('quizzes', ' / %d ', $question['allotment']) //  / %d 点
 		));
 		$ret .= $this->Form->hidden($fieldNameBase . 'id',
 			array('value' => $answer['id']));
@@ -211,7 +209,7 @@ class QuizGradingHelper extends AppHelper {
  */
 	public function getQuestionLabel($questionIndex, $question, $answer) {
 		$ret = '<label class="control-label">';
-		$ret .= sprintf(__d('quizzes', 'Question %2d:'), $questionIndex + 1); // 問題%2d：
+		$ret .= __d('quizzes', 'Question %2d:', $questionIndex + 1); // 問題%2d：
 		$ret .= $this->getGradingLabel($answer);
 		$ret .= '</label>';
 		return $ret;
@@ -310,8 +308,7 @@ class QuizGradingHelper extends AppHelper {
  * @return string header描画HTML
  */
 	protected function _getScoreSummary($quiz, $summary) {
-		$ret = sprintf(
-			__d('quizzes', 'Score %d'), // 得点%d点
+		$ret = __d('quizzes', 'Score %d', // 得点%d点
 			$summary['QuizAnswerSummary']['summary_score']
 		);
 		if ($summary['QuizAnswerSummary']['is_grade_finished'] == false) {
@@ -330,8 +327,7 @@ class QuizGradingHelper extends AppHelper {
 				}
 			}
 			// + 未採点分が%d点あります
-			$ret .= sprintf(
-				__d('quizzes', ' + There are ungraded question %d points.'),
+			$ret .= __d('quizzes', ' + There are ungraded question %d points.',
 				$notScorePoint
 			);
 		}
@@ -375,12 +371,12 @@ class QuizGradingHelper extends AppHelper {
 			$min = 0;
 			$sec = $secTime;
 			$msg .= '%d sec.';
-			$ret = sprintf(__d('quizzes', $msg), $sec);
+			$ret = __d('quizzes', $msg, $sec);
 		} else {
 			$min = $secTime / 60;
 			$sec = $secTime % 60;
 			$msg .= '%d min %d sec.';
-			$ret = sprintf(__d('quizzes', $msg), $min, $sec);
+			$ret = __d('quizzes', $msg, $min, $sec);
 		}
 		return $ret;
 	}

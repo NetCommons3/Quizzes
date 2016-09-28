@@ -403,28 +403,28 @@ class QuizzesControllerAddTest extends WorkflowControllerAddTest {
 				'validationError' => array(
 					'field' => 'ActionQuizAdd.create_option',
 					'value' => null,
-					'message' => sprintf(__d('quizzes', 'Please choose create option.'))
+					'message' => __d('quizzes', 'Please choose create option.')
 				)
 			)),
 			Hash::merge($result, array(
 				'validationError' => array(
 					'field' => 'ActionQuizAdd.title',
 					'value' => '',
-					'message' => sprintf(__d('net_commons', 'Please input %s.'), __d('quizzes', 'Title'))
+					'message' => __d('net_commons', 'Please input %s.', __d('quizzes', 'Title'))
 				)
 			)),
 			Hash::merge($resultPastReuse, array(
 				'validationError' => array(
 					'field' => 'ActionQuizAdd.past_quiz_id',
 					'value' => '',
-					'message' => sprintf(__d('quizzes', 'Please select past quiz.'))
+					'message' => __d('quizzes', 'Please select past quiz.')
 				)
 			)),
 			Hash::merge($resultPastReuse, array(
 				'validationError' => array(
 					'field' => 'ActionQuizAdd.past_quiz_id',
 					'value' => '9999999',
-					'message' => sprintf(__d('quizzes', 'Please select past quiz.'))
+					'message' => __d('quizzes', 'Please select past quiz.')
 				)
 			)),
 		);

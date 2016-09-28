@@ -14,7 +14,9 @@ echo $this->NetCommonsHtml->script(array(
 	'/quizzes/js/quizzes_edit_question.js',
 ));
 $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->data));
+$jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 ?>
+<?php echo $this->element('NetCommons.javascript_alert'); ?>
 
 <?php
 	if ($isPublished) {
@@ -26,8 +28,9 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 
 <article id="nc-quizzes-question-edit"
 	 ng-controller="QuizzesEditQuestion"
-	 ng-init="initialize(<?php echo Current::read('Frame.id'); ?>,
-	 						<?php echo (int)$isPublished; ?>,
+	 ng-init="initialize(<?php echo $isPublished; ?>,
+	 						'<?php echo $ajaxPostUrl; ?>',
+	 						<?php echo h(json_encode($jsPostData)); ?>,
 							<?php echo h(json_encode($jsQuiz)); ?>
 							)">
 
@@ -162,9 +165,15 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 			</uib-tabset>
 		</div>
 		<div class="panel-footer text-center">
-			<?php echo $this->Wizard->buttons('edit_question', $cancelUrl, [], [], true); ?>
+			<?php echo $this->Wizard->buttons(
+				'edit_question',
+				$cancelUrl,
+				[],
+				['type' => 'button', 'ng-click' => 'post(\'edit_question\')'],
+				true); ?>
 		</div>
 		<?php echo $this->NetCommonsForm->end(); ?>
+		<?php echo $this->QuestionEdit->quizGetFinallySubmit($postUrl); ?>
 	</div>
 
 </article>

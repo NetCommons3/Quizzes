@@ -948,3 +948,9 @@ msgstr ""
 
 msgid "Please input template file."
 msgstr ""
+
+msgid "Failed to send data."
+msgstr ""
+
+msgid "There is a choice of the same value."
+msgstr ""

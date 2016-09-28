@@ -86,20 +86,17 @@ class QuizAnswerHelper extends AppHelper {
 				'div' => false,
 				'legend' => false,
 				'label' => false,
-				'before' => '<div class="radio"><label>',
-				'separator' => '</label></div><div class="radio"><label>',
-				'after' => '</label></div>',
 				'disabled' => $readonly,
 				'error' => false,
+				'hiddenField' => false,
 			);
 			if ($question['is_choice_horizon'] == QuizzesComponent::USES_USE) {
 				$setting = Hash::merge($setting, array(
-					'before' => '<label class="radio-inline">',
-					'separator' => '</label><label class="radio-inline">',
-					'after' => '</label>',
+					'inline' => true
 				));
 			}
-			$ret = $this->NetCommonsForm->input($fieldName, $setting);
+			$ret = $this->NetCommonsForm->hidden($fieldName, array('value' => ''));
+			$ret .= $this->NetCommonsForm->input($fieldName, $setting);
 		}
 		return $ret;
 	}

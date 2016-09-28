@@ -406,7 +406,7 @@ class QuizResultControllerViewTest extends WorkflowControllerViewTest {
 			$this->view);
 		$this->assertTextContains(__d('quizzes', 'Overall performance'), $this->view);
 		$this->assertTextContains(
-			sprintf(__d('quizzes', '%s \'s grade'), 'Editor'),
+			__d('quizzes', '%s \'s grade', 'Editor'),
 			$this->view);
 		$this->assertTextContains(__d('quizzes', 'Score history'), $this->view);
 		$this->assertTextContains('<nvd3 options="opt" data="data"></nvd3>', $this->view);

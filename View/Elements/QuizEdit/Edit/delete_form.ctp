@@ -22,6 +22,6 @@
 	<?php echo $this->NetCommonsForm->hidden('key'); ?>
 
 	<?php echo $this->Button->delete('',
-			sprintf(__d('net_commons', 'Deleting the %s. Are you sure to proceed?'), __d('quizzes', 'Quiz'))
+			__d('net_commons', 'Deleting the %s. Are you sure to proceed?', __d('quizzes', 'Quiz'))
 		); ?>
 <?php echo $this->NetCommonsForm->end();

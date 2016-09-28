@@ -52,16 +52,14 @@
 
 		<label class="pull-right text-muted">
 			<?php /* (配点%3d点) */
-			echo sprintf(
-			__d('quizzes', '(Allotment %3d)'),
+			echo __d('quizzes', '(Allotment %3d)',
 			$question['allotment']
 			); ?>
 		</label>
 
 		<label class="control-label">
 			<?php /* 問題%2d：*/
-			echo sprintf(
-			__d('quizzes', 'Question %2d :'),
+			echo __d('quizzes', 'Question %2d :',
 			$question['serial_number'] + 1
 			); ?>
 		</label>

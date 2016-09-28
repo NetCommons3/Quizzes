@@ -147,7 +147,7 @@ class QuizResultHelper extends AppHelper {
 		}
 		$second = $summary['Statistics']['avg_elapsed_second'];
 
-		$ret = sprintf(__d('quizzes', '%01.1f min.'), round($second / 60, 1));
+		$ret = __d('quizzes', '%01.1f min.', round($second / 60, 1));
 		return $ret;
 	}
 /**
@@ -263,7 +263,7 @@ class QuizResultHelper extends AppHelper {
  */
 	public function getElapsed($quiz, $summary) {
 		$second = $summary['QuizAnswerSummary']['elapsed_second'];
-		$ret = sprintf('%01.1f分', round($second / 60, 1));
+		$ret = __d('quizzes', '%01.1f min.', round($second / 60, 1));
 		return $ret;
 	}
 

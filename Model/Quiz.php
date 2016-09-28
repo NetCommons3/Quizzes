@@ -158,7 +158,7 @@ class Quiz extends QuizzesAppModel {
 			),
 			'title' => array( // タイトル
 				'rule' => 'notBlank',
-				'message' => sprintf(__d('net_commons', 'Please input %s.'), __d('quizzes', 'Title')),
+				'message' => __d('net_commons', 'Please input %s.', __d('quizzes', 'Title')),
 				'required' => true,
 				'allowEmpty' => false,
 				'required' => true,
@@ -287,8 +287,8 @@ class Quiz extends QuizzesAppModel {
 			'checkFormat' => array(
 				'rule' => array('datetime', 'ymd'),
 				'required' => true,
-				'message' => sprintf(
-					__d('net_commons', 'Unauthorized pattern for %s. Please input the data in %s format.'),
+				'message' => __d('net_commons',
+					'Unauthorized pattern for %s. Please input the data in %s format.',
 					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
 			),
 		);
@@ -296,8 +296,8 @@ class Quiz extends QuizzesAppModel {
 			'checkDateTime' => array(
 				'rule' => array('datetime', 'ymd'),
 				'required' => true,
-				'message' => sprintf(
-					__d('net_commons', 'Unauthorized pattern for %s. Please input the data in %s format.'),
+				'message' => __d('net_commons',
+					'Unauthorized pattern for %s. Please input the data in %s format.',
 					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
 			),
 			'checkDateComp' => array(
@@ -584,7 +584,7 @@ class Quiz extends QuizzesAppModel {
 
 			//新着データセット
 			$this->setTopicValue(
-				'title', sprintf(__d('quizzes', '%s started'), $quiz['Quiz']['title'])
+				'title', __d('quizzes', '%s started', $quiz['Quiz']['title'])
 			);
 			if (! $quiz['Quiz']['answer_timing']) {
 				$this->setTopicValue('publish_start', null);

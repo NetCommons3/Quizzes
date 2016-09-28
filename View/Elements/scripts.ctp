@@ -1,13 +1,13 @@
 <?php
 echo $this->NetCommonsHtml->script(array(
 ));
-$maxQuestionWarningMsg = sprintf(
-	__d('quizzes', 'Number of questions that can be created is up %d . Already it has become %d .'),
+$maxQuestionWarningMsg = __d('quizzes',
+	'Number of questions that can be created is up %d . Already it has become %d .',
 	QuizzesComponent::MAX_QUESTION_COUNT,
 	QuizzesComponent::MAX_QUESTION_COUNT
 );
-$maxChoiceWarningMsg = sprintf(
-	__d('quizzes', 'Number of choices that can be created is up %d per question. Already it has become %d .'),
+$maxChoiceWarningMsg = __d('quizzes',
+	'Number of choices that can be created is up %d per question. Already it has become %d .',
 	QuizzesComponent::MAX_CHOICE_COUNT,
 	QuizzesComponent::MAX_CHOICE_COUNT
 );
@@ -22,6 +22,7 @@ echo $this->NetCommonsHtml->scriptBlock(
 		'"resultNumberLabel": "' . __d('quizzes', 'Number') . '",' .
 		'"maxQuestionWarningMsg": "' . $maxQuestionWarningMsg . '",' .
 		'"maxChoiceWarningMsg": "' . $maxChoiceWarningMsg . '",' .
+		'"sendingErrorMsg": "' . __d('quizzes', 'Failed to send data.') . '",' .
 	'});'
 );
 echo $this->NetCommonsHtml->css('/quizzes/css/quiz.css');

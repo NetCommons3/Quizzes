@@ -266,7 +266,7 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 			}
 			foreach ($page['QuizQuestion'] as $question) {
 				$questionNumber = $questionNumber + 1;
-				$qNumberStr = sprintf(__d('quizzes', 'Question %2d :'), $questionNumber);
+				$qNumberStr = __d('quizzes', 'Question %2d :', $questionNumber);
 				$cols[] = $qNumberStr;
 				$cols[] = __d('quizzes', 'Score');
 

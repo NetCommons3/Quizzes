@@ -948,3 +948,9 @@ msgstr "終了"
 
 msgid "Please input template file."
 msgstr "ファイルを指定してください。"
+
+msgid "Failed to send data."
+msgstr "データの送信に失敗しました。"
+
+msgid "There is a choice of the same value."
+msgstr "同じ値の選択肢があります。"

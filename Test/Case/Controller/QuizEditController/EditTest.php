@@ -489,7 +489,7 @@ class QuizEditControllerEditTest extends WorkflowControllerEditTest {
 			'validationError' => array(
 				'field' => 'Quiz.title',
 				'value' => '',
-				'message' => sprintf(__d('net_commons', 'Please input %s.'), __d('quizzes', 'Title')),
+				'message' => __d('net_commons', 'Please input %s.', __d('quizzes', 'Title')),
 			)
 		)));
 		array_push($results, Hash::merge($result, array(
@@ -552,8 +552,8 @@ class QuizEditControllerEditTest extends WorkflowControllerEditTest {
 			'validationError' => array(
 				'field' => 'Quiz.answer_start_period',
 				'value' => '',
-				'message' => sprintf(
-					__d('net_commons', 'Unauthorized pattern for %s. Please input the data in %s format.'),
+				'message' => __d('net_commons',
+					'Unauthorized pattern for %s. Please input the data in %s format.',
 					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss'),
 			)
 		)));
@@ -561,8 +561,8 @@ class QuizEditControllerEditTest extends WorkflowControllerEditTest {
 			'validationError' => array(
 				'field' => 'Quiz.answer_end_period',
 				'value' => '',
-				'message' => sprintf(
-					__d('net_commons', 'Unauthorized pattern for %s. Please input the data in %s format.'),
+				'message' => __d('net_commons',
+					'Unauthorized pattern for %s. Please input the data in %s format.',
 					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss'),
 			)
 		)));

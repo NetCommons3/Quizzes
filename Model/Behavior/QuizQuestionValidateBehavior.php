@@ -42,6 +42,7 @@ class QuizQuestionValidateBehavior extends ModelBehavior {
 	public function beforeValidate(Model $model, $options = array()) {
 		// 付属の選択肢以下のvalidate
 		if ($this->_checkChoiceExists($model)) {
+			$this->_checkChoiceIsUnique($model);
 			// この質問種別に必要な選択肢データがちゃんとあるなら選択肢をバリデート
 			$validationErrors = array();
 			foreach ($model->data['QuizChoice'] as $cIndex => $choice) {
@@ -57,6 +58,7 @@ class QuizQuestionValidateBehavior extends ModelBehavior {
 		}
 
 		if ($this->_checkCorrectExists($model)) {
+			$this->_checkCorrectInChoice($model);
 			foreach ($model->data['QuizCorrect'] as $correct) {
 				$model->QuizCorrect->create();
 				$model->QuizCorrect->set($correct);
@@ -96,6 +98,31 @@ class QuizQuestionValidateBehavior extends ModelBehavior {
 		return true;
 	}
 /**
+ * _checkChoiceIsUnique
+ *
+ * 選択肢はユニークになっているか
+ *
+ * @param Model $model Model using this behavior
+ * @return bool
+ */
+	protected function _checkChoiceIsUnique($model) {
+		$questionType = $model->data['QuizQuestion']['question_type'];
+
+		// 択一、複数以外の時はチェック不要
+		if (! QuizzesComponent::isSelectionInputType($questionType)) {
+			return true;
+		}
+		$choices = Hash::extract($model->data, 'QuizChoice.{n}.choice_label');
+		$uniqueChoices = array_unique($choices);
+
+		if ($uniqueChoices != $choices) {
+			$model->validationErrors['question_pickup_error'][] =
+				__d('quizzes', 'There is a choice of the same value.');
+			return false;
+		}
+		return true;
+	}
+/**
  * _checkCorrectExists
  *
  * 適正な正解を持っているか
@@ -114,6 +141,32 @@ class QuizQuestionValidateBehavior extends ModelBehavior {
 			$model->validationErrors['question_pickup_error'][] =
 				__d('quizzes', 'please set at least one correct.');
 			return false;
+		}
+		return true;
+	}
+/**
+ * _checkCorrectInChoice
+ *
+ * 正解は選択肢の中のものが設定されているか
+ *
+ * @param Model $model Model using this behavior
+ * @return bool
+ */
+	protected function _checkCorrectInChoice($model) {
+		$questionType = $model->data['QuizQuestion']['question_type'];
+
+		// 択一、複数の時は正解データが選択肢の中にあることが前提
+		if (QuizzesComponent::isSelectionInputType($questionType)) {
+			// 択一、複数選択のときは、正解は必ず「０」番目のものしかありませんので０から取得
+			$corrects = Hash::extract($model->data, 'QuizCorrect.0.correct');
+			$choices = Hash::extract($model->data, 'QuizChoice.{n}.choice_label');
+			foreach ($corrects as $correct) {
+				if (! in_array($correct, $choices)) {
+					$model->validationErrors['question_pickup_error'][] =
+						__d('quizzes', 'Please set correct answer.');
+					return false;
+				}
+			}
 		}
 		return true;
 	}

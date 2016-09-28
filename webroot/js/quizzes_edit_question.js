@@ -48,8 +48,8 @@ angular.module('html-to-plaintext-module', [])
 NetCommonsApp.requires.push('html-to-plaintext-module');
 
 NetCommonsApp.controller('QuizzesEditQuestion',
-    ['$scope', 'NetCommonsWysiwyg', 'quizzesMessages', '$timeout',
-      function($scope, NetCommonsWysiwyg, quizzesMessages, $timeout) {
+    ['$scope', '$http', '$q', 'NetCommonsWysiwyg', 'quizzesMessages', '$timeout', 'NC3_URL',
+      function($scope, $http, $q, NetCommonsWysiwyg, quizzesMessages, $timeout, NC3_URL) {
 
        /**
         * tinymce
@@ -97,9 +97,10 @@ NetCommonsApp.controller('QuizzesEditQuestion',
         *
         * @return {void}
         */
-       $scope.initialize = function(frameId, isPublished, quiz) {
-         $scope.frameId = frameId;
+       $scope.initialize = function(isPublished, postUrl, postData, quiz) {
          $scope.isPublished = isPublished;
+         $scope.postUrl = postUrl;
+         $scope.postData = postData;
          $scope.quiz = quiz;
          $scope.quiz.quizPage = $scope.toArray(quiz.quizPage);
 
@@ -151,11 +152,16 @@ NetCommonsApp.controller('QuizzesEditQuestion',
                continue;
              }
              // 質問の選択肢の中にエラーがあるかのフラグ設定
+             // および正解設定ステータスの設定
+             question.quizCorrect[0].multiCorrectStat = new Array();
              for (var cIdx = 0; cIdx < question.quizChoice.length; cIdx++) {
                var choice = question.quizChoice[cIdx];
                if (choice.errorMessages) {
                  $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].hasError = true;
                  $scope.quiz.quizPage[pIdx].hasError = true;
+               }
+               if (jQuery.inArray(choice.choiceLabel, question.quizCorrect[0].correct) != -1) {
+                 question.quizCorrect[0].multiCorrectStat[cIdx] = true;
                }
              }
            }
@@ -225,41 +231,20 @@ NetCommonsApp.controller('QuizzesEditQuestion',
          }
          return false;
        };
-
-       /**
-        * focus DateTimePicker
-        *
-        * @return {void}
-        */
-       $scope.setMinMaxDate = function(ev, pIdx, qIdx) {
-         // 自分のタイプがMinかMaxかを知る
-         var curEl = ev.currentTarget;
-         var elId = curEl.id;
-
-         var typeMinMax;
-         typeMinMax = elId.substr(elId.lastIndexOf('.') + 1);
-         var targetEl;
-         var targetElId;
-
-         // 相方のデータを取り出す
-         if (typeMinMax == 'min') {
-           targetElId = elId.substring(0, elId.lastIndexOf('.')) + '.max';
-         } else {
-           targetElId = elId.substring(0, elId.lastIndexOf('.')) + '.min';
-         }
-         var targetEl = document.getElementById(targetElId);
-         var limitDate = $(targetEl).val();
-
-         // 自分のMinまたはMaxを設定する
-         var el = document.getElementById(elId);
-         if (limitDate != '') {
-           if (typeMinMax == 'min') {
-             $(el).data('DateTimePicker').maxDate(limitDate);
-           } else {
-             $(el).data('DateTimePicker').minDate(limitDate);
-           }
-         }
-       };
+        /**
+         * in choice label?
+         *
+         * @return {void}
+         */
+        $scope.inChoice = function(needle, haystack) {
+          var len = haystack.length;
+          for (var i = 0; i < len; i++) {
+            if (haystack[i].choiceLabel == needle) {
+              return true;
+            }
+          }
+          return false;
+        };
 
        /**
         * Add Quiz Page
@@ -390,7 +375,7 @@ NetCommonsApp.controller('QuizzesEditQuestion',
        };
 
        /**
-        * Move to another page Quiz Question
+        * Copy to another page Quiz Question
         *
         * @return {void}
         */
@@ -504,7 +489,14 @@ NetCommonsApp.controller('QuizzesEditQuestion',
          }
          for (var i = 0; i < question.quizChoice.length; i++) {
            if (question.quizChoice[i].choiceSequence == seq) {
-             $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizChoice.splice(i, 1);
+             var choices = $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizChoice;
+             var choiceLabel = choices[i].choiceLabel;
+             // 削除する選択肢のラベルが正解に入っていたら正解データから削除する
+             var correctIndex = jQuery.inArray(choiceLabel, question.quizCorrect[0].correct);
+             if (correctIndex != -1) {
+               question.quizCorrect[0].correct.splice(correctIndex, 1);
+             }
+             choices.quizChoice.splice(i, 1);
            }
          }
          $scope._resetQuizChoiceSequence(pIdx, qIdx);
@@ -569,6 +561,24 @@ NetCommonsApp.controller('QuizzesEditQuestion',
 
          question.quizCorrect.splice(cIdx, 1);
        };
+        /**
+         * correct set (for multi select
+         *
+         * @return {void}
+         */
+        $scope.setMultipleCorrect = function(pIdx, qIdx, cIdx, label) {
+          var corrects = $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizCorrect[0];
+          var matchIndex = jQuery.inArray(label, corrects.correct);
+          if (corrects.multiCorrectStat[cIdx] === true) {
+            if (matchIndex == -1) {
+              corrects.correct.push(label);
+            }
+          } else {
+            if (matchIndex != -1) {
+              corrects.correct.splice(i, 1);
+            }
+          }
+        };
        /**
         * add correct word
         *
@@ -616,9 +626,11 @@ NetCommonsApp.controller('QuizzesEditQuestion',
              $scope.addChoice($event, pIdx, qIdx, itemCount);
            }
          }
+         // 正解がなくなっている場合に備えて最低いっこは存在するように
          if (! correct || correct.length == 0) {
            $scope.addCorrect($event, pIdx, qIdx);
          }
+         // 単語複数のときはデフォルト３つの単語回答を作る
          if (question.questionType == variables.TYPE_MULTIPLE_WORD) {
            if (correct.length < variables.DEFAULT_ITEM_COUNT) {
              for (var itemCt = correct.length; itemCt < variables.DEFAULT_ITEM_COUNT; ) {
@@ -626,6 +638,14 @@ NetCommonsApp.controller('QuizzesEditQuestion',
                itemCt = $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizCorrect.length;
              }
            }
+         }
+         // 選択肢系
+         if (question.questionType == variables.TYPE_SELECTION ||
+             question.questionType == variables.TYPE_MULTIPLE_SELECTION) {
+           var newCorrect = jQuery.grep(question.quizCorrect[0].correct, function(n, i) {
+             return ($scope.inChoice(n, question.quizChoice));
+           });
+           question.quizCorrect[0].correct = newCorrect;
          }
        };
         /**
@@ -643,5 +663,147 @@ NetCommonsApp.controller('QuizzesEditQuestion',
             return false;
           }
           return true;
+        };
+        /**
+         * １質問ずつの分割送信
+         * JSで保持しているquizをそのまま送ると、
+         * Angularが付け加えているハッシュ属性まで送ってしまうので明示的に送信データにコピーしている
+         * 属性名はCakeで処理しやすいようにスネーク記法にしておく
+         *
+         * @return {void}
+         */
+        $scope.post = function(action) {
+          var promises = new Array();
+          var pageIndex = 0;
+
+          $scope.$parent.sending = true;
+
+          angular.forEach($scope.quiz.quizPage, function(page) {
+            var qIndex = 0;
+            angular.forEach(page.quizQuestion, function(question) {
+              var postPage = new Object();
+              postPage.QuizPage = new Object();
+              postPage.QuizPage[pageIndex] = new Object();
+              postPage.QuizPage[pageIndex].key = page.key;
+              postPage.QuizPage[pageIndex].is_page_description = page.isPageDescription;
+              postPage.QuizPage[pageIndex].page_description = page.pageDescription;
+              postPage.QuizPage[pageIndex].page_sequence = pageIndex;
+
+              postPage.QuizPage[pageIndex].QuizQuestion = new Object();
+              postPage.QuizPage[pageIndex].QuizQuestion[qIndex] = new Object();
+              var postQ = postPage.QuizPage[pageIndex].QuizQuestion[qIndex];
+
+              postQ.key = question.key;
+              postQ.question_sequence = qIndex;
+              postQ.question_value = question.questionValue;
+              postQ.question_type = question.questionType;
+
+              postQ.is_choice_random = question.isChoiceRandom;
+              postQ.is_choice_horizon = question.isChoiceHorizon;
+              postQ.is_order_fixed = question.isOrderFixed;
+
+              postQ.allotment = question.allotment;
+              postQ.commentary = question.commentary;
+
+              if (question.quizChoice) {
+                postQ.QuizChoice = new Object();
+                var cIndex = 0;
+                angular.forEach(question.quizChoice, function(choice) {
+                  postQ.QuizChoice[cIndex] = new Object();
+                  postQ.QuizChoice[cIndex].key = choice.key;
+                  postQ.QuizChoice[cIndex].choice_sequence = cIndex;
+                  postQ.QuizChoice[cIndex].choice_label = choice.choiceLabel;
+                  cIndex++;
+                });
+              }
+              if (question.quizCorrect) {
+                postQ.QuizCorrect = new Object();
+                var coIndex = 0;
+                angular.forEach(question.quizCorrect, function(correct) {
+                  // 複数単語のとき以外は正解は１番目のものだけが対象なので
+                  // それだけを送るようにします
+                  var pileUp = false;
+                  if (question.questionType != variables.TYPE_MULTIPLE_WORD) {
+                    if (coIndex == 0) {
+                      pileUp = true;
+                    }
+                  } else {
+                    pileUp = true;
+                  }
+                  if (pileUp == true) {
+                    postQ.QuizCorrect[coIndex] = new Object();
+                    postQ.QuizCorrect[coIndex].key = correct.key;
+                    postQ.QuizCorrect[coIndex].correct_sequence = coIndex;
+                    postQ.QuizCorrect[coIndex].correct = correct.correct;
+                    coIndex++;
+                  }
+                });
+              }
+
+              promises.push($scope.postQuizElm(postPage));
+
+              qIndex++;
+
+            }, $scope);
+
+            pageIndex++;
+
+          }, $scope);
+
+          $q.all(promises).then(
+             function() {
+               var fm = angular.element('#finallySubmitForm');
+               fm[0].submit();
+               // 送信に全て成功したときは画面がリダイレクトされるから何もしない
+             },
+             function() {
+               // 送信が１回でも失敗したら送信中状態（sending）をfalseにしてエラー表示する
+               $scope.$parent.sending = false;
+               $scope.$parent.flashMessage(quizzesMessages.sendingErrorMsg, 'danger', 5000);
+             }
+          );
+        };
+        /**
+         * 送信処理実体
+         *
+         * @return {void}
+         */
+        $scope.postQuizElm = function(ajaxPost) {
+          var deferred = $q.defer();
+          var promise = deferred.promise;
+
+          $http.get(NC3_URL + '/net_commons/net_commons/csrfToken.json')
+             .success(function(token) {
+               var postData;
+               postData = $scope.postData;
+               postData._Token.key = token.data._Token.key;
+               if (ajaxPost) {
+                 postData.QuizPage = ajaxPost.QuizPage;
+               } else {
+                 postData.QuizPage = new Object();
+               }
+               $http.post(NC3_URL + $scope.postUrl, $.param({_method: 'POST', data: postData}),
+                   {cache: false,
+                     headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                   }
+               ).success(function(data) {
+                 deferred.resolve(data);
+               }).error(function(data, status) {
+                 deferred.reject(data, status);
+               });
+             })
+             .error(function(data, status) {
+               deferred.reject(data, status);
+             });
+
+          promise.success = function(fn) {
+            promise.then(fn);
+            return promise;
+          };
+          promise.error = function(fn) {
+            promise.then(null, fn);
+            return promise;
+          };
+          return promise;
         };
      }]);

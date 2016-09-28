@@ -57,7 +57,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 			'title' => array(
 				'rule' => array(
 					'requireWhen', 'create_option', QuizzesComponent::QUIZ_CREATE_OPT_NEW),
-				'message' => sprintf(__d('net_commons', 'Please input %s.'), __d('quizzes', 'Title')),
+				'message' => __d('net_commons', 'Please input %s.', __d('quizzes', 'Title')),
 				'required' => false,
 			),
 			'past_quiz_id' => array(

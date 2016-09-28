@@ -195,8 +195,8 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 			->method('checkOwnAnsweredSummaryId')
 			->will($this->returnValue(true));
 		$result = $this->_testGetAction($url, null);
-		$this->assertTextContains(sprintf(__d('quizzes', 'Question %2d:'), 1), $result);
-		$this->assertTextNotContains(sprintf(__d('quizzes', 'Question %2d:'), 2), $result);
+		$this->assertTextContains(__d('quizzes', 'Question %2d:', 1), $result);
+		$this->assertTextNotContains(__d('quizzes', 'Question %2d:', 2), $result);
 	}
 /**
  * gradingアクションのテスト
