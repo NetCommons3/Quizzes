@@ -11,8 +11,8 @@
 ?>
 <?php if ($quiz['Quiz']['answer_timing'] == QuizzesComponent::USES_USE): ?>
     <strong>
-        <?php echo $this->Date->dateFormat($quiz['Quiz']['answer_start_period']); ?>
+        <?php echo $this->Date->dateFormat($quiz['Quiz']['answer_start_period'], 'Y/m/d H:i'); ?>
         <?php echo __d('quizzes', ' - '); ?>
-        <?php echo $this->Date->dateFormat($quiz['Quiz']['answer_end_period']); ?>
+        <?php echo $this->Date->dateFormat($quiz['Quiz']['answer_end_period'], 'Y/m/d H:i'); ?>
     </strong>
 <?php endif;
