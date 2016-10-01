@@ -311,7 +311,8 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 				'action' => 'edit_question',
 				'key' => '257b711744f8fb6ba8313a688a9de52f'
 			),
-			'assert' => null, 'exception' => 'BadRequestException'
+			//'assert' => null, 'exception' => 'BadRequestException'
+			'assert' => array('method' => 'assertContains', 'expected' => __d('quizzes', 'not found this quiz.')),
 		);
 		// ** 自分の記事（一度も公開してない
 		$results[1] = array(
@@ -330,7 +331,8 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 				'block_id' => $data['Block']['id'],
 				'action' => 'edit_question',
 				'key' => 'quiz_99999'),
-			'assert' => null, 'exception' => 'BadRequestException', 'return' => 'json'
+			//'assert' => null, 'exception' => 'BadRequestException', 'return' => 'json'
+			'assert' => array('method' => 'assertContains', 'expected' => __d('quizzes', 'not found this quiz.')),
 		);
 		//新規作成
 		$results[3] = array(
@@ -390,8 +392,9 @@ class QuizEditControllerEditQuestionTest extends WorkflowControllerEditTest {
 				'action' => 'edit_question',
 				'key' => null
 			),
-			'assert' => null, 'exception' => 'BadRequestException',
-			'return' => 'viewFile'
+			//'assert' => null, 'exception' => 'BadRequestException',
+			//'return' => 'viewFile'
+			'assert' => array('method' => 'assertContains', 'expected' => __d('quizzes', 'not found this quiz.')),
 		);
 
 		return $results;
