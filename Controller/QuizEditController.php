@@ -187,10 +187,10 @@ class QuizEditController extends QuizzesAppController {
  * @return void
  */
 	public function edit_question() {
-		// 処理対象のアンケートデータが見つかっていない場合、エラー
+		// 処理対象の小テストデータが見つかっていない場合、エラー
 		if (empty($this->_quiz)) {
-			$this->throwBadRequest();
-			return false;
+			$this->setAction('edit_not_found');
+			return;
 		}
 		// Postの場合
 		if ($this->request->is('post') || $this->request->is('put')) {
@@ -227,9 +227,7 @@ class QuizEditController extends QuizzesAppController {
 
 				// バリデート
 				$this->Quiz->set($Quiz);
-				if (!$this->Quiz->validates(
-					array('validate' => Quiz::QUIZ_VALIDATE_TYPE))
-				) {
+				if (! $this->Quiz->validates(array('validate' => Quiz::QUIZ_VALIDATE_TYPE))) {
 					$this->__setupViewParameters($Quiz, '');
 					return;
 				}
@@ -282,34 +280,6 @@ class QuizEditController extends QuizzesAppController {
 	}
 
 /**
- * _changeBoolean
- *
- * JSから送られるデータはbooleanの値のものがtrueとかfalseの文字列データで来てしまうので
- * 正式なbool値に変換しておく
- *
- * @param array $orig 元データ
- * @return array 変換後の配列データ
- */
-	protected function _changeBoolean($orig) {
-		$new = [];
-
-		foreach ($orig as $key => $value) {
-			if (is_array($value)) {
-				$new[$key] = $this->_changeBoolean($value);
-			} else {
-				if ($value === 'true') {
-					$value = true;
-				}
-				if ($value === 'false') {
-					$value = false;
-				}
-				$new[$key] = $value;
-			}
-		}
-		return $new;
-	}
-
-/**
  * edit method
  *
  * @throws BadRequestException
@@ -318,7 +288,7 @@ class QuizEditController extends QuizzesAppController {
 	public function edit() {
 		// 処理対象のアンケートデータが見つかっていない場合、エラー
 		if (empty($this->_quiz)) {
-			$this->throwBadRequest();
+			$this->setAction('edit_not_found');
 			return;
 		}
 
@@ -375,6 +345,20 @@ class QuizEditController extends QuizzesAppController {
 	}
 
 /**
+ * edit_not_found method
+ *
+ * @return void
+ */
+	public function edit_not_found() {
+		if ($this->request->is('post') || $this->request->is('put')) {
+			$this->throwBadRequest();
+			return;
+		}
+		$url = $this->_getCancelBackUrl();
+		$this->set('cancelUrl', $url);
+	}
+
+/**
  * delete method
  *
  * @return void
@@ -399,11 +383,7 @@ class QuizEditController extends QuizzesAppController {
 
 		$this->Session->delete(self::QUIZ_EDIT_SESSION_INDEX . $this->_sessionIndex);
 
-		if ($this->layout == 'NetCommons.setting') {
-			$this->redirect(NetCommonsUrl::backToIndexUrl('default_setting_action'));
-		} else {
-			$this->redirect(NetCommonsUrl::backToPageUrl());
-		}
+		$this->redirect($this->_getCancelBackUrl());
 	}
 
 /**
@@ -465,11 +445,7 @@ class QuizEditController extends QuizzesAppController {
 		$this->set('postUrl', array('url' => $ajaxPostUrl));
 
 		$this->set('formOptions', array('url' => $this->_getActionUrl($this->action), 'type' => 'post'));
-		if ($this->layout == 'NetCommons.setting') {
-			$this->set('cancelUrl', array('url' => NetCommonsUrl::backToIndexUrl('default_setting_action')));
-		} else {
-			$this->set('cancelUrl', array('url' => NetCommonsUrl::backToPageUrl()));
-		}
+		$this->set('cancelUrl', array('url' => $this->_getCancelBackUrl()));
 		$this->set('deleteUrl', array('url' => $this->_getActionUrl('delete')));
 
 		$this->set('questionTypeOptions', $this->Quizzes->getQuestionTypeOptionsWithLabel());
@@ -507,5 +483,20 @@ class QuizEditController extends QuizzesAppController {
 				$dst[$pageIndex]['QuizQuestion'][$qIndex]['commentary'] = $question['commentary'];
 			}
 		}
+	}
+/**
+ * _getCancelBackUrl
+ *
+ * セッティングモードか通常モードからかで編集画面からの戻りＵＲＬを分ける
+ *
+ * @return array
+ */
+	protected function _getCancelBackUrl() {
+		if ($this->layout == 'NetCommons.setting') {
+			$retArr = NetCommonsUrl::backToIndexUrl('default_setting_action');
+		} else {
+			$retArr = NetCommonsUrl::backToPageUrl();
+		}
+		return $retArr;
 	}
 }
