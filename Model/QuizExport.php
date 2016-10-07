@@ -77,9 +77,7 @@ class QuizExport extends QuizzesAppModel {
 
 		// 言語数分
 		$Language = ClassRegistry::init('M17n.Language');
-		$languages = $Language->find('all', array(
-			'recursive' => -1
-		));
+		$languages = $Language->getLanguage();
 
 		$quizzes = array();
 		foreach ($languages as $lang) {
