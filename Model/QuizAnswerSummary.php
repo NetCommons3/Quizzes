@@ -228,7 +228,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
  * @return array 採点権限を持つ採点可能な回答サマリを返す
  */
 	public function getCanGradingSummary() {
-		if (! Current::permission('content_publishable')) {
+		if (! Current::permission('block_editable')) {
 			return array();
 		}
 		$conditions = $this->Quiz->getBaseCondition();

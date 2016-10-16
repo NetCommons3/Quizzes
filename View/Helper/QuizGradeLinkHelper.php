@@ -73,6 +73,6 @@ class QuizGradeLinkHelper extends AppHelper {
  * @return bool
  */
 	public function canGrade($quiz) {
-		return Current::permission('content_publishable');
+		return Current::permission('block_editable');
 	}
 }
