@@ -40,7 +40,7 @@ class QuizResultController extends QuizzesAppController {
 		'NetCommons.Permission' => array(
 			//アクセスの権限
 			'allow' => array(
-				'index' => 'content_publishable',
+				'index' => 'block_editable',
 			),
 		),
 		'Quizzes.QuizzesOwnAnswerQuiz',	// 回答済み小テスト管理
@@ -78,6 +78,7 @@ class QuizResultController extends QuizzesAppController {
 	public function beforeFilter() {
 		// 親クラスのbeforeFilterを済ませる
 		parent::beforeFilter();
+
 		// NetCommonsお約束：編集画面へのURLに編集対象のコンテンツキーが含まれている
 		// まずは、そのキーを取り出す
 		$quizKey = $this->_getQuizKeyFromPass();

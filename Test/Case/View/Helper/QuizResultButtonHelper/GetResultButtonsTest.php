@@ -67,7 +67,7 @@ class QuizResultButtonHelperGetResultButtonsTest extends NetCommonsHelperTestCas
 			)
 		);
 		Current::$current['Permission']['content_editable']['value'] = true;
-		Current::$current['Permission']['content_publishable']['value'] = true;
+		Current::$current['Permission']['block_editable']['value'] = true;
 		//テスト実施
 		$result = $this->QuizResultButton->getResultButtons(
 			$quiz,
