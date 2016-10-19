@@ -102,7 +102,7 @@ class QuizExport extends QuizzesAppModel {
 			$quizzes[] = $quiz;
 		}
 		// Exportするデータが一つも見つからないって
-		if (empty($quiz)) {
+		if (empty($quizzes)) {
 			return false;
 		}
 		$zipData['Quizzes'] = $quizzes;
