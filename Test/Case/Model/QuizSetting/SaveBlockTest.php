@@ -105,9 +105,9 @@ class QuizSettingSaveBlockTest extends NetCommonsModelTestCase {
  */
 	public function dataProviderSave() {
 		return array(
-			array($this->_getData(1, 'frame_3', 6)),
-			array($this->_getData(1, 'frame_7', null)),
-			array($this->_getData(4, 'frame_8', null)),
+			array($this->_getData('2', 'frame_3', 6)),
+			array($this->_getData('2', 'frame_7', null)),
+			array($this->_getData('5', 'frame_8', null)),
 		);
 	}
 /**
@@ -140,8 +140,8 @@ class QuizSettingSaveBlockTest extends NetCommonsModelTestCase {
  */
 	public function dataProviderSaveOnExceptionError() {
 		return array(
-			array($this->_getData(4, 'frame_8', null), 'Blocks.Block', 'save'),
-			array($this->_getData(4, 'frame_8', null), 'Frames.Frame', 'save'),
+			array($this->_getData('5', 'frame_8', null), 'Blocks.Block', 'save'),
+			array($this->_getData('5', 'frame_8', null), 'Frames.Frame', 'save'),
 		);
 	}
 
