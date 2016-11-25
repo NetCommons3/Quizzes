@@ -496,7 +496,7 @@ NetCommonsApp.controller('QuizzesEditQuestion',
              if (correctIndex != -1) {
                question.quizCorrect[0].correct.splice(correctIndex, 1);
              }
-             choices.quizChoice.splice(i, 1);
+             question.quizChoice.splice(i, 1);
            }
          }
          $scope._resetQuizChoiceSequence(pIdx, qIdx);
