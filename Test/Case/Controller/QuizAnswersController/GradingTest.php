@@ -154,7 +154,7 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 			'action' => 'grading',
 		), $urlOptions);
 		$url[] = '99999';
-		$this->setExpectedException('ForbiddenException');
+		$this->setExpectedException('BadRequestException');
 		$this->_testGetAction($url, null);
 	}
 /**
@@ -172,7 +172,7 @@ class QuizAnswersControllerGradingTest extends NetCommonsControllerTestCase {
 			'controller' => $this->_controller,
 			'action' => 'grading',
 		), $urlOptions);
-		$this->setExpectedException('ForbiddenException');
+		$this->setExpectedException('BadRequestException');
 		$this->_testGetAction($url, null);
 	}
 /**
