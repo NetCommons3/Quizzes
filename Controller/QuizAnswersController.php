@@ -385,7 +385,7 @@ class QuizAnswersController extends QuizzesAppController {
 		$summaryId = Hash::get($this->params['pass'], '0');
 		$summary = $this->QuizAnswerSummary->findById($summaryId);
 		if (! $summary) {
-			throw new ForbiddenException(__d('net_commons', 'Forbidden Request'));
+			return $this->setAction('throwBadRequest');
 		}
 		// 編集者でない場合は
 		// 自分の回答したサマリか確認
