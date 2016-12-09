@@ -773,7 +773,8 @@ NetCommonsApp.controller('QuizzesEditQuestion',
           var promise = deferred.promise;
 
           $http.get(NC3_URL + '/net_commons/net_commons/csrfToken.json')
-             .success(function(token) {
+             .then(function(response) {
+               var token = response.data;
                var postData;
                postData = $scope.postData;
                postData._Token.key = token.data._Token.key;
@@ -786,13 +787,18 @@ NetCommonsApp.controller('QuizzesEditQuestion',
                    {cache: false,
                      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                    }
-               ).success(function(data) {
+               ).success(function(response) {
+                 var data = response.data;
                  deferred.resolve(data);
-               }).error(function(data, status) {
+               }).error(function(response) {
+                 var data = response.data;
+                 var status = response.status;
                  deferred.reject(data, status);
                });
-             })
-             .error(function(data, status) {
+             },
+             function(response) {
+               var data = response.data;
+               var status = response.status;
                deferred.reject(data, status);
              });
 
