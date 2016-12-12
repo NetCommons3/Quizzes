@@ -787,10 +787,10 @@ NetCommonsApp.controller('QuizzesEditQuestion',
                    {cache: false,
                      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                    }
-               ).success(function(response) {
+               ).then(function(response) {
                  var data = response.data;
                  deferred.resolve(data);
-               }).error(function(response) {
+               }, function(response) {
                  var data = response.data;
                  var status = response.status;
                  deferred.reject(data, status);
