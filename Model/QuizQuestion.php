@@ -348,7 +348,7 @@ class QuizQuestion extends QuizzesAppModel {
 			'conditions' => array('id' => $quizPageId),
 		));
 
-		$quizPageId = $this->QuizPage->find('list', array(
+		$quizPageIds = $this->QuizPage->find('list', array(
 			'recursive' => -1,
 			'callbacks' => false,
 			'fields' => array('id', 'id'),
@@ -358,7 +358,7 @@ class QuizQuestion extends QuizzesAppModel {
 			),
 		));
 
-		return array_values($quizPageId);
+		return array_values($quizPageIds);
 	}
 
 }
