@@ -293,14 +293,14 @@ class QuizPage extends QuizzesAppModel {
 			$conditions['is_active'] = true;
 		}
 
-		$quizId = $this->Quiz->find('list', array(
+		$quizIds = $this->Quiz->find('list', array(
 			'recursive' => -1,
 			'callbacks' => false,
 			'fields' => array('id', 'id'),
 			'conditions' => $conditions,
 		));
 
-		return array_values($quizId);
+		return array_values($quizIds);
 	}
 
 }
