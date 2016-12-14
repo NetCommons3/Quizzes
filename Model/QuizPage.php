@@ -176,6 +176,39 @@ class QuizPage extends QuizzesAppModel {
 	}
 
 /**
+ * 多言語データ取得のため、当言語のquiz_idから全言語のquiz_idを取得する
+ *
+ * @param id $quizId 当言語のquiz_id
+ * @return array
+ */
+	public function getQuizIdsForM17n($quizId) {
+		$quiz = $this->Quiz->find('first', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'key', 'is_active', 'is_latest'),
+			'conditions' => array('id' => $quizId),
+		));
+
+		$conditions = array(
+			'key' => Hash::get($quiz, 'Quiz.key', '')
+		);
+		if (Hash::get($quiz, 'Quiz.is_latest')) {
+			$conditions['is_latest'] = true;
+		} else {
+			$conditions['is_active'] = true;
+		}
+
+		$quizIds = $this->Quiz->find('list', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'id'),
+			'conditions' => $conditions,
+		));
+
+		return array_values($quizIds);
+	}
+
+/**
  * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
@@ -268,39 +301,6 @@ class QuizPage extends QuizzesAppModel {
 			$this->QuizQuestion->saveQuizQuestion($page['QuizQuestion']);
 		}
 		return true;
-	}
-
-/**
- * 多言語データ取得のため、当言語のquiz_idから全言語のquiz_idを取得する
- *
- * @param id $quizId 当言語のquiz_id
- * @return array
- */
-	public function getQuizIdsForM17n($quizId) {
-		$quiz = $this->Quiz->find('first', array(
-			'recursive' => -1,
-			'callbacks' => false,
-			'fields' => array('id', 'key', 'is_active', 'is_latest'),
-			'conditions' => array('id' => $quizId),
-		));
-
-		$conditions = array(
-			'key' => Hash::get($quiz, 'Quiz.key', '')
-		);
-		if (Hash::get($quiz, 'Quiz.is_latest')) {
-			$conditions['is_latest'] = true;
-		} else {
-			$conditions['is_active'] = true;
-		}
-
-		$quizIds = $this->Quiz->find('list', array(
-			'recursive' => -1,
-			'callbacks' => false,
-			'fields' => array('id', 'id'),
-			'conditions' => $conditions,
-		));
-
-		return array_values($quizIds);
 	}
 
 }

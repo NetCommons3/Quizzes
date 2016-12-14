@@ -23,7 +23,7 @@ class QuizQuestion extends QuizzesAppModel {
 /**
  * 配点デフォルト値
  */
-	const	QUIZ_QUESTION_DEFAULT_ALLOTMENT = 10;
+	const QUIZ_QUESTION_DEFAULT_ALLOTMENT = 10;
 
 /**
  * use behaviors
@@ -291,6 +291,33 @@ class QuizQuestion extends QuizzesAppModel {
 	}
 
 /**
+ * 多言語データ取得のため、当言語のquiz_page_idから全言語のquiz_page_idを取得する
+ *
+ * @param id $quizPageId 当言語のquiz_page_id
+ * @return array
+ */
+	public function getQuizPageIdsForM17n($quizPageId) {
+		$quizPage = $this->QuizPage->find('first', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'key', 'quiz_id'),
+			'conditions' => array('id' => $quizPageId),
+		));
+
+		$quizPageIds = $this->QuizPage->find('list', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'id'),
+			'conditions' => array(
+				'quiz_id' => $this->QuizPage->getQuizIdsForM17n($quizPage['QuizPage']['quiz_id']),
+				'key' => $quizPage['QuizPage']['key']
+			),
+		));
+
+		return array_values($quizPageIds);
+	}
+
+/**
  * saveQuizQuestion
  * save QuizQuestion data
  *
@@ -332,33 +359,6 @@ class QuizQuestion extends QuizzesAppModel {
 			}
 		}
 		return true;
-	}
-
-/**
- * 多言語データ取得のため、当言語のquiz_page_idから全言語のquiz_page_idを取得する
- *
- * @param id $quizPageId 当言語のquiz_page_id
- * @return array
- */
-	public function getQuizPageIdsForM17n($quizPageId) {
-		$quizPage = $this->QuizPage->find('first', array(
-			'recursive' => -1,
-			'callbacks' => false,
-			'fields' => array('id', 'key', 'quiz_id'),
-			'conditions' => array('id' => $quizPageId),
-		));
-
-		$quizPageIds = $this->QuizPage->find('list', array(
-			'recursive' => -1,
-			'callbacks' => false,
-			'fields' => array('id', 'id'),
-			'conditions' => array(
-				'quiz_id' => $this->QuizPage->getQuizIdsForM17n($quizPage['QuizPage']['quiz_id']),
-				'key' => $quizPage['QuizPage']['key']
-			),
-		));
-
-		return array_values($quizPageIds);
 	}
 
 }
