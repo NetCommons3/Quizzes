@@ -23,7 +23,7 @@ class QuizAnswer extends QuizzesAppModel {
  *
  * @var int
  */
-	const	QUIZ_MAX_ANSWER_LENGTH = 60000;
+	const QUIZ_MAX_ANSWER_LENGTH = 60000;
 
 /**
  * use behaviors

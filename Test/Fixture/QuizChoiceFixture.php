@@ -16,37 +16,6 @@
 class QuizChoiceFixture extends CakeTestFixture {
 
 /**
- * Import
- *
- * @var array
- */
-	public $import = array('connection' => 'master');
-
-/**
- * Fields
- *
- * @var array
- */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'language_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-		'choice_sequence' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => '選択肢並び順'),
-		'choice_label' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '選択肢ラベル', 'charset' => 'utf8'),
-		'quiz_question_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'modified_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'fk_quiz_choice_quiz_question1_idx' => array('column' => 'quiz_question_id', 'unique' => 0),
-			'fk_quiz_choices_languages1_idx' => array('column' => 'language_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
-	);
-
-/**
  * Records
  *
  * @var array
@@ -2069,5 +2038,16 @@ class QuizChoiceFixture extends CakeTestFixture {
 			'modified' => '2016-06-10 06:18:17'
 		),
 	);
+
+/**
+ * Initialize the fixture.
+ *
+ * @return void
+ */
+	public function init() {
+		require_once App::pluginPath('Quizzes') . 'Config' . DS . 'Schema' . DS . 'schema.php';
+		$this->fields = (new QuizzesSchema())->tables[Inflector::tableize($this->name)];
+		parent::init();
+	}
 
 }

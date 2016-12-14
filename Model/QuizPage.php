@@ -30,6 +30,15 @@ class QuizPage extends QuizzesAppModel {
 		'Wysiwyg.Wysiwyg' => array(
 			'fields' => array('page_description'),
 		),
+		'M17n.M17n' => array(
+			'associations' => array(
+				'QuizQuestion' => array(
+					'class' => 'Quizzes.QuizQuestion',
+					'foreignKey' => 'quiz_page_id',
+				),
+			),
+			'afterCallback' => false,
+		)
 	);
 
 /**
@@ -128,7 +137,8 @@ class QuizPage extends QuizzesAppModel {
 					'quiz_id' => $quiz['Quiz']['id'],
 				),
 				'order' => array('page_sequence ASC'),
-				'recursive' => -1));
+				'recursive' => -1
+			));
 
 			$quiz['QuizPage'] = Hash::combine($pages, '{n}.QuizPage.page_sequence', '{n}.QuizPage');
 		}
@@ -140,6 +150,31 @@ class QuizPage extends QuizzesAppModel {
 			$quiz['Quiz']['page_count']++;
 		}
 	}
+
+/**
+ * Called before each find operation. Return false if you want to halt the find
+ * call, otherwise return the (modified) query data.
+ *
+ * @param array $query Data used to execute this query, i.e. conditions, order, etc.
+ * @return mixed true if the operation should continue, false if it should abort; or, modified
+ *  $query to continue with new $query
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforefind
+ */
+	public function beforeFind($query) {
+		//hasManyで実行されたとき、多言語の条件追加
+		if (! $this->id && isset($query['conditions']['quiz_id'])) {
+			$query['conditions']['quiz_id'] = $this->getQuizIdsForM17n($query['conditions']['quiz_id']);
+			$query['conditions']['OR'] = array(
+				'language_id' => Current::read('Language.id'),
+				'is_translation' => false,
+			);
+
+			return $query;
+		}
+
+		return parent::beforeFind($query);
+	}
+
 /**
  * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
@@ -233,6 +268,39 @@ class QuizPage extends QuizzesAppModel {
 			$this->QuizQuestion->saveQuizQuestion($page['QuizQuestion']);
 		}
 		return true;
+	}
+
+/**
+ * 多言語データ取得のため、当言語のquiz_idから全言語のquiz_idを取得する
+ *
+ * @param id $quizId 当言語のquiz_id
+ * @return array
+ */
+	public function getQuizIdsForM17n($quizId) {
+		$quiz = $this->Quiz->find('first', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'key', 'is_active', 'is_latest'),
+			'conditions' => array('id' => $quizId),
+		));
+
+		$conditions = array(
+			'key' => Hash::get($quiz, 'Quiz.key', '')
+		);
+		if (Hash::get($quiz, 'Quiz.is_latest')) {
+			$conditions['is_latest'] = true;
+		} else {
+			$conditions['is_active'] = true;
+		}
+
+		$quizId = $this->Quiz->find('list', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'id'),
+			'conditions' => $conditions,
+		));
+
+		return array_values($quizId);
 	}
 
 }

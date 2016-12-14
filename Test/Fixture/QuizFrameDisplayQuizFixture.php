@@ -15,34 +15,6 @@
 class QuizFrameDisplayQuizFixture extends CakeTestFixture {
 
 /**
- * Import
- *
- * @var array
- */
-	public $import = array('connection' => 'master');
-
-/**
- * Fields
- *
- * @var array
- */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'frame_key' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'quiz_key' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'modified_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'quiz_key' => array('column' => 'quiz_key', 'unique' => 0),
-			'fk_quiz_frame_display_quizzes_quiz_idx' => array('column' => 'frame_key', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
-	);
-
-/**
  * Records
  *
  * @var array
@@ -391,5 +363,16 @@ class QuizFrameDisplayQuizFixture extends CakeTestFixture {
 			'modified' => '2016-06-10 06:19:46'
 		),
 	);
+
+/**
+ * Initialize the fixture.
+ *
+ * @return void
+ */
+	public function init() {
+		require_once App::pluginPath('Quizzes') . 'Config' . DS . 'Schema' . DS . 'schema.php';
+		$this->fields = (new QuizzesSchema())->tables[Inflector::tableize($this->name)];
+		parent::init();
+	}
 
 }

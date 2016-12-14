@@ -16,55 +16,6 @@
 class QuizFixture extends CakeTestFixture {
 
 /**
- * Import
- *
- * @var array
- */
-	public $import = array('connection' => 'master');
-
-/**
- * Fields
- *
- * @var array
- */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'language_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
-		'is_active' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => '公開中データか否か'),
-		'is_latest' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => '最新編集データであるか否か'),
-		'block_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-		'status' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => '公開状況  1:公開中、2:公開申請中、3:下書き中、4:差し戻し'),
-		'title' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '小テストタイトル', 'charset' => 'utf8'),
-		'passing_grade' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 4, 'unsigned' => false, 'comment' => '合格点'),
-		'estimated_time' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 4, 'unsigned' => false, 'comment' => '時間の目安(分)'),
-		'answer_timing' => array('type' => 'integer', 'null' => false, 'default' => '0', 'length' => 4, 'unsigned' => false),
-		'answer_start_period' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'answer_end_period' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'is_no_member_allow' => array('type' => 'boolean', 'null' => true, 'default' => '0', 'comment' => '非会員の回答を許可するか | 0:許可しない | 1:許可する'),
-		'is_key_pass_use' => array('type' => 'boolean', 'null' => true, 'default' => '0', 'comment' => 'キーフレーズによる回答ガードを設けるか | 0:キーフレーズガードは用いない | 1:キーフレーズガードを用いる'),
-		'is_image_authentication' => array('type' => 'boolean', 'null' => true, 'default' => '0', 'comment' => 'SPAMガード項目を表示するか否か | 0:表示しない | 1:表示する'),
-		'is_repeat_allow' => array('type' => 'boolean', 'null' => true, 'default' => '0', 'comment' => '繰り返しを許す'),
-		'is_repeat_until_passing' => array('type' => 'boolean', 'null' => true, 'default' => '0', 'comment' => '繰り返しは合格まで'),
-		'is_page_random' => array('type' => 'boolean', 'null' => true, 'default' => '0', 'comment' => 'ページ表示順序ランダム化'),
-		'perfect_score' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '満点'),
-		'is_correct_show' => array('type' => 'boolean', 'null' => true, 'default' => '1', 'comment' => '正解を表示するか否か | 0:表示しない | 1:表示する'),
-		'is_total_show' => array('type' => 'boolean', 'null' => true, 'default' => '1', 'comment' => '集計結果を表示するか否か | 0:表示しない | 1:表示する'),
-		'is_answer_mail_send' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'import_key' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'export_key' => array('type' => 'string', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'modified_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'fk_quizzes_blocks1_idx' => array('column' => 'block_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
-	);
-
-/**
  * Records
  *
  * @var array
@@ -1652,5 +1603,16 @@ class QuizFixture extends CakeTestFixture {
 			'modified' => '2016-06-10 06:19:45'
 		),
 	);
+
+/**
+ * Initialize the fixture.
+ *
+ * @return void
+ */
+	public function init() {
+		require_once App::pluginPath('Quizzes') . 'Config' . DS . 'Schema' . DS . 'schema.php';
+		$this->fields = (new QuizzesSchema())->tables[Inflector::tableize($this->name)];
+		parent::init();
+	}
 
 }

@@ -60,6 +60,55 @@ class Quiz extends QuizzesAppModel {
 				'title', 'sub_title'
 			),
 		),
+		//多言語
+		'M17n.M17n' => array(
+			'commonFields' => array(
+				'passing_grade',
+				'estimated_time',
+				'answer_timing',
+				'answer_start_period',
+				'answer_end_period',
+				'is_no_member_allow',
+				'is_key_pass_use',
+				'is_image_authentication',
+				'is_repeat_allow',
+				'is_repeat_until_passing',
+				'is_page_random',
+				'perfect_score',
+				'is_correct_show',
+				'is_total_show',
+				'is_answer_mail_send',
+				'import_key',
+				'export_key',
+			),
+			'associations' => array(
+				'QuizPage' => array(
+					'class' => 'Quizzes.QuizPage',
+					'foreignKey' => 'quiz_id',
+					'associations' => array(
+						'QuizQuestion' => array(
+							'class' => 'Quizzes.QuizQuestion',
+							'foreignKey' => 'quiz_page_id',
+							'associations' => array(
+								'QuizChoice' => array(
+									'class' => 'Quizzes.QuizChoice',
+									'foreignKey' => 'quiz_question_id',
+									'isM17n' => true,
+								),
+								'QuizCorrect' => array(
+									'class' => 'Quizzes.QuizCorrect',
+									'foreignKey' => 'quiz_question_id',
+									'isM17n' => true,
+								),
+							),
+							'isM17n' => true,
+						),
+					),
+					'isM17n' => true,
+				),
+			),
+			'afterCallback' => false,
+		),
 	);
 
 /**
@@ -613,11 +662,13 @@ class Quiz extends QuizzesAppModel {
 			// これまでのテスト回答データを消す
 			$this->QuizAnswerSummary->deleteTestAnswerSummary($saveQuiz['Quiz']['key'], $status);
 
+			//多言語化の処理
+			$this->set($saveQuiz);
+			$this->saveM17nData();
+
 			$this->commit();
 		} catch (Exception $ex) {
-			$this->rollback();
-			CakeLog::error($ex);
-			throw $ex;
+			$this->rollback($ex);
 		}
 		return $saveQuiz;
 	}
