@@ -40,7 +40,6 @@ class QuizQuestion extends QuizzesAppModel {
 		'M17n.M17n' => array(
 			'commonFields' => array(
 				'question_sequence',
-				'question_value',
 				'question_type',
 				'is_choice_random',
 				'is_choice_horizon',
