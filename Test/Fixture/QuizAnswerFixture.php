@@ -15,37 +15,6 @@
 class QuizAnswerFixture extends CakeTestFixture {
 
 /**
- * Import
- *
- * @var array
- */
-	public $import = array('connection' => 'master');
-
-/**
- * Fields
- *
- * @var array
- */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'answer_value' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '回答した文字列を設定する\\n選択肢、択一の場合は、選択肢のid値:ラベルを入れる\\n\\n複数選択肢\\nこれらの場合は、(id値):(ラベル)を|つなぎで並べる。\\n', 'charset' => 'utf8'),
-		'answer_correct_status' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'correct_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:未採点 1:正解 2:不正解'),
-		'score' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
-		'quiz_answer_summary_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-		'quiz_question_key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'modified_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'fk_quiz_answer_quiz_answer_summary1_idx' => array('column' => 'quiz_answer_summary_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
-	);
-
-/**
  * Records
  *
  * @var array
@@ -533,5 +502,16 @@ class QuizAnswerFixture extends CakeTestFixture {
 			'modified' => '2016-06-07 01:36:36'
 		),
 	);
+
+/**
+ * Initialize the fixture.
+ *
+ * @return void
+ */
+	public function init() {
+		require_once App::pluginPath('Quizzes') . 'Config' . DS . 'Schema' . DS . 'schema.php';
+		$this->fields = (new QuizzesSchema())->tables[Inflector::tableize($this->name)];
+		parent::init();
+	}
 
 }

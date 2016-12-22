@@ -74,7 +74,7 @@ class QuizSaveQuizTest extends WorkflowSaveTest {
 		Current::$current['Frame']['key'] = 'frame_3';
 		Current::$current['Frame']['room_id'] = '2';
 		Current::$current['Frame']['plugin_key'] = 'quizzes';
-		Current::$current['Frame']['language_id'] = '2';
+		Current::$current['FramesLanguage']['language_id'] = '2';
 		Current::$current['Plugin']['key'] = 'quizzes';
 		$mailQueueMock = $this->getMock('MailQueueBehavior',
 			['setAddEmbedTagValue', 'afterSave']);

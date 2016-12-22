@@ -16,43 +16,6 @@
 class QuizQuestionFixture extends CakeTestFixture {
 
 /**
- * Import
- *
- * @var array
- */
-	public $import = array('connection' => 'master');
-
-/**
- * Fields
- *
- * @var array
- */
-	public $fields = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'key' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'language_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-		'question_sequence' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => '質問表示順'),
-		'question_value' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '質問文', 'charset' => 'utf8'),
-		'question_type' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'unsigned' => false, 'comment' => '質問タイプ | 1:択一選択 | 2:複数選択 | 3:単語 | 4:単語（複数） | 5:記述式\\n'),
-		'is_choice_random' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => '選択肢表示順序ランダム化 | 質問タイプが1:択一選択 2:複数選択 のとき有効'),
-		'is_choice_horizon' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
-		'is_order_fixed' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => '単語複数時順番固定化 | 質問タイプが4:単語（複数） のとき有効'),
-		'allotment' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '配点'),
-		'commentary' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '解説', 'charset' => 'utf8'),
-		'quiz_page_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-		'created_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'modified_user' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'fk_quiz_question_quiz_page1_idx' => array('column' => 'quiz_page_id', 'unique' => 0),
-			'fk_quiz_questions_languages1_idx' => array('column' => 'language_id', 'unique' => 0)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
-	);
-
-/**
  * Records
  *
  * @var array
@@ -1067,5 +1030,16 @@ class QuizQuestionFixture extends CakeTestFixture {
 			'modified' => '2016-06-10 06:19:45'
 		),
 	);
+
+/**
+ * Initialize the fixture.
+ *
+ * @return void
+ */
+	public function init() {
+		require_once App::pluginPath('Quizzes') . 'Config' . DS . 'Schema' . DS . 'schema.php';
+		$this->fields = (new QuizzesSchema())->tables[Inflector::tableize($this->name)];
+		parent::init();
+	}
 
 }

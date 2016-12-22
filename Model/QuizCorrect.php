@@ -26,6 +26,9 @@ class QuizCorrect extends QuizzesAppModel {
  */
 	public $actsAs = array(
 		'NetCommons.OriginalKey',
+		'M17n.M17n' => array(
+			'afterCallback' => false,
+		)
 	);
 
 /**
@@ -96,6 +99,7 @@ class QuizCorrect extends QuizzesAppModel {
 
 		return parent::beforeValidate($options);
 	}
+
 /**
  * AfterFind Callback function
  *
@@ -106,8 +110,10 @@ class QuizCorrect extends QuizzesAppModel {
  */
 	public function afterFind($results, $primary = false) {
 		foreach ($results as &$val) {
-			$val[$this->alias]['correct'] =
-				explode(QuizzesComponent::ANSWER_DELIMITER, $val[$this->alias]['correct']);
+			if (isset($val[$this->alias]['correct'])) {
+				$val[$this->alias]['correct'] =
+					explode(QuizzesComponent::ANSWER_DELIMITER, $val[$this->alias]['correct']);
+			}
 		}
 		return $results;
 	}

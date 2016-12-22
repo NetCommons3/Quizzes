@@ -36,6 +36,28 @@ class QuizQuestion extends QuizzesAppModel {
 		'Wysiwyg.Wysiwyg' => array(
 			'fields' => array('question_value', 'commentary'),
 		),
+		//多言語
+		'M17n.M17n' => array(
+			'commonFields' => array(
+				'question_sequence',
+				'question_type',
+				'is_choice_random',
+				'is_choice_horizon',
+				'is_order_fixed',
+				'allotment',
+			),
+			'associations' => array(
+				'QuizChoice' => array(
+					'class' => 'Quizzes.QuizChoice',
+					'foreignKey' => 'quiz_question_id',
+				),
+				'QuizCorrect' => array(
+					'class' => 'Quizzes.QuizCorrect',
+					'foreignKey' => 'quiz_question_id',
+				),
+			),
+			'afterCallback' => false,
+		),
 	);
 
 /**
@@ -244,6 +266,31 @@ class QuizQuestion extends QuizzesAppModel {
 	}
 
 /**
+ * Called before each find operation. Return false if you want to halt the find
+ * call, otherwise return the (modified) query data.
+ *
+ * @param array $query Data used to execute this query, i.e. conditions, order, etc.
+ * @return mixed true if the operation should continue, false if it should abort; or, modified
+ *  $query to continue with new $query
+ * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforefind
+ */
+	public function beforeFind($query) {
+		//hasManyで実行されたとき、多言語の条件追加
+		if (! $this->id && isset($query['conditions']['quiz_page_id'])) {
+			$quizPageId = $query['conditions']['quiz_page_id'];
+			$query['conditions']['quiz_page_id'] = $this->getQuizPageIdsForM17n($quizPageId);
+			$query['conditions']['OR'] = array(
+				'QuizQuestion.language_id' => Current::read('Language.id'),
+				'QuizQuestion.is_translation' => false,
+			);
+
+			return $query;
+		}
+
+		return parent::beforeFind($query);
+	}
+
+/**
  * saveQuizQuestion
  * save QuizQuestion data
  *
@@ -286,4 +333,32 @@ class QuizQuestion extends QuizzesAppModel {
 		}
 		return true;
 	}
+
+/**
+ * 多言語データ取得のため、当言語のquiz_page_idから全言語のquiz_page_idを取得する
+ *
+ * @param id $quizPageId 当言語のquiz_page_id
+ * @return array
+ */
+	public function getQuizPageIdsForM17n($quizPageId) {
+		$quizPage = $this->QuizPage->find('first', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'key', 'quiz_id'),
+			'conditions' => array('id' => $quizPageId),
+		));
+
+		$quizPageId = $this->QuizPage->find('list', array(
+			'recursive' => -1,
+			'callbacks' => false,
+			'fields' => array('id', 'id'),
+			'conditions' => array(
+				'quiz_id' => $this->QuizPage->getQuizIdsForM17n($quizPage['QuizPage']['quiz_id']),
+				'key' => $quizPage['QuizPage']['key']
+			),
+		));
+
+		return array_values($quizPageId);
+	}
+
 }
