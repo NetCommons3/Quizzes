@@ -41,7 +41,7 @@ class AddChoiceHorizon extends CakeMigration {
 					'within_time_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:時間判定なし 1:時間内 2:時間オーバー'),
 				),
 				'quiz_answers' => array(
-					'correct_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:未採点 1:正解 2:不正解'),
+					'correct_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:未採点 1:不正解 2:正解'),
 				),
 			),
 			'create_field' => array(
