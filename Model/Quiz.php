@@ -63,6 +63,9 @@ class Quiz extends QuizzesAppModel {
 		//多言語
 		'M17n.M17n' => array(
 			'commonFields' => array(
+				'status',
+				'is_active',
+				'is_latest',
 				'passing_grade',
 				'estimated_time',
 				'answer_timing',
