@@ -109,6 +109,12 @@ class Quiz extends QuizzesAppModel {
 					),
 					'isM17n' => true,
 				),
+				'AuthorizationKey' => array(
+					'class' => 'AuthorizationKeys.AuthorizationKey',
+					'foreignKey' => 'content_id',
+					'fieldForIdentifyPlugin' => array('field' => 'model', 'value' => 'Quiz'),
+					'isM17n' => false
+				),
 			),
 			'afterCallback' => false,
 		),
