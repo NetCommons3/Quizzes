@@ -107,7 +107,6 @@ class QuizGradingHelper extends AppHelper {
 				);
 			}
 		} elseif ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_SELECTION) {
-			$this->log($answer['answer_value'], 'debug');
 			$ret .= sprintf(
 				' %s %s',
 				$this->_getMark($answer['correct_status']),
