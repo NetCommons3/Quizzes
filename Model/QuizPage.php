@@ -123,32 +123,29 @@ class QuizPage extends QuizzesAppModel {
 	}
 
 /**
- * setPageToQuiz
+ * getPageForQuiz
  * setup page data to quiz array
  *
  * @param array &$quiz quiz data
+ * @param array $pages all quiz-page data in this quiz
+ * @param array $questions all quiz-question data in this quiz
  * @return void
  */
-	public function setPageToQuiz(&$quiz) {
-		// ページデータが小テストデータの中にない状態でここが呼ばれている場合、
-		if (!isset($quiz['QuizPage'])) {
-			$pages = $this->find('all', array(
-				'conditions' => array(
-					'quiz_id' => $quiz['Quiz']['id'],
-				),
-				'order' => array('page_sequence ASC'),
-				'recursive' => -1
-			));
-
-			$quiz['QuizPage'] = Hash::combine($pages, '{n}.QuizPage.page_sequence', '{n}.QuizPage');
-		}
-		$quiz['Quiz']['page_count'] = 0;
-		foreach ($quiz['QuizPage'] as &$page) {
+	public function getPageForQuiz(&$quiz, $pages, $questions) {
+		$targetPages = Hash::extract(
+			$pages,
+			'{n}.QuizPage[quiz_id=' . $quiz['Quiz']['id'] . ']'
+		);
+		foreach ($targetPages as &$page) {
 			if (isset($page['id'])) {
-				$this->QuizQuestion->setQuestionToPage($quiz, $page);
+				$this->QuizQuestion->getQuestionForPage($page, $questions);
 			}
-			$quiz['Quiz']['page_count']++;
 		}
+		$quiz['QuizPage'] = $targetPages;
+		$quiz['Quiz']['page_count'] = count($targetPages);
+		$quiz['Quiz']['question_count'] = array_sum(
+			Hash::extract($targetPages, '{n}.question_count')
+		);
 	}
 
 /**

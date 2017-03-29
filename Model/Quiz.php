@@ -184,6 +184,7 @@ class Quiz extends QuizzesAppModel {
 			'QuizSetting' => 'Quizzes.QuizSetting',
 			'QuizFrameSetting' => 'Quizzes.QuizFrameSetting',
 			'QuizPage' => 'Quizzes.QuizPage',
+			'QuizQuestion' => 'Quizzes.QuizQuestion',
 			'QuizFrameDisplayQuiz' => 'Quizzes.QuizFrameDisplayQuiz',
 			'QuizAnswerSummary' => 'Quizzes.QuizAnswerSummary',
 		]);
@@ -432,6 +433,45 @@ class Quiz extends QuizzesAppModel {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function afterFind($results, $primary = false) {
+		$quizPages = array();
+		$quizQuestions = array();
+		$quizAnswerCts = array();
+		if ($this->recursive >= 0) {
+			$quizIds = Hash::extract($results, '{n}.Quiz.id');
+			// Quiz.idの配列から対応するQuizPageの配列を取得
+			$quizPages = $this->QuizPage->find('all', array(
+				'conditions' => array(
+					'quiz_id' => $quizIds,
+				),
+				'order' => array('quiz_id ASC', 'page_sequence ASC'),
+				'recursive' => -1
+			));
+			// QuizPage.idの配列から対応するQuizQuestionの配列を取得
+			$quizPageIds = Hash::extract($quizPages, '{n}.QuizPage.id');
+			$quizQuestions = $this->QuizQuestion->find('all', array(
+				'conditions' => array(
+					'quiz_page_id' => $quizPageIds,
+				),
+				'order' => array('quiz_page_id ASC', 'question_sequence ASC'),
+			));
+			// Quiz.idの配列から対応するQuizAnswerCountの配列を取得
+			$this->QuizAnswerSummary->virtualFields = array('all_answer_count' => 'COUNT(quiz_key)');
+			$quizAnswerCts = $this->QuizAnswerSummary->find('all', array(
+				'fields' => array(
+					'quiz_key',
+					'all_answer_count'
+				),
+				'conditions' => array(
+					'quiz_key' => Hash::extract($results, '{n}.Quiz.key'),
+					'answer_status' => QuizzesComponent::ACTION_ACT,
+					'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
+				),
+				'group' => 'quiz_key',
+				'recursive' => -1
+			));
+			$this->QuizAnswerSummary->virtualFields = array();
+		}
+
 		foreach ($results as &$val) {
 			// この場合はcount
 			if (! isset($val['Quiz']['id'])) {
@@ -441,7 +481,6 @@ class Quiz extends QuizzesAppModel {
 			if (! isset($val['Quiz']['key'])) {
 				continue;
 			}
-
 			// この場合はlist取得
 			if (! isset($val['Quiz']['answer_timing'])) {
 				continue;
@@ -457,20 +496,12 @@ class Quiz extends QuizzesAppModel {
 			// かつ、ページ数、質問数もカウントする
 			$val['Quiz']['page_count'] = 0;
 			$val['Quiz']['question_count'] = 0;
-
-			if ($this->recursive >= 0) {
-				// ページ情報取り出し
-				$this->QuizPage->setPageToQuiz($val);
-				// 回答数取り出し
-				$val['Quiz']['all_answer_count'] = $this->QuizAnswerSummary->find('count', array(
-					'conditions' => array(
-						'quiz_key' => $val['Quiz']['key'],
-						'answer_status' => QuizzesComponent::ACTION_ACT,
-						'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
-					),
-					'recursive' => -1
-				));
-			}
+			$quizAnswer = Hash::extract(
+				$quizAnswerCts,
+				'{n}.QuizAnswerSummary[quiz_key=' . $val['Quiz']['key'] . ']'
+			);
+			$val['Quiz']['all_answer_count'] = Hash::get($quizAnswer, '0.all_answer_count', 0);
+			$this->QuizPage->getPageForQuiz($val, $quizPages, $quizQuestions);
 		}
 		return $results;
 	}

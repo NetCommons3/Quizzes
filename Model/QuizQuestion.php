@@ -232,37 +232,35 @@ class QuizQuestion extends QuizzesAppModel {
 	}
 
 /**
- * setQuestionToPage
+ * getQuestionForPage
  * setup page data to quiz array
  *
- * @param array &$quiz quiz data
- * @param array &$page quiz page data
+ * @param array &$page quiz-page data
+ * @param array $questions all question data in this quiz
  * @return void
  */
-	public function setQuestionToPage(&$quiz, &$page) {
-		$questions = $this->find('all', array(
-			'conditions' => array(
-				'quiz_page_id' => $page['id'],
-			),
-			'order' => array(
-				'question_sequence' => 'asc',
-			)
-		));
+	public function getQuestionForPage(&$page, $questions) {
+		$targetQuestions = Hash::extract(
+			$questions,
+			'{n}.QuizQuestion[quiz_page_id=' . $page['id'] . ']'
+		);
 
-		if (!empty($questions)) {
-			foreach ($questions as $question) {
-				if (isset($question['QuizChoice'])) {
-					$question['QuizQuestion']['QuizChoice'] = $question['QuizChoice'];
-				}
-				if (isset($question['QuizCorrect'])) {
-					$question['QuizQuestion']['QuizCorrect'] = $question['QuizCorrect'];
-				}
-				// 万が一ShufflePageComponentを通らなかったときのための保険
-				$question['QuizQuestion']['serial_number'] = $question['QuizQuestion']['question_sequence'];
-				$page['QuizQuestion'][] = $question['QuizQuestion'];
-				$quiz['Quiz']['question_count']++;
-			}
+		foreach ($targetQuestions as &$question) {
+			$targetChoices = Hash::extract(
+				$questions,
+				'{n}.QuizChoice.{n}[quiz_question_id=' . $question['id'] . ']'
+			);
+			$targetCorrects = Hash::extract(
+				$questions,
+				'{n}.QuizCorrect.{n}[quiz_question_id=' . $question['id'] . ']'
+			);
+			$question['QuizChoice'] = $targetChoices;
+			$question['QuizCorrect'] = $targetCorrects;
+			// 万が一ShufflePageComponentを通らなかったときのための保険
+			$question['serial_number'] = $question['question_sequence'];
+			$page['QuizQuestion'][] = $question;
 		}
+		$page['question_count'] = count($targetQuestions);
 	}
 
 /**
@@ -276,7 +274,7 @@ class QuizQuestion extends QuizzesAppModel {
  */
 	public function beforeFind($query) {
 		//hasManyで実行されたとき、多言語の条件追加
-		if (! $this->id && isset($query['conditions']['quiz_page_id'])) {
+		if (! $this->id && ! empty($query['conditions']['quiz_page_id'])) {
 			$quizPageId = $query['conditions']['quiz_page_id'];
 			$query['conditions']['quiz_page_id'] = $this->getQuizPageIdsForM17n($quizPageId);
 			$query['conditions']['OR'] = array(
