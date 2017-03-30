@@ -150,17 +150,17 @@ class QuestionEditHelper extends AppHelper {
  * @return string HTML
  */
 	public function quizAttributeDatetime($fieldName, $options, $help = '') {
-		$ngModel = 'quiz.quiz.' . Inflector::variable($fieldName);
+		//$ngModel = 'quiz.quiz.' . Inflector::variable($fieldName);
 
 		$defaultOptions = array(
 			'type' => 'datetime',
 			'id' => $fieldName,
-			'ng-model' => $ngModel,
+			//'ng-model' => $ngModel,
 		);
 		$options = Hash::merge($defaultOptions, $options);
 		if (isset($options['min']) && isset($options['max'])) {
-			$min = $options['min'];
-			$max = $options['max'];
+			$min = 'NetCommonsFormDatetimePickerModel_Quiz_' . $options['min'];
+			$max = 'NetCommonsFormDatetimePickerModel_Quiz_' . $options['max'];
 			$options = Hash::merge($options, array(
 				'ng-focus' => 'setMinMaxDate($event, \'' . $min . '\', \'' . $max . '\')',
 			));

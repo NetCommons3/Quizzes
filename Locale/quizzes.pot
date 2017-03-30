@@ -1039,3 +1039,5 @@ msgstr ""
 msgid "You can create a new quiz . Please choose from that are displayed how to create below ."
 msgstr ""
 
+msgid "if you set the period, please set time."
+msgstr ""

@@ -36,6 +36,7 @@ class Quiz extends QuizzesAppModel {
 		'Workflow.Workflow',
 		'Workflow.WorkflowComment',
 		'AuthorizationKeys.AuthorizationKey',
+		'Quizzes.QuizValidate',
 		// 自動でメールキューの登録, 削除。ワークフロー利用時はWorkflow.Workflowより下に記述する
 		'Mails.MailQueue' => array(
 			'embedTags' => array(
@@ -244,6 +245,35 @@ class Quiz extends QuizzesAppModel {
 						)),
 					'message' => __d('net_commons', 'Invalid request.'),
 				),
+				'requireOtherFields' => array(
+					'rule' => array(
+						'requireOtherFields',
+						QuizzesComponent::USES_USE,
+						array('Quiz.answer_start_period', 'Quiz.answer_end_period'),
+						'OR'
+					),
+					'message' => __d('quizzes', 'if you set the period, please set time.')
+				)
+			),
+			'answer_start_period' => array(
+				'checkDateTime' => array(
+					'rule' => 'checkDateTime',
+					'message' => __d('net_commons',
+						'Unauthorized pattern for %s. Please input the data in %s format.',
+						__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
+				)
+			),
+			'answer_end_period' => array(
+				'checkDateTime' => array(
+					'rule' => 'checkDateTime',
+					'message' => __d('net_commons',
+						'Unauthorized pattern for %s. Please input the data in %s format.',
+						__d('quizzes', 'End period'), 'YYYY-MM-DD hh:mm:ss')
+				),
+				'checkDateComp' => array(
+					'rule' => array('checkDateComp', '>=', 'answer_start_period'),
+					'message' => __d('quizzes', 'start period must be smaller than end period.')
+				)
 			),
 			'is_page_random' => array(
 				'boolean' => array(
@@ -300,7 +330,6 @@ class Quiz extends QuizzesAppModel {
 				),
 			),
 		));
-		$this->_setAnswerTimingValidation();
 		$this->_setKeyPhraseValidation();
 		$this->_setImageAuthValidation();
 
@@ -330,41 +359,6 @@ class Quiz extends QuizzesAppModel {
 		return true;
 	}
 
-/**
- * _setAnswerTimingValidation
- *
- * 回答期間に制限を与える設定の場合、
- * 回答期間にまつわるバリデーションを設定する
- *
- * @return void
- */
-	protected function _setAnswerTimingValidation() {
-		if ($this->data['Quiz']['answer_timing'] != QuizzesComponent::USES_USE) {
-			return;
-		}
-		$this->validate['answer_start_period'] = array(
-			'checkFormat' => array(
-				'rule' => array('datetime', 'ymd'),
-				'required' => true,
-				'message' => __d('net_commons',
-					'Unauthorized pattern for %s. Please input the data in %s format.',
-					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
-			),
-		);
-		$this->validate['answer_end_period'] = array(
-			'checkDateTime' => array(
-				'rule' => array('datetime', 'ymd'),
-				'required' => true,
-				'message' => __d('net_commons',
-					'Unauthorized pattern for %s. Please input the data in %s format.',
-					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
-			),
-			'checkDateComp' => array(
-				'rule' => array('comparison', '>=', $this->data['Quiz']['answer_start_period']),
-				'message' => __d('quizzes', 'start period must be smaller than end period.')
-			)
-		);
-	}
 /**
  * _setKeyPhraseValidation
  *
