@@ -14,6 +14,7 @@
 	   class="form-control input-sm"
 	   ng-model="choice.choiceLabel"
 	   nc-focus = "true"
+	   ng-blur="resetMultipleCorrect(pageIndex, qIndex)"
 		/>
 
 <?php echo $this->element(

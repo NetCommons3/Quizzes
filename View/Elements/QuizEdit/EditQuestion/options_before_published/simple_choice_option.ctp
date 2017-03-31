@@ -81,7 +81,7 @@
 						'value' => '{{choice.choiceLabel}}',
 						'ng-checked' => 'isCorrect(choice.choiceLabel, question.quizCorrect[0].correct)',
 						'ng-model' => 'question.quizCorrect[0].multiCorrectStat[cIndex]',
-						'ng-change' => 'setMultipleCorrect(pageIndex, qIndex, cIndex, choice.choiceLabel)',
+						'ng-change' => 'resetMultipleCorrect(pageIndex, qIndex)',
 						'hiddenField' => false
 						));
 						?>
