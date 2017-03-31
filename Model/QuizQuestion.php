@@ -359,4 +359,34 @@ class QuizQuestion extends QuizzesAppModel {
 		return true;
 	}
 
+/**
+ * deleteQuizQuestion
+ *
+ * 小テスト問題情報削除、配下の選択肢、正解情報も削除
+ *
+ * @param int $quizPageId 小テストページID
+ * @return bool
+ */
+	public function deleteQuizQuestion($quizPageId) {
+		$quizQuestions = $this->find('all', array(
+			'conditions' => array(
+				'QuizQuestion.quiz_page_id' => $quizPageId
+			),
+			'recursive' => -1
+		));
+		foreach ($quizQuestions as $question) {
+			if (! $this->QuizChoice->deleteAll(array(
+				'QuizChoice.quiz_question_id' => $question['QuizQuestion']['id']))) {
+				return false;
+			}
+			if (! $this->QuizCorrect->deleteAll(array(
+				'QuizCorrect.quiz_question_id' => $question['QuizQuestion']['id']))) {
+				return false;
+			}
+			if (! $this->delete($question['QuizQuestion']['id'], false)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

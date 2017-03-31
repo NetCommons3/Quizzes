@@ -750,9 +750,17 @@ class Quiz extends QuizzesAppModel {
 		$this->begin();
 		try {
 			// 小テスト削除
-			if (! $this->deleteAll(array(
-				'Quiz.key' => $data['Quiz']['key']), true, true)) {
-				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			$deleteQuizzes = $this->find('all', array(
+				'conditions' => array('Quiz.key' => $data['Quiz']['key']),
+				'recursive' => -1
+			));
+			foreach ($deleteQuizzes as $quiz) {
+				if (! $this->QuizPage->deleteQuizPage($quiz['Quiz']['id'])) {
+					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+				}
+				if (! $this->delete($quiz['Quiz']['id'], false)) {
+					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+				}
 			}
 
 			//コメントの削除

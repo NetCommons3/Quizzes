@@ -300,4 +300,29 @@ class QuizPage extends QuizzesAppModel {
 		return true;
 	}
 
+/**
+ * deleteQuizPage
+ *
+ * 小テストページ情報削除、配下の質問情報に削除命令を実施
+ *
+ * @param int $quizId 小テストID
+ * @return bool
+ */
+	public function deleteQuizPage($quizId) {
+		$quizPages = $this->find('all', array(
+			'conditions' => array(
+				'QuizPage.quiz_id' => $quizId
+			),
+			'recursive' => -1
+		));
+		foreach ($quizPages as $page) {
+			if (! $this->QuizQuestion->deleteQuizQuestion($page['QuizPage']['id'])) {
+				return false;
+			}
+			if (! $this->delete($page['QuizPage']['id'], false)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
