@@ -244,7 +244,7 @@ class QuizQuestion extends QuizzesAppModel {
 			$questions,
 			'{n}.QuizQuestion[quiz_page_id=' . $page['id'] . ']'
 		);
-
+		$targetQuestions = Hash::sort($targetQuestions, '{n}.question_sequence', 'asc');
 		foreach ($targetQuestions as &$question) {
 			$targetChoices = Hash::extract(
 				$questions,

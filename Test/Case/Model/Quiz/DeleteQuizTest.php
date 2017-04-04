@@ -115,7 +115,7 @@ class QuizDeleteQuizTest extends WorkflowDeleteTest {
 		$data = $this->dataProviderDelete()[0][0];
 
 		return array(
-			array($data, 'Quizzes.Quiz', 'deleteAll'),
+			array($data, 'Quizzes.Quiz', 'delete'),
 			array($data, 'Quizzes.QuizFrameDisplayQuiz', 'deleteAll'),
 			array($data, 'Quizzes.QuizAnswerSummary', 'deleteAll'),
 		);

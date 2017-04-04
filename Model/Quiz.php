@@ -432,38 +432,46 @@ class Quiz extends QuizzesAppModel {
 		$quizAnswerCts = array();
 		if ($this->recursive >= 0) {
 			$quizIds = Hash::extract($results, '{n}.Quiz.id');
-			// Quiz.idの配列から対応するQuizPageの配列を取得
-			$quizPages = $this->QuizPage->find('all', array(
-				'conditions' => array(
-					'quiz_id' => $quizIds,
-				),
-				'order' => array('quiz_id ASC', 'page_sequence ASC'),
-				'recursive' => -1
-			));
-			// QuizPage.idの配列から対応するQuizQuestionの配列を取得
-			$quizPageIds = Hash::extract($quizPages, '{n}.QuizPage.id');
-			$quizQuestions = $this->QuizQuestion->find('all', array(
-				'conditions' => array(
-					'quiz_page_id' => $quizPageIds,
-				),
-				'order' => array('quiz_page_id ASC', 'question_sequence ASC'),
-			));
-			// Quiz.idの配列から対応するQuizAnswerCountの配列を取得
-			$this->QuizAnswerSummary->virtualFields = array('all_answer_count' => 'COUNT(quiz_key)');
-			$quizAnswerCts = $this->QuizAnswerSummary->find('all', array(
-				'fields' => array(
-					'quiz_key',
-					'all_answer_count'
-				),
-				'conditions' => array(
-					'quiz_key' => Hash::extract($results, '{n}.Quiz.key'),
-					'answer_status' => QuizzesComponent::ACTION_ACT,
-					'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
-				),
-				'group' => 'quiz_key',
-				'recursive' => -1
-			));
-			$this->QuizAnswerSummary->virtualFields = array();
+			if (! empty($quizIds)) {
+				// Quiz.idの配列から対応するQuizPageの配列を取得
+				$quizPages = $this->QuizPage->find('all', array(
+					'conditions' => array(
+						'QuizPage.quiz_id' => $quizIds,
+					),
+					'order' => array(
+						'QuizPage.quiz_id ASC',
+						'QuizPage.page_sequence ASC'
+					),
+					'recursive' => -1
+				));
+				// QuizPage.idの配列から対応するQuizQuestionの配列を取得
+				$quizPageIds = Hash::extract($quizPages, '{n}.QuizPage.id');
+				$quizQuestions = $this->QuizQuestion->find('all', array(
+					'conditions' => array(
+						'QuizQuestion.quiz_page_id' => $quizPageIds,
+					),
+					'order' => array(
+						'QuizQuestion.quiz_page_id ASC',
+						'QuizQuestion.question_sequence ASC'
+					),
+				));
+				// Quiz.idの配列から対応するQuizAnswerCountの配列を取得
+				$this->QuizAnswerSummary->virtualFields = array('all_answer_count' => 'COUNT(quiz_key)');
+				$quizAnswerCts = $this->QuizAnswerSummary->find('all', array(
+					'fields' => array(
+						'QuizAnswerSummary.quiz_key',
+						'QuizAnswerSummary.all_answer_count'
+					),
+					'conditions' => array(
+						'QuizAnswerSummary.quiz_key' => Hash::extract($results, '{n}.Quiz.key'),
+						'QuizAnswerSummary.answer_status' => QuizzesComponent::ACTION_ACT,
+						'QuizAnswerSummary.test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
+					),
+					'group' => 'QuizAnswerSummary.quiz_key',
+					'recursive' => -1
+				));
+				$this->QuizAnswerSummary->virtualFields = array();
+			}
 		}
 
 		foreach ($results as &$val) {

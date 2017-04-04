@@ -136,6 +136,7 @@ class QuizPage extends QuizzesAppModel {
 			$pages,
 			'{n}.QuizPage[quiz_id=' . $quiz['Quiz']['id'] . ']'
 		);
+		$targetPages = Hash::sort($targetPages, '{n}.page_sequence', 'asc');
 		foreach ($targetPages as &$page) {
 			if (isset($page['id'])) {
 				$this->QuizQuestion->getQuestionForPage($page, $questions);

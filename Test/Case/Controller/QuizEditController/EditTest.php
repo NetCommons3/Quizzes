@@ -551,15 +551,19 @@ class QuizEditControllerEditTest extends WorkflowControllerEditTest {
 				'message' => __d('net_commons', 'Invalid request.'),
 			)
 		)));
-		array_push($results, Hash::merge($resultPeriodOn, array(
-			'validationError' => array(
-				'field' => 'Quiz.answer_start_period',
-				'value' => '',
-				'message' => __d('net_commons',
-					'Unauthorized pattern for %s. Please input the data in %s format.',
-					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss'),
+		array_push($results, Hash::merge($resultPeriodOn,
+			array(
+				'data' => array('Quiz' => array('answer_end_period' => null))
+			),
+			array(
+				'validationError' => array(
+					'field' => 'Quiz.answer_start_period',
+					'value' => null,
+					'message' => __d('quizzes', 'if you set the period, please set time.')
+				)
 			)
-		)));
+		));
+		/*
 		array_push($results, Hash::merge($resultPeriodOn, array(
 			'validationError' => array(
 				'field' => 'Quiz.answer_end_period',
@@ -569,6 +573,7 @@ class QuizEditControllerEditTest extends WorkflowControllerEditTest {
 					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss'),
 			)
 		)));
+		*/
 		array_push($results, Hash::merge($resultPeriodOn, array(
 			'validationError' => array(
 				'field' => 'Quiz.answer_end_period',
