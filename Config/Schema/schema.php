@@ -57,7 +57,7 @@ class QuizzesSchema extends CakeSchema {
 		'answer_number' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '回答回数　ログインして回答している人物の場合に限定して回答回数をカウントする'),
 		'is_grade_finished' => array('type' => 'boolean', 'null' => false, 'default' => '0', 'comment' => '採点が完了しているかどうか'),
 		'summary_score' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '得点'),
-		'passing_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:合格判定なし 1:合格 2:不合格'),
+		'passing_status' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false, 'comment' => '0:合格判定なし 1:不合格 2:合格'),
 		'answer_start_time' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => '回答開始時刻 小テストの開始画面でPOSTした時刻'),
 		'answer_finish_time' => array('type' => 'datetime', 'null' => true, 'default' => null, 'comment' => '回答完了時刻 確認ボタンをクリックした時刻'),
 		'elapsed_second' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => '回答にかかった時間(秒)'),

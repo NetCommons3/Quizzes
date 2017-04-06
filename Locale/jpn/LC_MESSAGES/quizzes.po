@@ -954,3 +954,6 @@ msgstr "データの送信に失敗しました。"
 
 msgid "There is a choice of the same value."
 msgstr "同じ値の選択肢があります。"
+
+msgid "if you set the period, please set time."
+msgstr "期間を設定する場合は、日時を設定してください。"

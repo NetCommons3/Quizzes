@@ -36,6 +36,7 @@ class Quiz extends QuizzesAppModel {
 		'Workflow.Workflow',
 		'Workflow.WorkflowComment',
 		'AuthorizationKeys.AuthorizationKey',
+		'Quizzes.QuizValidate',
 		// 自動でメールキューの登録, 削除。ワークフロー利用時はWorkflow.Workflowより下に記述する
 		'Mails.MailQueue' => array(
 			'embedTags' => array(
@@ -184,6 +185,7 @@ class Quiz extends QuizzesAppModel {
 			'QuizSetting' => 'Quizzes.QuizSetting',
 			'QuizFrameSetting' => 'Quizzes.QuizFrameSetting',
 			'QuizPage' => 'Quizzes.QuizPage',
+			'QuizQuestion' => 'Quizzes.QuizQuestion',
 			'QuizFrameDisplayQuiz' => 'Quizzes.QuizFrameDisplayQuiz',
 			'QuizAnswerSummary' => 'Quizzes.QuizAnswerSummary',
 		]);
@@ -243,6 +245,35 @@ class Quiz extends QuizzesAppModel {
 						)),
 					'message' => __d('net_commons', 'Invalid request.'),
 				),
+				'requireOtherFields' => array(
+					'rule' => array(
+						'requireOtherFields',
+						QuizzesComponent::USES_USE,
+						array('Quiz.answer_start_period', 'Quiz.answer_end_period'),
+						'OR'
+					),
+					'message' => __d('quizzes', 'if you set the period, please set time.')
+				)
+			),
+			'answer_start_period' => array(
+				'checkDateTime' => array(
+					'rule' => 'checkDateTime',
+					'message' => __d('net_commons',
+						'Unauthorized pattern for %s. Please input the data in %s format.',
+						__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
+				)
+			),
+			'answer_end_period' => array(
+				'checkDateTime' => array(
+					'rule' => 'checkDateTime',
+					'message' => __d('net_commons',
+						'Unauthorized pattern for %s. Please input the data in %s format.',
+						__d('quizzes', 'End period'), 'YYYY-MM-DD hh:mm:ss')
+				),
+				'checkDateComp' => array(
+					'rule' => array('checkDateComp', '>=', 'answer_start_period'),
+					'message' => __d('quizzes', 'start period must be smaller than end period.')
+				)
 			),
 			'is_page_random' => array(
 				'boolean' => array(
@@ -299,7 +330,6 @@ class Quiz extends QuizzesAppModel {
 				),
 			),
 		));
-		$this->_setAnswerTimingValidation();
 		$this->_setKeyPhraseValidation();
 		$this->_setImageAuthValidation();
 
@@ -329,41 +359,6 @@ class Quiz extends QuizzesAppModel {
 		return true;
 	}
 
-/**
- * _setAnswerTimingValidation
- *
- * 回答期間に制限を与える設定の場合、
- * 回答期間にまつわるバリデーションを設定する
- *
- * @return void
- */
-	protected function _setAnswerTimingValidation() {
-		if ($this->data['Quiz']['answer_timing'] != QuizzesComponent::USES_USE) {
-			return;
-		}
-		$this->validate['answer_start_period'] = array(
-			'checkFormat' => array(
-				'rule' => array('datetime', 'ymd'),
-				'required' => true,
-				'message' => __d('net_commons',
-					'Unauthorized pattern for %s. Please input the data in %s format.',
-					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
-			),
-		);
-		$this->validate['answer_end_period'] = array(
-			'checkDateTime' => array(
-				'rule' => array('datetime', 'ymd'),
-				'required' => true,
-				'message' => __d('net_commons',
-					'Unauthorized pattern for %s. Please input the data in %s format.',
-					__d('quizzes', 'Start period'), 'YYYY-MM-DD hh:mm:ss')
-			),
-			'checkDateComp' => array(
-				'rule' => array('comparison', '>=', $this->data['Quiz']['answer_start_period']),
-				'message' => __d('quizzes', 'start period must be smaller than end period.')
-			)
-		);
-	}
 /**
  * _setKeyPhraseValidation
  *
@@ -432,6 +427,53 @@ class Quiz extends QuizzesAppModel {
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  */
 	public function afterFind($results, $primary = false) {
+		$quizPages = array();
+		$quizQuestions = array();
+		$quizAnswerCts = array();
+		if ($this->recursive >= 0) {
+			$quizIds = Hash::extract($results, '{n}.Quiz.id');
+			if (! empty($quizIds)) {
+				// Quiz.idの配列から対応するQuizPageの配列を取得
+				$quizPages = $this->QuizPage->find('all', array(
+					'conditions' => array(
+						'QuizPage.quiz_id' => $quizIds,
+					),
+					'order' => array(
+						'QuizPage.quiz_id ASC',
+						'QuizPage.page_sequence ASC'
+					),
+					'recursive' => -1
+				));
+				// QuizPage.idの配列から対応するQuizQuestionの配列を取得
+				$quizPageIds = Hash::extract($quizPages, '{n}.QuizPage.id');
+				$quizQuestions = $this->QuizQuestion->find('all', array(
+					'conditions' => array(
+						'QuizQuestion.quiz_page_id' => $quizPageIds,
+					),
+					'order' => array(
+						'QuizQuestion.quiz_page_id ASC',
+						'QuizQuestion.question_sequence ASC'
+					),
+				));
+				// Quiz.idの配列から対応するQuizAnswerCountの配列を取得
+				$this->QuizAnswerSummary->virtualFields = array('all_answer_count' => 'COUNT(quiz_key)');
+				$quizAnswerCts = $this->QuizAnswerSummary->find('all', array(
+					'fields' => array(
+						'QuizAnswerSummary.quiz_key',
+						'QuizAnswerSummary.all_answer_count'
+					),
+					'conditions' => array(
+						'QuizAnswerSummary.quiz_key' => Hash::extract($results, '{n}.Quiz.key'),
+						'QuizAnswerSummary.answer_status' => QuizzesComponent::ACTION_ACT,
+						'QuizAnswerSummary.test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
+					),
+					'group' => 'QuizAnswerSummary.quiz_key',
+					'recursive' => -1
+				));
+				$this->QuizAnswerSummary->virtualFields = array();
+			}
+		}
+
 		foreach ($results as &$val) {
 			// この場合はcount
 			if (! isset($val['Quiz']['id'])) {
@@ -441,7 +483,6 @@ class Quiz extends QuizzesAppModel {
 			if (! isset($val['Quiz']['key'])) {
 				continue;
 			}
-
 			// この場合はlist取得
 			if (! isset($val['Quiz']['answer_timing'])) {
 				continue;
@@ -457,20 +498,12 @@ class Quiz extends QuizzesAppModel {
 			// かつ、ページ数、質問数もカウントする
 			$val['Quiz']['page_count'] = 0;
 			$val['Quiz']['question_count'] = 0;
-
-			if ($this->recursive >= 0) {
-				// ページ情報取り出し
-				$this->QuizPage->setPageToQuiz($val);
-				// 回答数取り出し
-				$val['Quiz']['all_answer_count'] = $this->QuizAnswerSummary->find('count', array(
-					'conditions' => array(
-						'quiz_key' => $val['Quiz']['key'],
-						'answer_status' => QuizzesComponent::ACTION_ACT,
-						'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
-					),
-					'recursive' => -1
-				));
-			}
+			$quizAnswer = Hash::extract(
+				$quizAnswerCts,
+				'{n}.QuizAnswerSummary[quiz_key=' . $val['Quiz']['key'] . ']'
+			);
+			$val['Quiz']['all_answer_count'] = Hash::get($quizAnswer, '0.all_answer_count', 0);
+			$this->QuizPage->getPageForQuiz($val, $quizPages, $quizQuestions);
 		}
 		return $results;
 	}
@@ -725,9 +758,17 @@ class Quiz extends QuizzesAppModel {
 		$this->begin();
 		try {
 			// 小テスト削除
-			if (! $this->deleteAll(array(
-				'Quiz.key' => $data['Quiz']['key']), true, true)) {
-				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+			$deleteQuizzes = $this->find('all', array(
+				'conditions' => array('Quiz.key' => $data['Quiz']['key']),
+				'recursive' => -1
+			));
+			foreach ($deleteQuizzes as $quiz) {
+				if (! $this->QuizPage->deleteQuizPage($quiz['Quiz']['id'])) {
+					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+				}
+				if (! $this->delete($quiz['Quiz']['id'], false)) {
+					throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
+				}
 			}
 
 			//コメントの削除

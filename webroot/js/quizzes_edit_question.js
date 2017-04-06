@@ -561,24 +561,25 @@ NetCommonsApp.controller('QuizzesEditQuestion',
 
          question.quizCorrect.splice(cIdx, 1);
        };
-        /**
-         * correct set (for multi select
-         *
-         * @return {void}
-         */
-        $scope.setMultipleCorrect = function(pIdx, qIdx, cIdx, label) {
-          var corrects = $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizCorrect[0];
-          var matchIndex = jQuery.inArray(label, corrects.correct);
-          if (corrects.multiCorrectStat[cIdx] === true) {
-            if (matchIndex == -1) {
-              corrects.correct.push(label);
-            }
-          } else {
-            if (matchIndex != -1) {
-              corrects.correct.splice(i, 1);
-            }
-          }
-        };
+       /**
+       * correct set (for multi select
+       *
+       * @return {void}
+       */
+       $scope.resetMultipleCorrect = function(pIdx, qIdx) {
+         var question = $scope.quiz.quizPage[pIdx].quizQuestion[qIdx];
+         if (question.questionType != variables.TYPE_MULTIPLE_SELECTION) {
+           return;
+         }
+         var corrects = question.quizCorrect[0];
+         corrects.correct.splice(0, corrects.correct.length);
+         angular.forEach(corrects.multiCorrectStat, function(value, key) {
+           if (value === true) {
+             var lbl = $scope.quiz.quizPage[pIdx].quizQuestion[qIdx].quizChoice[key].choiceLabel;
+              corrects.correct.push(lbl);
+           }
+         });
+       };
        /**
         * add correct word
         *

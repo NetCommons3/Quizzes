@@ -297,9 +297,12 @@ class ActionQuizAdd extends QuizzesAppModel {
 			// jsonファイルを読み取り、PHPオブジェクトに変換
 			$jsonFilePath = $quizZip->path . DS . QuizzesComponent::QUIZ_JSON_FILENAME;
 			$jsonFile = new File($jsonFilePath);
+			if (! $jsonFile->exists()) {
+				// ファイルがない？
+				return null;
+			}
 			$jsonData = $jsonFile->read();
 			$jsonQuiz = json_decode($jsonData, true);
-
 		} catch (Exception $ex) {
 			$this->validationErrors['template_file'][] = __d('quizzes', 'file upload error.');
 			return null;
@@ -371,6 +374,10 @@ class ActionQuizAdd extends QuizzesAppModel {
 	private function __checkFingerPrint($folderPath) {
 		// フィンガープリントファイルを取得
 		$file = new File($folderPath . DS . QuizzesComponent::QUIZ_FINGER_PRINT_FILENAME, false);
+		if (! $file->exists()) {
+			// フィンガープリントファイルがない？
+			return false;
+		}
 		$fingerPrint = $file->read();
 
 		// ファイル内容から算出されるハッシュ値と指定されたフットプリント値を比較し

@@ -99,17 +99,29 @@ class QuizGradingHelper extends AppHelper {
 		$ret .= '<dd>';
 		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
 			foreach ($answer['answer_value'] as $index => $ans) {
-				$ret .= sprintf('%s (%d) %s <br />',
-					$this->_getMark($answer, $index), $index + 1, h($ans));
+				$ret .= sprintf(
+					'%s (%d) %s <br />',
+					$this->_getMark(Hash::get($answer, 'answer_correct_status.' . $index)),
+					$index + 1,
+					h($ans)
+				);
 			}
+		} elseif ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_SELECTION) {
+			$ret .= sprintf(
+				' %s %s',
+				$this->_getMark($answer['correct_status']),
+				h(implode(' , ', $answer['answer_value']))
+			);
 		} else {
 			$yourAns = '';
 			foreach ($answer['answer_value'] as $index => $ans) {
-				$yourAns .= sprintf(' %s %s /',
-					$this->_getMark($answer, $index), h($ans));
+				$yourAns .= sprintf(
+					' %s %s /',
+					$this->_getMark(Hash::get($answer, 'answer_correct_status.' . $index)),
+					h($ans)
+				);
 			}
 			$ret .= trim($yourAns, '/');
-
 		}
 		$ret .= '</dd>';
 		return $ret;
@@ -117,15 +129,13 @@ class QuizGradingHelper extends AppHelper {
 /**
  * 正答状態マーク取得
  *
- * @param array $answer 回答
- * @param int $index 回答のインデックス
+ * @param int $status 回答の正答状態
  * @return string 正解・不正解マーク
  */
-	protected function _getMark($answer, $index) {
-		if (! isset($answer['answer_correct_status'][$index])) {
+	protected function _getMark($status) {
+		if (is_null($status)) {
 			return '<span class="label label-warning">' . __d('quizzes', 'miss') . '</span>';
 		}
-		$status = $answer['answer_correct_status'][$index];
 		if ($status == QuizzesComponent::STATUS_GRADE_FAIL) {
 			return '<span class="label label-warning">' . __d('quizzes', 'miss') . '</span>';
 		}

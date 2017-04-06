@@ -86,7 +86,7 @@ class ActionQuizAddCreateFromReuseTest extends NetCommonsGetTest {
 		// getNewQuizを呼ぶことで_createNewが呼ばれる仕組み
 		$result = $this->ActionQuizAdd->getNewQuiz();
 
-		$this->assertTrue(Hash::check($result, 'Quiz[title=テストパターン９]'));
+		$this->assertTrue(Hash::check($result, 'Quiz.title'));
 		$this->assertTrue(Hash::check($result, 'QuizPage.0'));
 		$this->assertTrue(Hash::check($result, 'QuizPage.0.QuizQuestion.0'));
 		$this->assertTrue(Hash::check($result, 'QuizPage.1.QuizQuestion.0.QuizChoice.0'));

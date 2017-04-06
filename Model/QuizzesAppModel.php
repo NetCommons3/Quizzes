@@ -29,10 +29,10 @@ class QuizzesAppModel extends AppModel {
 		$ret = QuizzesComponent::QUIZ_PERIOD_STAT_IN;
 		if ($check == QuizzesComponent::USES_USE) {
 			$nowTime = strtotime((new NetCommonsTime())->getNowDatetime());
-			if ($nowTime < strtotime($startTime)) {
+			if (! empty($startTime) && $nowTime < strtotime($startTime)) {
 				$ret = QuizzesComponent::QUIZ_PERIOD_STAT_BEFORE;
 			}
-			if ($nowTime > strtotime($endTime)) {
+			if (! empty($endTime) && $nowTime > strtotime($endTime)) {
 				$ret = QuizzesComponent::QUIZ_PERIOD_STAT_END;
 			}
 		}

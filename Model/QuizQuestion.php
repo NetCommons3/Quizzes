@@ -232,37 +232,35 @@ class QuizQuestion extends QuizzesAppModel {
 	}
 
 /**
- * setQuestionToPage
+ * getQuestionForPage
  * setup page data to quiz array
  *
- * @param array &$quiz quiz data
- * @param array &$page quiz page data
+ * @param array &$page quiz-page data
+ * @param array $questions all question data in this quiz
  * @return void
  */
-	public function setQuestionToPage(&$quiz, &$page) {
-		$questions = $this->find('all', array(
-			'conditions' => array(
-				'quiz_page_id' => $page['id'],
-			),
-			'order' => array(
-				'question_sequence' => 'asc',
-			)
-		));
-
-		if (!empty($questions)) {
-			foreach ($questions as $question) {
-				if (isset($question['QuizChoice'])) {
-					$question['QuizQuestion']['QuizChoice'] = $question['QuizChoice'];
-				}
-				if (isset($question['QuizCorrect'])) {
-					$question['QuizQuestion']['QuizCorrect'] = $question['QuizCorrect'];
-				}
-				// 万が一ShufflePageComponentを通らなかったときのための保険
-				$question['QuizQuestion']['serial_number'] = $question['QuizQuestion']['question_sequence'];
-				$page['QuizQuestion'][] = $question['QuizQuestion'];
-				$quiz['Quiz']['question_count']++;
-			}
+	public function getQuestionForPage(&$page, $questions) {
+		$targetQuestions = Hash::extract(
+			$questions,
+			'{n}.QuizQuestion[quiz_page_id=' . $page['id'] . ']'
+		);
+		$targetQuestions = Hash::sort($targetQuestions, '{n}.question_sequence', 'asc');
+		foreach ($targetQuestions as &$question) {
+			$targetChoices = Hash::extract(
+				$questions,
+				'{n}.QuizChoice.{n}[quiz_question_id=' . $question['id'] . ']'
+			);
+			$targetCorrects = Hash::extract(
+				$questions,
+				'{n}.QuizCorrect.{n}[quiz_question_id=' . $question['id'] . ']'
+			);
+			$question['QuizChoice'] = $targetChoices;
+			$question['QuizCorrect'] = $targetCorrects;
+			// 万が一ShufflePageComponentを通らなかったときのための保険
+			$question['serial_number'] = $question['question_sequence'];
+			$page['QuizQuestion'][] = $question;
 		}
+		$page['question_count'] = count($targetQuestions);
 	}
 
 /**
@@ -276,7 +274,7 @@ class QuizQuestion extends QuizzesAppModel {
  */
 	public function beforeFind($query) {
 		//hasManyで実行されたとき、多言語の条件追加
-		if (! $this->id && isset($query['conditions']['quiz_page_id'])) {
+		if (! $this->id && ! empty($query['conditions']['quiz_page_id'])) {
 			$quizPageId = $query['conditions']['quiz_page_id'];
 			$query['conditions']['quiz_page_id'] = $this->getQuizPageIdsForM17n($quizPageId);
 			$query['conditions']['OR'] = array(
@@ -361,4 +359,34 @@ class QuizQuestion extends QuizzesAppModel {
 		return true;
 	}
 
+/**
+ * deleteQuizQuestion
+ *
+ * 小テスト問題情報削除、配下の選択肢、正解情報も削除
+ *
+ * @param int $quizPageId 小テストページID
+ * @return bool
+ */
+	public function deleteQuizQuestion($quizPageId) {
+		$quizQuestions = $this->find('all', array(
+			'conditions' => array(
+				'QuizQuestion.quiz_page_id' => $quizPageId
+			),
+			'recursive' => -1
+		));
+		foreach ($quizQuestions as $question) {
+			if (! $this->QuizChoice->deleteAll(array(
+				'QuizChoice.quiz_question_id' => $question['QuizQuestion']['id']))) {
+				return false;
+			}
+			if (! $this->QuizCorrect->deleteAll(array(
+				'QuizCorrect.quiz_question_id' => $question['QuizQuestion']['id']))) {
+				return false;
+			}
+			if (! $this->delete($question['QuizQuestion']['id'], false)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
