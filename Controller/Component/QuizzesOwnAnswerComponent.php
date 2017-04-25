@@ -54,8 +54,8 @@ class QuizzesOwnAnswerComponent extends Component {
 
 		$answerSummary = ClassRegistry::init('Quizzes.QuizAnswerSummary');
 		$conditions = array(
-			'user_id' => Current::read('User.id'),
-			'answer_status' => QuizzesComponent::ACTION_ACT,
+			'QuizAnswerSummary.user_id' => Current::read('User.id'),
+			'QuizAnswerSummary.answer_status' => QuizzesComponent::ACTION_ACT,
 			//2016.08.17'test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM,
 		);
 

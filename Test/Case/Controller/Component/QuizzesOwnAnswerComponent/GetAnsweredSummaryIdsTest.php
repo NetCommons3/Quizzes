@@ -76,7 +76,7 @@ class QuizzesOwnAnswerComponentGetAnsweredSummaryIdsTest extends NetCommonsContr
 		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerComponent');
 
 		//ログイン
-		TestAuthGeneral::login($this);
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
 
 		//テストアクション実行
 		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_component/index_with_login',
@@ -130,5 +130,4 @@ class QuizzesOwnAnswerComponentGetAnsweredSummaryIdsTest extends NetCommonsContr
 		$result = $this->controller->QuizzesOwnAnswer->getAnsweredSummaryIds();
 		$this->assertEqual($result, array(11, 12, 13));
 	}
-
 }
