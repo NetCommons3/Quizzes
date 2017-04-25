@@ -54,12 +54,15 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 			<label class="h2"><?php echo __d('quizzes', 'Setting method of implementation'); /* '実施方法の設定' */ ?></label>
 			<div class="row">
 				<div class="col-xs-11 col-xs-offset-1">
-					<?php if ($isMailSetting) {
-						echo $this->QuestionEdit->quizAttributeCheckbox(
+					<?php if ($isMailSetting): ?>
+					<?php echo $this->QuestionEdit->quizAttributeCheckbox(
 						'is_answer_mail_send',
-						__d('quizzes', 'Answer mail send'));
-											}
-					?>
+						__d('quizzes', 'Answer mail send'));?>
+					<?php else: ?>
+					<div class="alert alert-warning">
+						<?php echo __d('registrations', 'E-mail notifications are disabled'); ?>
+					</div>
+					<?php endif; ?>
 					<?php echo $this->element('Quizzes.QuizEdit/Edit/quiz_method/period'); ?>
 
 					<?php if (Current::read('Room.space_id') == Space::PUBLIC_SPACE_ID): ?>
