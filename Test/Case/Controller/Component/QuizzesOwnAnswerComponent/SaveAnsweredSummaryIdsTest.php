@@ -76,7 +76,7 @@ class QuizzesOwnAnswerComponentSaveAnsweredSummaryIdsTest extends NetCommonsCont
 		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerComponent');
 
 		//ログイン
-		TestAuthGeneral::login($this);
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
 
 		//テストアクション実行
 		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_component/index_with_login',

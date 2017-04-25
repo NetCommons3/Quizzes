@@ -101,7 +101,7 @@ class QuizzesOwnAnswerQuizComponentGetOwnAnsweredKeysTest extends NetCommonsCont
 		$this->generateNc('TestQuizzes.TestQuizzesOwnAnswerQuizComponent');
 
 		//ログイン
-		TestAuthGeneral::login($this);
+		TestAuthGeneral::login($this, Role::ROOM_ROLE_KEY_GENERAL_USER);
 
 		//テストアクション実行
 		$this->_testGetAction('/test_quizzes/test_quizzes_own_answer_quiz_component/index_with_login',
