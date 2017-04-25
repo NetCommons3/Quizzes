@@ -60,7 +60,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 						__d('quizzes', 'Answer mail send'));?>
 					<?php else: ?>
 					<div class="alert alert-warning">
-						<?php echo __d('registrations', 'E-mail notifications are disabled'); ?>
+						<?php echo __d('quizzes', 'E-mail notifications are disabled'); ?>
 					</div>
 					<?php endif; ?>
 					<?php echo $this->element('Quizzes.QuizEdit/Edit/quiz_method/period'); ?>

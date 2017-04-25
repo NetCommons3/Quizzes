@@ -957,3 +957,6 @@ msgstr "同じ値の選択肢があります。"
 
 msgid "if you set the period, please set time."
 msgstr "期間を設定する場合は、日時を設定してください。"
+
+msgid "E-mail notifications are disabled"
+msgstr "メール通知は許可されていないため設定できません。"
