@@ -42,7 +42,6 @@ class TestQuizzesOwnAnswerComponentController extends AppController {
  * @return void
  */
 	public function index_with_login() {
-		Current::$current['User']['id'] = 4;
 		$this->autoRender = true;
 		$this->view = 'index';
 	}
