@@ -46,6 +46,7 @@ class QuizBlocksController extends QuizzesAppSettingController {
 	public $uses = array(
 		'Quizzes.Quiz',
 		'Quizzes.QuizFrameSetting',
+		'Quizzes.QuizFrameDisplayQuiz',
 		'Quizzes.QuizAnswerSummary',
 		'Quizzes.QuizAnswerSummaryCsv',
 		'Blocks.Block',
@@ -112,6 +113,15 @@ class QuizBlocksController extends QuizzesAppSettingController {
 			return;
 		}
 
+		$frame = $this->QuizFrameDisplayQuiz->find('all', array(
+			'conditions' => array(
+				'frame_key' => Current::read('Frame.key'),
+			),
+			'recursive' => -1,
+		));
+		$frame = Hash::combine($frame,
+			'{n}.QuizFrameDisplayQuiz.quiz_key', '{n}.QuizFrameDisplayQuiz.quiz_key');
+		$this->request->data['QuizFrameDisplayQuiz'] = $frame;
 		$this->set('quizzes', $quiz);
 	}
 

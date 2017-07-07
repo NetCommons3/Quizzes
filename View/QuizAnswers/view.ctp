@@ -31,7 +31,7 @@
 	<?php endif; ?>
 
 	<?php
-		echo $this->NetCommonsForm->create('QuizAnswer', array('type' => 'post'));
+		echo $this->NetCommonsForm->create('QuizAnswer', array('type' => 'post', 'class' => 'quiz-answer-form'));
 		echo $this->NetCommonsForm->hidden('Frame.id');
 		echo $this->NetCommonsForm->hidden('Block.id');
 		echo $this->NetCommonsForm->hidden('QuizPage.page_sequence');
