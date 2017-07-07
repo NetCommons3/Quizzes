@@ -95,3 +95,12 @@ dl.quiz-grading-data dd {
     max-height:450px;
     overflow-y: scroll;
 }
+
+.quiz-answer-form .checkbox label,
+.quiz-answer-form .radio label {
+    margin-left: 10px;
+}
+.quiz-answer-form .checkbox-inline+.checkbox-inline,
+.quiz-answer-form .radio-inline+.radio-inline {
+    margin-left: 0px;
+}
