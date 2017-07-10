@@ -56,7 +56,7 @@ echo $this->NetCommonsHtml->script(array(
 				</thead>
 				<tbody>
 				<?php foreach ((array)$quizzes as $quiz) : ?>
-				<?php echo $this->BlockIndex->startTableRow($quiz['Quiz']['key']); ?>
+				<?php echo $this->BlockIndex->startTableRow($quiz['Quiz']['key'], 'QuizFrameDisplayQuiz.' . $quiz['Quiz']['key']); ?>
 					<?php echo $this->BlockIndex->tableData(
 						'',
 						$this->QuizStatusLabel->statusLabelManagementWidget($quiz),
