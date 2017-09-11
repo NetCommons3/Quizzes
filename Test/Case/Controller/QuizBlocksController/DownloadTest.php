@@ -61,15 +61,15 @@ class QuizBlocksControllerDownloadTest extends NetCommonsControllerTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		//ログイン
-		TestAuthGeneral::login($this);
-
 		//テストプラグインのロード
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Quizzes', 'TestQuizzes');
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Quizzes', 'TestFiles');
 
 		//テストコントローラ生成
 		$this->generateNc('TestQuizzes.TestQuizBlocks');
+
+		//ログイン
+		TestAuthGeneral::login($this);
 	}
 
 /**
