@@ -66,7 +66,9 @@ class QuizBlocksControllerExportTest extends NetCommonsControllerTestCase {
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Quizzes', 'TestFiles');
 
 		//テストコントローラ生成
-		$this->generateNc('TestQuizzes.TestQuizBlocks');
+		$this->generateNc('TestQuizzes.TestQuizBlocks', array('components' => array(
+			'Flash' => array('set')
+		)));
 
 		//ログイン
 		TestAuthGeneral::login($this);
@@ -144,8 +146,8 @@ class QuizBlocksControllerExportTest extends NetCommonsControllerTestCase {
 			'key' => '4f02540a2a10aeffbcc079e73961d4ad',
 			'frame_id' => $frameId
 		);
-		$this->controller->Session->expects($this->once())
-			->method('setFlash')
+		$this->controller->Flash->expects($this->once())
+			->method('set')
 			->with(__d('quizzes', 'Designation of the quiz does not exist.'));
 		$result = $this->_testNcAction($url);
 		$this->assertEmpty($result);
@@ -170,8 +172,8 @@ class QuizBlocksControllerExportTest extends NetCommonsControllerTestCase {
 			'key' => 'acc5e94c9617ed332cc2ef4d013ae686',
 			'frame_id' => $frameId
 		);
-		$this->controller->Session->expects($this->once())
-			->method('setFlash')
+		$this->controller->Flash->expects($this->once())
+			->method('set')
 			->with(__d('quizzes', 'export error'));
 		$this->_testNcAction($url);
 	}

@@ -25,7 +25,7 @@ App::uses('QuizzesComponent', 'Quizzes.Controller/Component');
  * @author Allcreator <info@allcreator.net>
  * @package NetCommons\Quizzes\TestSuite
  */
-abstract class QuizDataGetTest extends NetCommonsCakeTestCase {
+class QuizDataGetTest extends NetCommonsCakeTestCase {
 
 /**
  * Fixtures

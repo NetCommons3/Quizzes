@@ -66,7 +66,9 @@ class QuizBlocksControllerDownloadTest extends NetCommonsControllerTestCase {
 		NetCommonsCakeTestCase::loadTestPlugin($this, 'Quizzes', 'TestFiles');
 
 		//テストコントローラ生成
-		$this->generateNc('TestQuizzes.TestQuizBlocks');
+		$this->generateNc('TestQuizzes.TestQuizBlocks', array('components' => array(
+			'Flash' => array('set')
+		)));
 
 		//ログイン
 		TestAuthGeneral::login($this);
@@ -153,8 +155,8 @@ class QuizBlocksControllerDownloadTest extends NetCommonsControllerTestCase {
 			'key' => '4f02540a2a10aeffbcc079e73961d4ad',
 			'frame_id' => $frameId
 		);
-		$this->controller->Session->expects($this->once())
-			->method('setFlash')
+		$this->controller->Flash->expects($this->once())
+			->method('set')
 			->with(__d('quizzes', 'Designation of the quiz does not exist.'));
 		$result = $this->_testPostAction('post', array(
 			'AuthorizationKey' => array(
@@ -180,8 +182,8 @@ class QuizBlocksControllerDownloadTest extends NetCommonsControllerTestCase {
 			'key' => '83b294e176a8c8026d4fbdb07ad2ed7f',
 			'frame_id' => $frameId
 		);
-		$this->controller->Session->expects($this->once())
-			->method('setFlash')
+		$this->controller->Flash->expects($this->once())
+			->method('set')
 			->with(__d('quizzes', 'Setting of password is required always to download answers.'));
 		$result = $this->_testPostAction('post', array(
 			'AuthorizationKey' => array(
@@ -210,8 +212,8 @@ class QuizBlocksControllerDownloadTest extends NetCommonsControllerTestCase {
 			'key' => '83b294e176a8c8026d4fbdb07ad2ed7f',
 			'frame_id' => $frameId
 		);
-		$this->controller->Session->expects($this->once())
-			->method('setFlash')
+		$this->controller->Flash->expects($this->once())
+			->method('set')
 			->with(__d('quizzes', 'download error'));
 		$this->_testPostAction('post', array(
 			'AuthorizationKey' => array(
