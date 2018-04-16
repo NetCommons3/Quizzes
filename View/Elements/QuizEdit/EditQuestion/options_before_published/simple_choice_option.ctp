@@ -20,7 +20,8 @@
 		<label class="checkbox-inline">
 			<?php echo $this->NetCommonsForm->checkbox('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.is_choice_horizon',
 			array(
-			'value' => QuizzesComponent::USES_USE,
+			'ng-true-value' => '"' . QuizzesComponent::USES_USE . '"',
+			'ng-false-value' => '"' . QuizzesComponent::USES_NOT_USE . '"',
 			'ng-model' => 'question.isChoiceHorizon',
 			'ng-checked' => 'question.isChoiceHorizon == ' . QuizzesComponent::USES_USE
 			));
@@ -35,7 +36,8 @@
 		<label class="checkbox-inline">
 			<?php echo $this->NetCommonsForm->checkbox('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.is_choice_random',
 			array(
-			'value' => QuizzesComponent::USES_USE,
+			'ng-true-value' => '"' . QuizzesComponent::USES_USE . '"',
+			'ng-false-value' => '"' . QuizzesComponent::USES_NOT_USE . '"',
 			'ng-model' => 'question.isChoiceRandom',
 			'ng-checked' => 'question.isChoiceRandom == ' . QuizzesComponent::USES_USE
 			));
