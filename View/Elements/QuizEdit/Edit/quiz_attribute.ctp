@@ -86,13 +86,13 @@ if ($isPublished) {
 </div>
 
 <?php
-	echo $this->QuestionEdit->quizAttributeCheckbox('is_repeat_allow',
+	echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_repeat_allow',
 	__d('quizzes', 'Repeat answer')); /* 繰り返し回答をさせる */
 ?>
 	<div class="row">
 		<div class="col-xs-11 col-xs-offset-1" ng-show="quiz.quiz.isRepeatAllow==1">
 			<?php
-	echo $this->QuestionEdit->quizAttributeCheckbox('is_repeat_until_passing',
+	echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_repeat_until_passing',
 			__d('quizzes', 'is allowed until pass'), /* 繰り返しできるのは合格するまでとする */
 			array(
 			'ng-disabled' => '!(hasPassLine())'
@@ -101,9 +101,9 @@ if ($isPublished) {
 		</div>
 	</div>
 <?php
-echo $this->QuestionEdit->quizAttributeCheckbox('is_page_random',
+echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_page_random',
 	__d('quizzes', 'Random page')); /* ページの表示順序をランダムにする */
-echo $this->QuestionEdit->quizAttributeCheckbox('is_correct_show',
+echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_correct_show',
 	__d('quizzes', 'display the  correct answer and commentary ')); /*採点結果画面に「正解・解説」を表示する。*/
-echo $this->QuestionEdit->quizAttributeCheckbox('is_total_show',
+echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_total_show',
 	__d('quizzes', 'Display a graph of the  correct answers ratio')); /* 採点結果画面に正答率の集計グラフを合わせて表示する */

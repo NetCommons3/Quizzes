@@ -10,19 +10,19 @@
  */
 ?>
 <?php
-	echo $this->QuestionEdit->quizAttributeCheckbox('is_no_member_allow', __d('quizzes', 'Answer of nonmember'));
+	echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_no_member_allow', __d('quizzes', 'Answer of nonmember'));
 ?>
 
 <div class="col-xs-11 col-xs-offset-1" ng-show="quiz.quiz.isNoMemberAllow == 1" >
 	<?php
 	/* テスト開始時に画像認証を求める */
-	echo $this->QuestionEdit->quizAttributeCheckbox('is_image_authentication',
+	echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_image_authentication',
 	__d('quizzes', 'image authentication at the start'),
 	array(
 	'ng-disabled' => 'quiz.quiz.isKeyPassUse == ' . QuizzesComponent::USES_USE));
 
 	/* テスト開始時に認証キーの入力を求める */
-	echo $this->QuestionEdit->quizAttributeCheckbox('is_key_pass_use',
+	echo $this->QuizQuestionEdit->quizAttributeCheckbox('is_key_pass_use',
 	__d('quizzes', 'key phrase at the start'),
 	array(
 	'ng-disabled' => 'quiz.quiz.isImageAuthentication == ' . QuizzesComponent::USES_USE));

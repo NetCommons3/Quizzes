@@ -169,12 +169,12 @@ msgid "Results confirmed"
 msgstr "成績確認"
 
 #: View/Elements/QuizEdit/edit_flow_chart.ctp:14
-#: View/Helper/QuestionEditHelper.php:185
+#: View/Helper/QuizQuestionEditHelper.php:185
 msgid "Set questions"
 msgstr "問題作成"
 
 #: View/Elements/QuizEdit/edit_flow_chart.ctp:15
-#: View/Helper/QuestionEditHelper.php:186
+#: View/Helper/QuizQuestionEditHelper.php:186
 msgid "Set quiz"
 msgstr "小テスト設定"
 

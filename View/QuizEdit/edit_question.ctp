@@ -14,7 +14,7 @@ echo $this->NetCommonsHtml->script(array(
 	'/quizzes/js/quizzes_edit_question.js',
 ));
 $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->data));
-$jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
+$jsPostData = $this->QuizQuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 ?>
 <?php echo $this->element('NetCommons.javascript_alert'); ?>
 
@@ -58,7 +58,7 @@ $jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 					</uib-tab-heading>
 
 					<div class="tab-body">
-						<?php echo $this->QuestionEdit->quizNgError('page.pagePickupError'); ?>
+						<?php echo $this->QuizQuestionEdit->quizNgError('page.pagePickupError'); ?>
 
 						<div class="row">
 							<?php echo $this->element($elementFolder . 'page_lead'); ?>
@@ -82,7 +82,7 @@ $jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 									<?php /* ここから質問本体設定 */
 
 										/* 配点 */
-										echo $this->QuestionEdit->questionInput('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.allotment',
+										echo $this->QuizQuestionEdit->questionInput('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.allotment',
 											__d('quizzes', 'Allotment'),
 											array(	'type' => 'number',
 													'required' => true,
@@ -94,7 +94,7 @@ $jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 													'after' => ' / ' . '{{getAllotmentSum()}}',
 											));
 										/* 質問文 問題文を入れてください */
-										echo $this->QuestionEdit->questionInput('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.question_value',
+										echo $this->QuizQuestionEdit->questionInput('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.question_value',
 											__d('quizzes', 'question sentence'),
 											array('type' => 'wysiwyg',
 											'ui-tinymce' => 'tinymce.options',
@@ -106,7 +106,7 @@ $jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 										));
 										/* 質問種別 */
 										/* 質問種別 */
-										echo $this->QuestionEdit->questionInput('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.question_type',
+										echo $this->QuizQuestionEdit->questionInput('QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.question_type',
 											__d('quizzes', 'Question type'),
 											array('type' => 'select',
 												'required' => true,
@@ -121,7 +121,7 @@ $jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 										<div class="col-xs-12">
 											<div class="well">
 
-												<?php echo $this->QuestionEdit->quizNgError('question.questionPickupError'); ?>
+												<?php echo $this->QuizQuestionEdit->quizNgError('question.questionPickupError'); ?>
 
 												<div ng-if="question.questionType == <?php echo QuizzesComponent::TYPE_SELECTION; ?>">
 													<?php echo $this->element($elementFolder . 'simple_choice_option'); ?>
@@ -173,7 +173,7 @@ $jsPostData = $this->QuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 				true); ?>
 		</div>
 		<?php echo $this->NetCommonsForm->end(); ?>
-		<?php echo $this->QuestionEdit->quizGetFinallySubmit($postUrl); ?>
+		<?php echo $this->QuizQuestionEdit->quizGetFinallySubmit($postUrl); ?>
 	</div>
 
 </article>
