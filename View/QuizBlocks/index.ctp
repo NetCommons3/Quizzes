@@ -45,6 +45,10 @@ echo $this->NetCommonsHtml->script(array(
 					array('sort' => true, 'type' => 'datetime')
 					); ?>
 					<?php echo $this->BlockIndex->tableHeader(
+						'Quiz.all_answer_count', __d('quizzes', 'sum of  examinees'),
+						array('sort' => false, 'type' => 'numeric')
+					); ?>
+					<?php echo $this->BlockIndex->tableHeader(
 						'', __d('quizzes', 'Answer CSV'),
 						array('type' => 'center')
 					); ?>
@@ -82,6 +86,12 @@ echo $this->NetCommonsHtml->script(array(
 						'',
 						$quiz['Quiz']['modified'],
 						array('type' => 'datetime')
+					); ?>
+
+					<?php echo $this->BlockIndex->tableData(
+						'',
+						$quiz['Quiz']['all_answer_count'],
+						array('type' => 'numeric')
 					); ?>
 
 					<?php if ($quiz['Quiz']['all_answer_count'] > 0): ?>
