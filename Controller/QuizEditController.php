@@ -55,6 +55,7 @@ class QuizEditController extends QuizzesAppController {
 			),
 		),
 		'Quizzes.Quizzes',
+		'Quizzes.QuizzesShuffle',
 	);
 
 /**
@@ -317,6 +318,8 @@ class QuizEditController extends QuizzesAppController {
 			if ($this->layout == 'NetCommons.setting') {
 				$this->redirect(NetCommonsUrl::backToIndexUrl('default_setting_action'));
 			} else {
+				// 保存をやり直しているのだからセッションに回答中データがあったら消してしまう
+				$this->QuizzesShuffle->clear($saveQuiz['Quiz']['key']);
 				// 回答画面（詳細）へリダイレクト×
 				// 発行したときはページの最初に戻るべきとの指摘アリ
 				if ($saveQuiz['Quiz']['status'] == WorkflowComponent::STATUS_PUBLISHED) {
