@@ -85,7 +85,7 @@ class QuizEditController extends QuizzesAppController {
 			),
 			'cancelUrl' => null
 		),
-		'Quizzes.QuestionEdit',
+		'Quizzes.QuizQuestionEdit',
 		'Quizzes.QuizAnswerCorrect'
 	);
 

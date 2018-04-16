@@ -1,6 +1,6 @@
 <?php
 /**
- * QuestionEditHelper::quizAttributeDatetime()のテスト
+ * QuizQuestionEditHelper::quizAttributeDatetime()のテスト
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author AllCreator <info@allcreator.net>
@@ -12,12 +12,12 @@
 App::uses('NetCommonsHelperTestCase', 'NetCommons.TestSuite');
 
 /**
- * QuestionEditHelper::quizAttributeDatetime()のテスト
+ * QuizQuestionEditHelper::quizAttributeDatetime()のテスト
  *
  * @author AllCreator <info@allcreator.net>
- * @package NetCommons\Quizzes\Test\Case\View\Helper\QuestionEditHelper
+ * @package NetCommons\Quizzes\Test\Case\View\Helper\QuizQuestionEditHelper
  */
-class QuestionEditHelperQuizAttributeDatetimeTest extends NetCommonsHelperTestCase {
+class QuizQuestionEditHelperQuizAttributeDatetimeTest extends NetCommonsHelperTestCase {
 
 /**
  * Fixtures
@@ -47,7 +47,7 @@ class QuestionEditHelperQuizAttributeDatetimeTest extends NetCommonsHelperTestCa
 		$params = array();
 
 		//Helperロード
-		$this->loadHelper('Quizzes.QuestionEdit', $viewVars, $requestData, $params);
+		$this->loadHelper('Quizzes.QuizQuestionEdit', $viewVars, $requestData, $params);
 	}
 
 /**
@@ -65,7 +65,7 @@ class QuestionEditHelperQuizAttributeDatetimeTest extends NetCommonsHelperTestCa
 		$help = 'help text';
 
 		//テスト実施
-		$result = $this->QuestionEdit->quizAttributeDatetime($fieldName, $options, $help);
+		$result = $this->QuizQuestionEdit->quizAttributeDatetime($fieldName, $options, $help);
 		//チェック
 		$this->assertContains('<span class="help-block">help text</span>', $result);
 	}

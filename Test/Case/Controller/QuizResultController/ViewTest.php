@@ -62,7 +62,7 @@ class QuizResultControllerViewTest extends WorkflowControllerViewTest {
 		$this->generateNc(Inflector::camelize($this->_controller));
 		$this->_targetController = $this->generate('Quizzes.QuizResult', array(
 			'components' => array(
-				'Auth' => array('user'),
+				'Auth' => array('login'),
 				'Session',
 				'Security',
 				//'NetCommons.Permission',

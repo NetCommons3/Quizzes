@@ -1,6 +1,6 @@
 <?php
 /**
- * QuestionEditHelper::quizAttributeCheckbox()のテスト
+ * QuizQuestionEditHelper::quizAttributeCheckbox()のテスト
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author AllCreator <info@allcreator.net>
@@ -12,12 +12,12 @@
 App::uses('NetCommonsHelperTestCase', 'NetCommons.TestSuite');
 
 /**
- * QuestionEditHelper::quizAttributeCheckbox()のテスト
+ * QuizQuestionEditHelper::quizAttributeCheckbox()のテスト
  *
  * @author AllCreator <info@allcreator.net>
- * @package NetCommons\Quizzes\Test\Case\View\Helper\QuestionEditHelper
+ * @package NetCommons\Quizzes\Test\Case\View\Helper\QuizQuestionEditHelper
  */
-class QuestionEditHelperQuizAttributeCheckboxTest extends NetCommonsHelperTestCase {
+class QuizQuestionEditHelperQuizAttributeCheckboxTest extends NetCommonsHelperTestCase {
 
 /**
  * Fixtures
@@ -47,7 +47,7 @@ class QuestionEditHelperQuizAttributeCheckboxTest extends NetCommonsHelperTestCa
 		$params = array();
 
 		//Helperロード
-		$this->loadHelper('Quizzes.QuestionEdit', $viewVars, $requestData, $params);
+		$this->loadHelper('Quizzes.QuizQuestionEdit', $viewVars, $requestData, $params);
 	}
 
 /**
@@ -63,7 +63,7 @@ class QuestionEditHelperQuizAttributeCheckboxTest extends NetCommonsHelperTestCa
 		$help = 'help text';
 
 		//テスト実施
-		$result = $this->QuestionEdit->quizAttributeCheckbox($fieldName, $label, $options, $help);
+		$result = $this->QuizQuestionEdit->quizAttributeCheckbox($fieldName, $label, $options, $help);
 
 		//チェック
 		$this->assertContains('<span class="help-block">help text</span></label>', $result);

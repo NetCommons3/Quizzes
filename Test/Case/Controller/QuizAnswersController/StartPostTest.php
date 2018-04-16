@@ -69,7 +69,7 @@ class QuizAnswersControllerStartPostTest extends NetCommonsControllerTestCase {
 		$this->generateNc(Inflector::camelize($this->_controller));
 		$this->_targetController = $this->generate('Quizzes.QuizAnswers', array(
 			'components' => array(
-				'Auth' => array('user'),
+				'Auth' => array('login'),
 				'Session',
 				'Security',
 				'NetCommons.Permission',

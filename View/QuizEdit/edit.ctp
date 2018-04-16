@@ -55,7 +55,7 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 			<div class="row">
 				<div class="col-xs-11 col-xs-offset-1">
 					<?php if ($isMailSetting): ?>
-					<?php echo $this->QuestionEdit->quizAttributeCheckbox(
+					<?php echo $this->QuizQuestionEdit->quizAttributeCheckbox(
 						'is_answer_mail_send',
 						__d('quizzes', 'Answer mail send'));?>
 					<?php else: ?>

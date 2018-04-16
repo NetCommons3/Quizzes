@@ -12,7 +12,7 @@
 <div class="form-group">
 
 	<?php /* アンケート期間設定 */
-	echo $this->QuestionEdit->quizAttributeCheckbox('answer_timing',
+	echo $this->QuizQuestionEdit->quizAttributeCheckbox('answer_timing',
 	__d('quizzes', 'limit the answer period'), /* 回答期間を制限する */
 	array());
 	?>
@@ -21,7 +21,7 @@
 			<div class="form-inline">
 				<div class="input-group">
 					<?php
-						echo $this->QuestionEdit->quizAttributeDatetime('answer_start_period',
+						echo $this->QuizQuestionEdit->quizAttributeDatetime('answer_start_period',
 						array(
 							'label' => false,
 							'min' => '',
@@ -33,7 +33,7 @@
 						<span class="glyphicon glyphicon-minus"></span>
 					</span>
 					<?php
-						echo $this->QuestionEdit->quizAttributeDatetime('answer_end_period',
+						echo $this->QuizQuestionEdit->quizAttributeDatetime('answer_end_period',
 						array(
 							'label' => false,
 							'min' => 'answer_start_period',

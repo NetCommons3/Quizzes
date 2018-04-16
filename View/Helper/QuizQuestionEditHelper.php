@@ -15,7 +15,7 @@ App::uses('AppHelper', 'View/Helper');
  * @author Allcreator Co., Ltd. <info@allcreator.net>
  * @package NetCommons\Quizzes\View\Helper
  */
-class QuestionEditHelper extends AppHelper {
+class QuizQuestionEditHelper extends AppHelper {
 
 /**
  * Other helpers used by FormHelper

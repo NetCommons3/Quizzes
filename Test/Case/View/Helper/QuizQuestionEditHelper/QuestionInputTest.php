@@ -1,6 +1,6 @@
 <?php
 /**
- * QuestionEditHelper::questionInput()のテスト
+ * QuizQuestionEditHelper::questionInput()のテスト
  *
  * @author Noriko Arai <arai@nii.ac.jp>
  * @author AllCreator <info@allcreator.net>
@@ -12,12 +12,12 @@
 App::uses('NetCommonsHelperTestCase', 'NetCommons.TestSuite');
 
 /**
- * QuestionEditHelper::questionInput()のテスト
+ * QuizQuestionEditHelper::questionInput()のテスト
  *
  * @author AllCreator <info@allcreator.net>
- * @package NetCommons\Quizzes\Test\Case\View\Helper\QuestionEditHelper
+ * @package NetCommons\Quizzes\Test\Case\View\Helper\QuizQuestionEditHelper
  */
-class QuestionEditHelperQuestionInputTest extends NetCommonsHelperTestCase {
+class QuizQuestionEditHelperQuestionInputTest extends NetCommonsHelperTestCase {
 
 /**
  * Fixtures
@@ -47,7 +47,7 @@ class QuestionEditHelperQuestionInputTest extends NetCommonsHelperTestCase {
 		$params = array();
 
 		//Helperロード
-		$this->loadHelper('Quizzes.QuestionEdit', $viewVars, $requestData, $params);
+		$this->loadHelper('Quizzes.QuizQuestionEdit', $viewVars, $requestData, $params);
 	}
 
 /**
@@ -65,7 +65,7 @@ class QuestionEditHelperQuestionInputTest extends NetCommonsHelperTestCase {
 		$label = 'testLabel';
 
 		//テスト実施
-		$result = $this->QuestionEdit->questionInput($fieldName, $title, $options, $label);
+		$result = $this->QuizQuestionEdit->questionInput($fieldName, $title, $options, $label);
 
 		//チェック
 		$expected = '<div class="row form-group">' .
