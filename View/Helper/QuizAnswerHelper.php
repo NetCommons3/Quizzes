@@ -198,7 +198,9 @@ class QuizAnswerHelper extends AppHelper {
 		$correctCnt = count($question['QuizCorrect']);
 		for ($iCnt = 0; $iCnt < $correctCnt; $iCnt++) {
 			if ($readonly) {
-				$ret .= sprintf('%s : ', $question['QuizCorrect'][$iCnt]['correct_label']) . h($this->value($fieldName . '.' . $iCnt)) . '<br />';
+				$ret .= sprintf('%s : ',
+					$question['QuizCorrect'][$iCnt]['correct_label']) .
+					h($this->value($fieldName . '.' . $iCnt)) . '<br />';
 			} else {
 				$ret .= $this->NetCommonsForm->input($fieldName . '.' . $iCnt, array(
 					'div' => 'form-inline',

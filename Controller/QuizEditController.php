@@ -445,8 +445,6 @@ class QuizEditController extends QuizzesAppController {
 		$this->set('backUrl', $backUrl);
 
 		$ajaxPostUrl = $this->_getActionUrl($this->action);
-$this->log(__FILE__.__LINE__, 'debug');
-		$this->log($ajaxPostUrl, 'debug');
 
 		$this->set('ajaxPostUrl', $ajaxPostUrl);
 		$this->set('postUrl', array('url' => $ajaxPostUrl));

@@ -12,18 +12,18 @@
 <div class="panel panel-default">
 	<div class="panel-body">
 		<?php if (isset($number)): ?>
-        <?php echo $number; ?>
-                <?php echo $this->NetCommonsForm->input(
-                    'QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.{{correctIndex}}.correct_label',
-                    array(
-                        'type' => 'text',
-                        'ng-model' => 'correct.correctLabel',
-                        //'ng-value' => '"(' . $number . ')"',
-                        'size' => 2,
-                        'style' => 'margin-right: 1em;'
-                    )
-                ); ?>
-            &nbsp;:&nbsp;
+	<?php echo $number; ?>
+		<?php echo $this->NetCommonsForm->input(
+			'QuizPage.{{pageIndex}}.QuizQuestion.{{qIndex}}.QuizCorrect.{{correctIndex}}.correct_label',
+			array(
+			'type' => 'text',
+			'ng-model' => 'correct.correctLabel',
+			//'ng-value' => '"(' . $number . ')"',
+			'size' => 2,
+			'style' => 'margin-right: 1em;'
+			)
+		); ?>
+		&nbsp;:&nbsp;
 		<?php endif; ?>
 		<span class="" ng-repeat="correctWord in correct.correct" >
 			<span class="btn btn-default btn-sm"
