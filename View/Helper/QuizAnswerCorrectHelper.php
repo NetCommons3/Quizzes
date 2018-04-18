@@ -117,7 +117,7 @@ class QuizAnswerCorrectHelper extends AppHelper {
  */
 	protected function _getMultipleWordCorrect($corrects) {
 		$ret = '';
-		foreach ($corrects as $index => $correct) {
+		foreach ($corrects as $correct) {
 			$ret .= sprintf('%s : ', $correct['correct_label']);
 			$ret .= $this->_getWordCorrect($correct);
 			$ret .= '<br />';
