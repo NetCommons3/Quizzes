@@ -60,7 +60,13 @@ class QuizGradingHelperGetAnswerTest extends NetCommonsHelperTestCase {
 	public function testGetAnswer() {
 		//データ生成
 		$question = array(
-			'question_type' => QuizzesComponent::TYPE_MULTIPLE_WORD
+			'question_type' => QuizzesComponent::TYPE_MULTIPLE_WORD,
+			'QuizCorrect' => array(
+				array('correct_label' => '(1)'),
+				array('correct_label' => '(2)'),
+				array('correct_label' => '(3)'),
+				array('correct_label' => '(4)'),
+			)
 		);
 		$answer = array(
 			'answer_value' => array(
@@ -80,10 +86,10 @@ class QuizGradingHelperGetAnswerTest extends NetCommonsHelperTestCase {
 		$result = $this->QuizGrading->getAnswer($question, $answer);
 
 		$expected = '<dt>' . __d('quizzes', 'your score') . '</dt>';
-		$expected .= '<dd> (1) answer1 <br /><span class="label label-warning">Ｘ</span>' .
-			' (2) answer2 <br /><span class="label label-success">◯</span>' .
-			' (3) answer3 <br /><span class="label label-warning">Ｘ</span>' .
-			' (4) answer4 <br /></dd>';
+		$expected .= '<dd> (1) : answer1 <br /><span class="label label-warning">Ｘ</span>' .
+			' (2) : answer2 <br /><span class="label label-success">◯</span>' .
+			' (3) : answer3 <br /><span class="label label-warning">Ｘ</span>' .
+			' (4) : answer4 <br /></dd>';
 		//チェック
 		$this->assertTextEquals($result, $expected);
 	}

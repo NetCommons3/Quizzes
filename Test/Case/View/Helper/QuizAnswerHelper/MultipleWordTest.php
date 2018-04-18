@@ -72,9 +72,9 @@ class QuizAnswerHelperMultipleWordTest extends NetCommonsHelperTestCase {
 		$fieldName = 'QuizAnswer.' . 0 . '.0.answer_value';
 		$question = array(
 			'QuizCorrect' => array(
-				array('correct' => array('test1')),
-				array('correct' => array('test2')),
-				array('correct' => array('test3')),
+				array('correct' => array('test1'), 'correct_label' => '(1)'),
+				array('correct' => array('test2'), 'correct_label' => '(2)'),
+				array('correct' => array('test3'), 'correct_label' => '(3)'),
 			)
 		);
 		$readonly = false;
@@ -84,13 +84,13 @@ class QuizAnswerHelperMultipleWordTest extends NetCommonsHelperTestCase {
 
 		//チェック
 		$expected = '<div class="form-inline"><label for="QuizAnswer00AnswerValue0" ' .
-			'class="control-label">(1) </label>' .
+			'class="control-label">(1) : </label>' .
 			'<input name="data[QuizAnswer][0][0][answer_value][0]" class="form-control" ' .
 			'type="text" value="T1" id="QuizAnswer00AnswerValue0"/></div><div class="form-inline">' .
-			'<label for="QuizAnswer00AnswerValue1" class="control-label">(2) </label>' .
+			'<label for="QuizAnswer00AnswerValue1" class="control-label">(2) : </label>' .
 			'<input name="data[QuizAnswer][0][0][answer_value][1]" class="form-control" ' .
 			'type="text" value="T2" id="QuizAnswer00AnswerValue1"/></div><div class="form-inline">' .
-			'<label for="QuizAnswer00AnswerValue2" class="control-label">(3) </label>' .
+			'<label for="QuizAnswer00AnswerValue2" class="control-label">(3) : </label>' .
 			'<input name="data[QuizAnswer][0][0][answer_value][2]" class="form-control" ' .
 			'type="text" value="T3" id="QuizAnswer00AnswerValue2"/></div>';
 		$this->assertTextEquals($result, $expected);
@@ -107,9 +107,9 @@ class QuizAnswerHelperMultipleWordTest extends NetCommonsHelperTestCase {
 		$fieldName = 'QuizAnswer.' . 0 . '.0.answer_value';
 		$question = array(
 			'QuizCorrect' => array(
-				array('correct' => array('test1')),
-				array('correct' => array('test2')),
-				array('correct' => array('test3')),
+				array('correct' => array('test1'), 'correct_label' => '(1)'),
+				array('correct' => array('test2'), 'correct_label' => '(2)'),
+				array('correct' => array('test3'), 'correct_label' => '(3)'),
 			)
 		);
 		$readonly = true;
@@ -118,7 +118,7 @@ class QuizAnswerHelperMultipleWordTest extends NetCommonsHelperTestCase {
 		$result = $this->QuizAnswer->multipleWord($index, $fieldName, $question, $readonly);
 
 		//チェック
-		$expected = '(1) T1<br />(2) T2<br />(3) T3<br />';
+		$expected = '(1) : T1<br />(2) : T2<br />(3) : T3<br />';
 		$this->assertTextEquals($result, $expected);
 	}
 }

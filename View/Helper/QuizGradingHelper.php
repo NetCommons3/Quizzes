@@ -100,9 +100,9 @@ class QuizGradingHelper extends AppHelper {
 		if ($question['question_type'] == QuizzesComponent::TYPE_MULTIPLE_WORD) {
 			foreach ($answer['answer_value'] as $index => $ans) {
 				$ret .= sprintf(
-					'%s (%d) %s <br />',
+					'%s %s : %s <br />',
 					$this->_getMark(Hash::get($answer, 'answer_correct_status.' . $index)),
-					$index + 1,
+					$question['QuizCorrect'][$index]['correct_label'],
 					h($ans)
 				);
 			}

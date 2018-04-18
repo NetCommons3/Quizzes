@@ -414,9 +414,10 @@ class QuizEditController extends QuizzesAppController {
 			'frame_id' => Current::read('Frame.id'),
 			's_id' => $this->_getQuizEditSessionIndex()
 		);
-		if ($this->layout == 'NetCommons.setting') {
+		if (Current::isSettingMode()) {
 			$urlArray['q_mode'] = 'setting';
 		}
+		$this->log($urlArray, 'debug');
 		return NetCommonsUrl::actionUrl($urlArray);
 	}
 
@@ -444,6 +445,9 @@ class QuizEditController extends QuizzesAppController {
 		$this->set('backUrl', $backUrl);
 
 		$ajaxPostUrl = $this->_getActionUrl($this->action);
+$this->log(__FILE__.__LINE__, 'debug');
+		$this->log($ajaxPostUrl, 'debug');
+
 		$this->set('ajaxPostUrl', $ajaxPostUrl);
 		$this->set('postUrl', array('url' => $ajaxPostUrl));
 
