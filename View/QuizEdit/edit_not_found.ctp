@@ -9,6 +9,9 @@
  * @copyright Copyright 2014, NetCommons Project
  */
 ?>
+<?php if (Current::permission('block_editable') && Current::isSettingMode()) : ?>
+	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
+<?php endif ?>
 <article>
     <?php echo __d('quizzes', 'not found this quiz.'); ?>
 

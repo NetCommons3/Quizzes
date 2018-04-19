@@ -16,6 +16,9 @@ echo $this->NetCommonsHtml->script(array(
 ));
 $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::changeBooleansToNumbers($this->data));
 ?>
+<?php if (Current::permission('block_editable') && Current::isSettingMode()) : ?>
+	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
+<?php endif ?>
 
 <article
 	id="nc-quizzes-setting-edit"

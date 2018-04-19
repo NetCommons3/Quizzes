@@ -735,6 +735,7 @@ NetCommonsApp.controller('QuizzesEditQuestion',
                     postQ.QuizCorrect[coIndex] = new Object();
                     postQ.QuizCorrect[coIndex].key = correct.key;
                     postQ.QuizCorrect[coIndex].correct_sequence = coIndex;
+                    postQ.QuizCorrect[coIndex].correct_label = correct.correctLabel;
                     postQ.QuizCorrect[coIndex].correct = correct.correct;
                     coIndex++;
                   }

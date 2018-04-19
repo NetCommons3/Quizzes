@@ -94,10 +94,12 @@ class QuizAnswerCorrectHelperGetCorrectTest extends NetCommonsHelperTestCase {
 			'commentary' => '',
 			'QuizCorrect' => array(
 				array(
-					'correct' => array('正解1', '正解2')
+					'correct' => array('正解1', '正解2'),
+					'correct_label' => '(1)'
 				),
 				array(
-					'correct' => array('他の1', '他の2')
+					'correct' => array('他の1', '他の2'),
+					'correct_label' => '(2)'
 				)
 			),
 		);
@@ -135,10 +137,10 @@ class QuizAnswerCorrectHelperGetCorrectTest extends NetCommonsHelperTestCase {
 		$result = $this->_testGetCorrect(QuizzesComponent::TYPE_MULTIPLE_WORD, $questions, $answers);
 		$this->assertTextEquals($result,
 			'<dt class="quiz-grading-correct bg-success">正解</dt>' .
-			'<dd class="quiz-grading-correct bg-success">(1) 正解1 ' .
+			'<dd class="quiz-grading-correct bg-success">(1) : 正解1 ' .
 			'<button type="button" class="btn btn-default btn-sm" ' .
 			'popover-placement="right" uib-popover="正解2,">他に認められる解答</button><br />' .
-			'(2) 他の1 <button type="button" class="btn btn-default btn-sm" ' .
+			'(2) : 他の1 <button type="button" class="btn btn-default btn-sm" ' .
 			'popover-placement="right" uib-popover="他の2,">他に認められる解答</button><br /></dd>');
 	}
 
