@@ -86,6 +86,14 @@ class QuizEditController extends QuizzesAppController {
 			'cancelUrl' => null
 		),
 		'Quizzes.QuizQuestionEdit',
+		'Blocks.BlockTabs' => array(
+			'mainTabs' => array(
+				'block_index' => array('url' => array('controller' => 'quiz_blocks')),
+				'role_permissions' => array('url' => array('controller' => 'quiz_block_role_permissions')),
+				'frame_settings' => array('url' => array('controller' => 'quiz_frame_settings')),
+				'mail_settings' => array('url' => array('controller' => 'quiz_mail_settings')),
+			),
+		),
 		'Quizzes.QuizAnswerCorrect'
 	);
 

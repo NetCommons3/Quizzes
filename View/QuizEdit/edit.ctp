@@ -20,6 +20,10 @@ $jsQuiz = NetCommonsAppController::camelizeKeyRecursive(QuizzesAppController::ch
 	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
 <?php endif ?>
 
+<?php if (Current::permission('block_editable') && $this->PageLayout->layoutSetting) : ?>
+	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
+<?php endif; ?>
+
 <article
 	id="nc-quizzes-setting-edit"
 	 ng-controller="QuizzesEdit"
