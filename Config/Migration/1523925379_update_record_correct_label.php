@@ -15,14 +15,14 @@ App::uses('NetCommonsMigration', 'NetCommons.Config/Migration');
  * @author Allcreator <info@allcreator.net>
  * @package NetCommons\Quizzes\Config\Migration
  */
-class AddCorrectLabel extends NetCommonsMigration {
+class UpdateRecordCorrectLabel extends NetCommonsMigration {
 
 /**
  * Migration description
  *
  * @var string
  */
-	public $description = 'add_correct_label';
+	public $description = 'update_record_correct_label';
 
 /**
  * Actions to be performed
@@ -31,16 +31,8 @@ class AddCorrectLabel extends NetCommonsMigration {
  */
 	public $migration = array(
 		'up' => array(
-			'create_field' => array(
-				'quiz_corrects' => array(
-					'correct_label' => array('type' => 'text', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '複数単語の場合に使用。見出しラベル', 'charset' => 'utf8', 'after' => 'correct_sequence'),
-				),
-			),
 		),
 		'down' => array(
-			'drop_field' => array(
-				'quiz_corrects' => array('correct_label'),
-			),
 		),
 	);
 
@@ -61,6 +53,13 @@ class AddCorrectLabel extends NetCommonsMigration {
  * @return bool Should process continue
  */
 	public function after($direction) {
+		if ($direction == 'down') {
+			return true;
+		}
+		$this->QuizCorrect = $this->generateModel('QuizCorrect');
+		$this->QuizCorrect->updateAll(
+			array('QuizCorrect.correct_label' => 'QuizCorrect.correct_sequence + 1')
+		);
 		return true;
 	}
 }
