@@ -29,6 +29,10 @@ $jsPostData = $this->QuizQuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
 <?php endif ?>
 
+<?php if (Current::permission('block_editable') && $this->PageLayout->layoutSetting) : ?>
+	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
+<?php endif; ?>
+
 <article id="nc-quizzes-question-edit"
 	 ng-controller="QuizzesEditQuestion"
 	 ng-init="initialize(<?php echo $isPublished; ?>,
