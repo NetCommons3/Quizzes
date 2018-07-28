@@ -43,7 +43,6 @@ class QuizzesController extends QuizzesAppController {
 		'Quizzes.QuizAnswer',
 		'Quizzes.QuizFrameSetting',
 		'Quizzes.QuizFrameDisplayQuiz',
-		'Files.FileModel',					// FileUpload
 		'PluginManager.Plugin',
 	);
 
