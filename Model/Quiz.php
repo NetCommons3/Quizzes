@@ -36,6 +36,7 @@ class Quiz extends QuizzesAppModel {
 		'Workflow.Workflow',
 		'Workflow.WorkflowComment',
 		'AuthorizationKeys.AuthorizationKey',
+		'Quizzes.Quiz',
 		'Quizzes.QuizValidate',
 		// 自動でメールキューの登録, 削除。ワークフロー利用時はWorkflow.Workflowより下に記述する
 		'Mails.MailQueue' => array(
@@ -430,48 +431,18 @@ class Quiz extends QuizzesAppModel {
 		$quizPages = array();
 		$quizQuestions = array();
 		$quizAnswerCts = array();
+
 		if ($this->recursive >= 0) {
-			$quizIds = Hash::extract($results, '{n}.Quiz.id');
-			if (! empty($quizIds)) {
-				// Quiz.idの配列から対応するQuizPageの配列を取得
-				$quizPages = $this->QuizPage->find('all', array(
-					'conditions' => array(
-						'QuizPage.quiz_id' => $quizIds,
-					),
-					'order' => array(
-						'QuizPage.quiz_id ASC',
-						'QuizPage.page_sequence ASC'
-					),
-					'recursive' => -1
-				));
-				// QuizPage.idの配列から対応するQuizQuestionの配列を取得
-				$quizPageIds = Hash::extract($quizPages, '{n}.QuizPage.id');
-				$quizQuestions = $this->QuizQuestion->find('all', array(
-					'conditions' => array(
-						'QuizQuestion.quiz_page_id' => $quizPageIds,
-					),
-					'order' => array(
-						'QuizQuestion.quiz_page_id ASC',
-						'QuizQuestion.question_sequence ASC'
-					),
-				));
-				// Quiz.idの配列から対応するQuizAnswerCountの配列を取得
-				$this->QuizAnswerSummary->virtualFields = array('all_answer_count' => 'COUNT(quiz_key)');
-				$quizAnswerCts = $this->QuizAnswerSummary->find('all', array(
-					'fields' => array(
-						'QuizAnswerSummary.quiz_key',
-						'QuizAnswerSummary.all_answer_count'
-					),
-					'conditions' => array(
-						'QuizAnswerSummary.quiz_key' => Hash::extract($results, '{n}.Quiz.key'),
-						'QuizAnswerSummary.answer_status' => QuizzesComponent::ACTION_ACT,
-						'QuizAnswerSummary.test_status' => QuizzesComponent::TEST_ANSWER_STATUS_PEFORM
-					),
-					'group' => 'QuizAnswerSummary.quiz_key',
-					'recursive' => -1
-				));
-				$this->QuizAnswerSummary->virtualFields = array();
-			}
+			list($quizIds, $quizKeys) = $this->getQuizIdsAndKeys($results);
+
+			// Quiz.idの配列から対応するQuizPageの配列を取得
+			list($quizPageIds, $quizPages) = $this->getQuizPageIdsAndPages($quizIds);
+
+			// QuizPage.idの配列から対応するQuizQuestionの配列を取得
+			$quizQuestions = $this->getQuizQuestions($quizPageIds);
+
+			// Quiz.idの配列から対応するQuizAnswerCountの配列を取得
+			$quizAnswerCts = $this->getQuizAnswerCounts($quizKeys);
 		}
 
 		foreach ($results as &$val) {
@@ -492,18 +463,21 @@ class Quiz extends QuizzesAppModel {
 				$val['Quiz']['answer_timing'],
 				$val['Quiz']['answer_start_period'],
 				$val['Quiz']['answer_end_period']);
-
 			//
 			// ページ配下の質問データも取り出す
 			// かつ、ページ数、質問数もカウントする
 			$val['Quiz']['page_count'] = 0;
 			$val['Quiz']['question_count'] = 0;
-			$quizAnswer = Hash::extract(
-				$quizAnswerCts,
-				'{n}.QuizAnswerSummary[quiz_key=' . $val['Quiz']['key'] . ']'
-			);
-			$val['Quiz']['all_answer_count'] = Hash::get($quizAnswer, '0.all_answer_count', 0);
-			$this->QuizPage->getPageForQuiz($val, $quizPages, $quizQuestions);
+			$val['Quiz']['all_answer_count'] = 0;
+			if (isset($quizAnswerCts[$val['Quiz']['key']])) {
+				$val['Quiz']['all_answer_count'] = $quizAnswerCts[$val['Quiz']['key']];
+			}
+			if (isset($quizPages[$val['Quiz']['id']])) {
+				$val['QuizPage'] = $quizPages[$val['Quiz']['id']];
+				foreach ($val['QuizPage'] as &$page) {
+					$page['QuizQuestion'] = $quizQuestions[$page['id']];
+				}
+			}
 		}
 		return $results;
 	}
