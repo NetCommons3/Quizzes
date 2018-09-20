@@ -106,6 +106,7 @@ class QuizFrameSettingsController extends QuizzesAppSettingController {
 			$this->request->data['Block'] = Current::read('Block');
 		}
 
+		$this->Quiz->recursive = -1;//ここで定義しないとafterFindで効いてこない
 		$quizzes = $this->Quiz->find('all', array(
 			'fields' => array(
 				'Quiz.id',

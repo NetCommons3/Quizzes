@@ -233,6 +233,7 @@ class QuizAnswerSummary extends QuizzesAppModel {
 		}
 		$conditions = $this->Quiz->getBaseCondition();
 		//$conditions = Hash::merge($conditions, array('created_user' => Current::read('User.id')));
+		$this->Quiz->recursive = -1;
 		$quizKeys = $this->Quiz->find('list', array(
 			'conditions' => $conditions,
 			'fields' => array('key'),

@@ -114,6 +114,7 @@ class QuizzesController extends QuizzesAppController {
 		$conditions = $this->Quiz->getCondition();
 
 		// データ取得の条件設定
+		$this->Quiz->recursive = 0;//ここで定義しないと効いてこない
 		$this->Paginator->settings = array_merge(
 			$this->Paginator->settings,
 			array(

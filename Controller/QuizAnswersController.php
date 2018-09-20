@@ -111,7 +111,7 @@ class QuizAnswersController extends QuizzesAppController {
 		);
 		$this->__quiz = $this->Quiz->find('first', array(
 			'conditions' => $conditions,
-			'recursive' => -1,
+			'recursive' => -1, // ここでの定義はafterFindには何も関係してこない
 		));
 		if (! $this->__quiz) {
 			$this->setAction('not_found_answer');
@@ -282,10 +282,10 @@ class QuizAnswersController extends QuizzesAppController {
 				$this->redirect($url);
 				return;
 			}
-		} else {
-			$setAnswers = $this->QuizAnswer->getProgressiveAnswerOfThisSummary($summary);
-			$this->request->data['QuizAnswer'] = $this->_setAnswerToView($setAnswers);
 		}
+		$setAnswers = $this->QuizAnswer->getProgressiveAnswerOfThisSummary($summary);
+		$this->request->data['QuizAnswer'] = $this->_setAnswerToView($setAnswers);
+
 		// 質問情報をView変数にセット
 		$this->set('quiz', $this->__quiz);
 		$this->request->data['Frame'] = Current::read('Frame');
