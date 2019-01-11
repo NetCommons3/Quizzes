@@ -25,13 +25,9 @@ $jsPostData = $this->QuizQuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 		$elementFolder = 'Quizzes.QuizEdit/EditQuestion/options_before_published/';
 	}
 ?>
-<?php if (Current::permission('block_editable') && Current::isSettingMode()) : ?>
+<?php if (Current::permission('block_editable') && (Current::isSettingMode() || $this->PageLayout->layoutSetting)) : ?>
 	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
 <?php endif ?>
-
-<?php if (Current::permission('block_editable') && $this->PageLayout->layoutSetting) : ?>
-	<?php echo $this->BlockTabs->main(BlockTabsHelper::MAIN_TAB_BLOCK_INDEX); ?>
-<?php endif; ?>
 
 <article id="nc-quizzes-question-edit"
 	 ng-controller="QuizzesEditQuestion"
