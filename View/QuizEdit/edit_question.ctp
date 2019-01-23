@@ -175,8 +175,7 @@ $jsPostData = $this->QuizQuestionEdit->getJsPostData($quizKey, $ajaxPostUrl);
 				['type' => 'button', 'ng-click' => 'post(\'edit_question\')'],
 				true); ?>
 		</div>
-		<?php echo $this->NetCommonsForm->end(); ?>
-		<?php echo $this->QuizQuestionEdit->quizGetFinallySubmit($postUrl); ?>
 	</div>
-
+	<?php echo $this->NetCommonsForm->end(); ?>
+	<?php echo $this->QuizQuestionEdit->quizGetFinallySubmit($postUrl); ?>
 </article>
