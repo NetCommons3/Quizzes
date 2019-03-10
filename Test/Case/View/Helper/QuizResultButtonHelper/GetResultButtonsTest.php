@@ -66,8 +66,8 @@ class QuizResultButtonHelperGetResultButtonsTest extends NetCommonsHelperTestCas
 				'status' => WorkflowComponent::STATUS_PUBLISHED,
 			)
 		);
-		Current::$current['Permission']['content_editable']['value'] = true;
-		Current::$current['Permission']['block_editable']['value'] = true;
+		Current::writePermission('2', 'content_editable', true);
+		Current::writePermission('2', 'block_editable', true);
 		//テスト実施
 		$result = $this->QuizResultButton->getResultButtons(
 			$quiz,

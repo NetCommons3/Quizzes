@@ -94,7 +94,7 @@ class QuizAnswerSummaryGetCanGradingSummaryTest extends NetCommonsGetTest {
 		$model = $this->_modelName;
 		$methodName = $this->_methodName;
 
-		Current::$current['Permission']['content_creatable']['value'] = true;
+		Current::writePermission('2', 'content_creatable', true);
 		Current::$current['Language']['id'] = 2;
 		Current::$current['User']['id'] = 4;
 		Current::$current['Block']['id'] = 2;
@@ -129,7 +129,7 @@ class QuizAnswerSummaryGetCanGradingSummaryTest extends NetCommonsGetTest {
 		$this->QuizAnswerSummary->save($data, false);
 		$insertId = $this->QuizAnswerSummary->getLastInsertId();
 
-		Current::$current['Permission']['content_editable']['value'] = true;
+		Current::writePermission('2', 'content_editable', true);
 		Current::$current['Language']['id'] = 2;
 		Current::$current['User']['id'] = 1;
 		Current::$current['Block']['id'] = 2;

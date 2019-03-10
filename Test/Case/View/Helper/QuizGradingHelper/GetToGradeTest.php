@@ -67,7 +67,7 @@ class QuizGradingHelperGetToGradeTest extends NetCommonsHelperTestCase {
 			'question_type' => QuizzesComponent::TYPE_SELECTION
 		);
 		$answer = null;
-		Current::$current['Permission']['content_editable']['value'] = true;
+		Current::writePermission('2', 'content_editable', true);
 
 		//テスト実施
 		$result = $this->QuizGrading->getToGrade($quiz, $summary, $pageIndex, $questionIndex, $question, $answer);
