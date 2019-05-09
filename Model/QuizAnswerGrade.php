@@ -98,7 +98,7 @@ class QuizAnswerGrade extends QuizzesAppModel {
 
 		$allotment = $question['allotment'];
 
-		$this->validate = Hash::merge($this->validate, array(
+		$this->validate = ValidateMerge::merge($this->validate, array(
 			'id' => array(
 				'numeric' => array(
 					'rule' => array('numeric'),

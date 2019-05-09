@@ -44,7 +44,7 @@ class ActionQuizAdd extends QuizzesAppModel {
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 	public function beforeValidate($options = array()) {
-		$this->validate = Hash::merge($this->validate, array(
+		$this->validate = ValidateMerge::merge($this->validate, array(
 			'create_option' => array(
 				'rule' => array(
 					'inList', array(

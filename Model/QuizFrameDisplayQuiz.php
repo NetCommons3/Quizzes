@@ -72,7 +72,7 @@ class QuizFrameDisplayQuiz extends QuizzesAppModel {
 		));
 		$this->chkQuizList = Hash::combine($quizzes, '{n}.Quiz.id', '{n}.Quiz.key');
 
-		$this->validate = Hash::merge($this->validate, array(
+		$this->validate = ValidateMerge::merge($this->validate, array(
 			'quiz_key' => array(
 				'notBlank' => array(
 					'rule' => array('notBlank'),
