@@ -22,14 +22,14 @@ class QuizAnswerScoreBehavior extends ModelBehavior {
 /**
  * 回答採点
  *
- * @param Model &$model モデル
+ * @param Model $model モデル
  * @param int $type 質問タイプ
  * @param bool $isOrderFixed 順番固定か否か
  * @param array $answer 回答データ
  * @param array $correct 正解データ
  * @return array answer
  */
-	public function scoreAnswer(Model &$model, $type, $isOrderFixed, $answer, $correct) {
+	public function scoreAnswer(Model $model, $type, $isOrderFixed, $answer, $correct) {
 		if ($type == QuizzesComponent::TYPE_SELECTION) {
 			$ret = $this->__scoreSingleChoice($answer, $correct);
 		} elseif ($type == QuizzesComponent::TYPE_MULTIPLE_SELECTION) {
