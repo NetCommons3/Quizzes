@@ -169,6 +169,9 @@ class QuizBlocksController extends QuizzesAppSettingController {
 					$csvFile->add($data);
 				}
 				$dataCount = count($datas);	// データ数カウント
+				if ($offset == 0) {
+					$dataCount -= 2;
+				}
 				$offset += $dataCount;		// 次の取得開始位置をずらす
 			} while ($dataCount == self::QUIZ_CSV_UNIT_NUMBER);
 			// データ取得数が制限値分だけとれている間は繰り返す
