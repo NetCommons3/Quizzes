@@ -476,6 +476,8 @@ class Quiz extends QuizzesAppModel {
 				$val['QuizPage'] = $quizPages[$val['Quiz']['id']];
 				foreach ($val['QuizPage'] as &$page) {
 					$page['QuizQuestion'] = $quizQuestions[$page['id']];
+					$val['Quiz']['page_count']++;
+					$val['Quiz']['question_count'] += count($quizQuestions[$page['id']]);
 				}
 			}
 		}
