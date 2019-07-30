@@ -160,15 +160,15 @@ class QuizBlocksController extends QuizzesAppSettingController {
 			// 回答データを一気に全部取得するのは、データ爆発の可能性があるので
 			// QUIZ_CSV_UNIT_NUMBER分に制限して取得する
 			$offset = 0;
+			$dataCount = 0;
 			do {
 				$datas = $this->QuizAnswerSummaryCsv->getAnswerSummaryCsv(
 					$quiz,
-					self::QUIZ_CSV_UNIT_NUMBER, $offset);
+					self::QUIZ_CSV_UNIT_NUMBER, $offset, $dataCount);
 				// CSV形式で書きこみ
 				foreach ($datas as $data) {
 					$csvFile->add($data);
 				}
-				$dataCount = count($datas);	// データ数カウント
 				$offset += $dataCount;		// 次の取得開始位置をずらす
 			} while ($dataCount == self::QUIZ_CSV_UNIT_NUMBER);
 			// データ取得数が制限値分だけとれている間は繰り返す

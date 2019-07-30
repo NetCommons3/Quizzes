@@ -113,15 +113,19 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
  * @param array $quiz quiz data
  * @param int $limit record limit
  * @param int $offset offset
+ * @param int &$dataCount データ数
  * @return array
  */
-	public function getAnswerSummaryCsv($quiz, $limit, $offset) {
+	public function getAnswerSummaryCsv($quiz, $limit, $offset, &$dataCount) {
 		// 指定された小テストの回答データをＣｓｖに出力しやすい行形式で返す
 		$retArray = array();
+		$headerLineCount = 0;
+		$dataCount = 0;
 
 		// $offset == 0 のときのみヘッダ行を出す
 		if ($offset == 0) {
 			$retArray = $this->_putHeader($quiz);
+			$headerLineCount = count($retArray);
 		}
 		// $quizにはページデータ、質問データが入っていることを前提とする
 
@@ -169,6 +173,7 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 			$retArray[] = $this->_getRows($quiz, $sampScore, $summary, $answers);
 		}
 
+		$dataCount = count($retArray) - $headerLineCount;
 		return $retArray;
 	}
 /**

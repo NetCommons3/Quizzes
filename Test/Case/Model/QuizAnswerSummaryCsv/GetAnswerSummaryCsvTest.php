@@ -88,9 +88,10 @@ class GetAnswerSummaryCsvTest extends NetCommonsGetTest {
 		$method = $this->_methodName;
 		$dataGet = new QuizDataGetTest();
 		$quiz = $dataGet->getData($quizId);
+		$dataCount = 0;
 
 		//テスト実行
-		$result = $this->$model->$method($quiz, 1000, 0);
+		$result = $this->$model->$method($quiz, 1000, 0, $dataCount);
 		//チェック
 		$this->assertEquals($expected, $result);
 	}
