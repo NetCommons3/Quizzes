@@ -25,26 +25,7 @@ App::uses('QuizzesComponent', 'Quizzes.Controller/Component');
  * @author Allcreator <info@allcreator.net>
  * @package NetCommons\Quizzes\TestSuite
  */
-class QuizDataGetTest extends NetCommonsCakeTestCase {
-
-/**
- * Fixtures
- *
- * @var array
- */
-	public $fixtures = array(
-		'plugin.quizzes.quiz',
-		'plugin.quizzes.quiz_page',
-		'plugin.quizzes.quiz_question',
-		'plugin.quizzes.quiz_choice',
-		'plugin.quizzes.quiz_correct',
-		'plugin.quizzes.quiz_answer_summary',
-		'plugin.quizzes.quiz_answer',
-		'plugin.quizzes.quiz_setting',
-		'plugin.quizzes.quiz_frame_setting',
-		'plugin.quizzes.quiz_frame_display_quiz',
-		'plugin.workflow.workflow_comment',
-	);
+class QuizDataGetTest {
 
 /**
  * テストDataの取得

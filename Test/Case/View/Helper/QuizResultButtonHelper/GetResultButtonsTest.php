@@ -26,7 +26,13 @@ class QuizResultButtonHelperGetResultButtonsTest extends NetCommonsHelperTestCas
  *
  * @var array
  */
-	public $fixtures = array();
+	public $fixtures = array(
+		'plugin.quizzes.quiz',
+		'plugin.quizzes.quiz_page',
+		'plugin.quizzes.quiz_question',
+		'plugin.quizzes.quiz_choice',
+		'plugin.quizzes.quiz_correct',
+	);
 
 /**
  * Plugin name
@@ -66,8 +72,11 @@ class QuizResultButtonHelperGetResultButtonsTest extends NetCommonsHelperTestCas
 				'status' => WorkflowComponent::STATUS_PUBLISHED,
 			)
 		);
-		Current::$current['Permission']['content_editable']['value'] = true;
-		Current::$current['Permission']['block_editable']['value'] = true;
+		Current::write('Room.id', '2');
+		Current::writePermission('2', 'content_editable', true);
+		Current::writePermission('2', 'block_editable', true);
+		//Current::$current['Permission']['content_editable']['value'] = true;
+		//Current::$current['Permission']['block_editable']['value'] = true;
 		//テスト実施
 		$result = $this->QuizResultButton->getResultButtons(
 			$quiz,

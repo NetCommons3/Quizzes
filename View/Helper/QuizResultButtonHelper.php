@@ -25,7 +25,7 @@ class QuizResultButtonHelper extends AppHelper {
  */
 	public $helpers = array(
 		'NetCommons.NetCommonsHtml',
-		'Workflows.Workflow',
+		'Workflow.Workflow',
 		'Quizzes.QuizGradeLink',
 		'Html'
 	);
