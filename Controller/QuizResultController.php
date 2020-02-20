@@ -83,6 +83,9 @@ class QuizResultController extends QuizzesAppController {
 		// まずは、そのキーを取り出す
 		$quizKey = $this->_getQuizKeyFromPass();
 
+		// CDNキャッシュを作成しない
+		$this->response->header('Pragma', 'no-cache');
+
 		// キーで指定されたデータを取り出しておく
 		$conditions = $this->Quiz->getResultViewCondition(
 			array('Quiz.key' => $quizKey)

@@ -95,6 +95,9 @@ class QuizAnswersController extends QuizzesAppController {
 		// 親クラスのbeforeFilterを済ませる
 		parent::beforeFilter();
 
+		// CDNキャッシュを作成しない
+		$this->response->header('Pragma', 'no-cache');
+
 		// 現在の表示形態を調べておく
 		list($this->__displayType) = $this->QuizFrameSetting->getQuizFrameSetting(
 			Current::read('Frame.key')
