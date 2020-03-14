@@ -73,7 +73,11 @@ class QuizExport extends QuizzesAppModel {
 		$Plugin = ClassRegistry::init('PluginManager.Plugin');
 		$composer = $Plugin->getComposer('netcommons/quizzes');
 		// 最初のデータは小テストプラグインのバージョン
-		$zipData['version'] = $composer['version'];
+		if (isset($composer['version'])) {
+			$zipData['version'] = $composer['version'];
+		} else {
+			$zipData['version'] = null;
+		}
 
 		// 言語数分
 		$Language = ClassRegistry::init('M17n.Language');
