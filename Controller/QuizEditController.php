@@ -465,7 +465,7 @@ class QuizEditController extends QuizzesAppController {
 		$this->set('isPublished', $isPublished);
 
 		$this->set('quizKey', Hash::get($Quiz, 'Quiz.key'));
-		
+
 		$this->request->data = $Quiz;
 		$this->request->data['Frame'] = Current::read('Frame');
 		$this->request->data['Block'] = Current::read('Block');
