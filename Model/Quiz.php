@@ -354,6 +354,10 @@ class Quiz extends QuizzesAppModel {
 				if (!$this->QuizPage->validates($options)) {
 					$validationErrors['QuizPage'][$pageIndex] = $this->QuizPage->validationErrors;
 				}
+
+				$data = $this->QuizPage->data['QuizPage'];
+				unset($this->QuizPage->data['QuizPage']);
+				$this->data['QuizPage'][$pageIndex] = array_merge($data, $this->QuizPage->data);
 			}
 			$this->validationErrors += $validationErrors;
 		}
@@ -659,15 +663,15 @@ class Quiz extends QuizzesAppModel {
 				$this->setTopicValue('answer_period_end', null);
 			}
 
-			$saveQuiz = $this->save($quiz, false);
+			$saveQuiz = $this->save(null, false);
 			if (! $saveQuiz) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 			$quizId = $this->id;
 
 			// ページ以降のデータを登録
-			$quiz = Hash::insert($quiz, 'QuizPage.{n}.quiz_id', $quizId);
-			if (! $this->QuizPage->saveQuizPage($quiz['QuizPage'])) {
+			$saveQuiz = Hash::insert($saveQuiz, 'QuizPage.{n}.quiz_id', $quizId);
+			if (! $this->QuizPage->saveQuizPage($saveQuiz['QuizPage'])) {
 				throw new InternalErrorException(__d('net_commons', 'Internal Server Error'));
 			}
 			// フレーム内表示対象アンケートに登録する
