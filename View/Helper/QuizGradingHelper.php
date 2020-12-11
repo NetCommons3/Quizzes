@@ -102,7 +102,7 @@ class QuizGradingHelper extends AppHelper {
 				$ret .= sprintf(
 					'%s %s : %s <br />',
 					$this->_getMark(Hash::get($answer, 'answer_correct_status.' . $index)),
-					$question['QuizCorrect'][$index]['correct_label'],
+					h($question['QuizCorrect'][$index]['correct_label']),
 					h($ans)
 				);
 			}
