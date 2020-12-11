@@ -254,6 +254,10 @@ class QuizPage extends QuizzesAppModel {
 					$validationErrors['QuizQuestion'][$qIndex] =
 						$this->QuizQuestion->validationErrors;
 				}
+
+				$data = $this->QuizQuestion->data['QuizQuestion'];
+				unset($this->QuizQuestion->data['QuizQuestion']);
+				$this->data['QuizQuestion'][$qIndex] = array_merge($data, $this->QuizQuestion->data);
 			}
 			$this->validationErrors += $validationErrors;
 		}
