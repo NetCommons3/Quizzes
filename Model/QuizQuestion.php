@@ -389,4 +389,41 @@ class QuizQuestion extends QuizzesAppModel {
 		}
 		return true;
 	}
+
+/**
+ * getAliveCondition
+ * 現在使用中状態であるか判断する。CleanUpプラグインで使用
+ *
+ * @param array $key 
+ * @return array
+ */
+	public function getAliveCondition($key) {
+		return array(
+			'conditions' => array(
+				'QuizQuestion.key' => $key,
+				'OR' => array(
+					'Quiz.is_active' => true,
+					'Quiz.is_latest' => true,
+				),
+			),
+			'joins' => array(
+				array(
+					'table' => 'quiz_pages',
+					'alias' => 'QuizPage',
+					'type' => 'INNER',
+					'conditions' => array(
+						$this->alias . '.quiz_page_id = QuizPage.id'
+					)
+				),
+				array(
+					'table' => 'quizzes',
+					'alias' => 'Quiz',
+					'type' => 'INNER',
+					'conditions' => array(
+						'QuizPage.quiz_id = Quiz.id'
+					)
+				)
+			)
+		);
+	}
 }

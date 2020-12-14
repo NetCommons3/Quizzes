@@ -330,4 +330,33 @@ class QuizPage extends QuizzesAppModel {
 		}
 		return true;
 	}
+
+/**
+ * getAliveCondition
+ * 現在使用中状態であるか判断する。CleanUpプラグインで使用
+ *
+ * @param array $key 
+ * @return array
+ */
+	public function getAliveCondition($key) {
+		return array(
+			'conditions' => array(
+				'QuizPage.key' => $key,
+				'OR' => array(
+					'Quiz.is_active' => true,
+					'Quiz.is_latest' => true,
+				),
+			),
+			'joins' => array(
+				array(
+					'table' => 'quizzes',
+					'alias' => 'Quiz',
+					'type' => 'INNER',
+					'conditions' => array(
+						'QuizPage.quiz_id = Quiz.id'
+					)
+				)
+			)
+		);
+	}
 }
