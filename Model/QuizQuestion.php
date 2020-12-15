@@ -394,7 +394,7 @@ class QuizQuestion extends QuizzesAppModel {
  * getAliveCondition
  * 現在使用中状態であるか判断する。CleanUpプラグインで使用
  *
- * @param array $key 
+ * @param array $key 判断対象のデータのキー
  * @return array
  */
 	public function getAliveCondition($key) {
