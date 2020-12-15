@@ -268,13 +268,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 		$flatQuiz = Hash::flatten($quiz);
 		foreach ($flatQuiz as $key => &$value) {
 			$model = null;
-			if (strpos($key, 'QuizQuestion.') !== false) {
-				$model = $this->QuizQuestion;
-			} elseif (strpos($key, 'QuizPage.') !== false) {
-				$model = $this->QuizPage;
-			} elseif (strpos($key, 'Quiz.') !== false) {
-				$model = $this->Quiz;
-			}
+			$model = $this->__getModelFromDataName($key);
 			if (!$model) {
 				continue;
 			}
@@ -373,13 +367,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 			$flatQuiz = Hash::flatten($q);
 			foreach ($flatQuiz as $key => &$value) {
 				$model = null;
-				if (strpos($key, 'QuizQuestion.') !== false) {
-					$model = $this->QuizQuestion;
-				} elseif (strpos($key, 'QuizPage.') !== false) {
-					$model = $this->QuizPage;
-				} elseif (strpos($key, 'Quiz.') !== false) {
-					$model = $this->Quiz;
-				}
+				$model = $this->__getModelFromDataName($key);
 				if (!$model) {
 					continue;
 				}
@@ -401,7 +389,24 @@ class ActionQuizAdd extends QuizzesAppModel {
 		}
 		return $quizzes;
 	}
-
+/**
+ * __getModelFromDataName
+ *
+ * @param string $keyName データフィールド名の頭の部分（モデル名）
+ * @return Model
+ */
+	private function __getModelFromDataName($keyName) {
+		if (strpos($keyName, 'QuizQuestion.') !== false) {
+			$model = $this->QuizQuestion;
+		} elseif (strpos($keyName, 'QuizPage.') !== false) {
+			$model = $this->QuizPage;
+		} elseif (strpos($keyName, 'Quiz.') !== false) {
+			$model = $this->Quiz;
+		} else {
+			$model = false;
+		}
+		return $model;
+	}
 /**
  * __checkFingerPrint
  *
