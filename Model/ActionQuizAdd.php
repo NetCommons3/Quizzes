@@ -249,7 +249,38 @@ class ActionQuizAdd extends QuizzesAppModel {
 		));
 		// ID値のみクリア
 		$this->clearQuizId($quiz);
+		// Wysiwygエディタ内のファイルの複製処理
+		$quiz = $this->_copyWysiwygFiles($quiz);
+		return $quiz;
+	}
 
+/**
+ * _copyWysiwygFiles 
+ * 
+ * 引数で指定された小テストの中を分析し、
+ * ウィジウィグに設定されているファイルは複製を作ります
+ * 
+ * @param array $quiz 小テストデータ
+ * @return array $quiz 複製を作り終えた小テストデータ
+ */
+	protected function _copyWysiwygFiles($quiz) {
+		$wysiswyg = new WysiwygZip();
+		$flatQuiz = Hash::flatten($quiz);
+		foreach ($flatQuiz as $key => &$value) {
+			$model = null;
+			$model = $this->__getModelFromDataName($key);
+			if (!$model) {
+				continue;
+			}
+			$columnName = substr($key, strrpos($key, '.') + 1);
+			if ($model->hasField($columnName)) {
+				if ($model->getColumnType($columnName) == 'text') {
+					$wysiswygZipFile = $wysiswyg->createWysiwygZip($value);
+					$value = $wysiswyg->getFromWysiwygZip($wysiswygZipFile);
+				}
+			}
+		}
+		$quiz = Hash::expand($flatQuiz);
 		return $quiz;
 	}
 
@@ -336,13 +367,7 @@ class ActionQuizAdd extends QuizzesAppModel {
 			$flatQuiz = Hash::flatten($q);
 			foreach ($flatQuiz as $key => &$value) {
 				$model = null;
-				if (strpos($key, 'QuizQuestion.') !== false) {
-					$model = $this->QuizQuestion;
-				} elseif (strpos($key, 'QuizPage.') !== false) {
-					$model = $this->QuizPage;
-				} elseif (strpos($key, 'Quiz.') !== false) {
-					$model = $this->Quiz;
-				}
+				$model = $this->__getModelFromDataName($key);
 				if (!$model) {
 					continue;
 				}
@@ -364,7 +389,24 @@ class ActionQuizAdd extends QuizzesAppModel {
 		}
 		return $quizzes;
 	}
-
+/**
+ * __getModelFromDataName
+ *
+ * @param string $keyName データフィールド名の頭の部分（モデル名）
+ * @return Model
+ */
+	private function __getModelFromDataName($keyName) {
+		if (strpos($keyName, 'QuizQuestion.') !== false) {
+			$model = $this->QuizQuestion;
+		} elseif (strpos($keyName, 'QuizPage.') !== false) {
+			$model = $this->QuizPage;
+		} elseif (strpos($keyName, 'Quiz.') !== false) {
+			$model = $this->Quiz;
+		} else {
+			$model = false;
+		}
+		return $model;
+	}
 /**
  * __checkFingerPrint
  *
