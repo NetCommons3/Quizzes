@@ -1,12 +1,6 @@
-# Quizzes
+Quizzes
 ==============
 
-Quizzes for NetCommons3
-
-[![Build Status](https://api.travis-ci.org/NetCommons3/Quizzes.png?branch=master)](https://travis-ci.org/NetCommons3/Quizzes)
-[![Coverage Status](https://coveralls.io/repos/NetCommons3/Quizzes/badge.png?branch=master)](https://coveralls.io/r/NetCommons3/Quizzes?branch=master)
-
-| dependencies  | status |
-| ------------- | ------ |
-| composer.json | [![Dependency Status](https://www.versioneye.com/user/projects/(versioneye_project_ID)/badge.png)](https://www.versioneye.com/user/projects/(573071b919f62a000efc072c)) |
-
+[![Tests Status](https://github.com/NetCommons3/Quizzes/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/NetCommons3/Quizzes/actions/workflows/tests.yml)
+[![Coverage Status](https://coveralls.io/repos/NetCommons3/Quizzes/badge.svg?branch=master)](https://coveralls.io/r/NetCommons3/Quizzes?branch=master)
+[![Stable Version](https://img.shields.io/packagist/v/netcommons/quizzes.svg?label=stable)](https://packagist.org/packages/netcommons/quizzes)
