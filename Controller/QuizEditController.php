@@ -425,7 +425,6 @@ class QuizEditController extends QuizzesAppController {
 		if (Current::isSettingMode()) {
 			$urlArray['q_mode'] = 'setting';
 		}
-		$this->log($urlArray, 'debug');
 		return NetCommonsUrl::actionUrl($urlArray);
 	}
 
