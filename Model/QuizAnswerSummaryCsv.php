@@ -14,6 +14,7 @@
 
 App::uses('QuizzesAppModel', 'Quizzes.Model');
 App::uses('QuizAnswerSummary', 'Quizzes.Model');
+App::uses('NetCommonsTime', 'NetCommons.Utility');
 
 /**
  * Summary for QuizAnswerSummary Model
@@ -61,6 +62,13 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 	);
 
 /**
+ * 日時を変換するクラス
+ *
+ * @var NetCommonsTime
+ */
+	private $__NetCommonsTime;
+
+/**
  * Constructor. Binds the model's database table to the object.
  *
  * @param bool|int|string|array $id Set this ID for this model on startup,
@@ -77,6 +85,7 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 			'Quiz' => 'Quizzes.Quiz',
 			'QuizAnswer' => 'Quizzes.QuizAnswer',
 		]);
+		$this->__NetCommonsTime = new NetCommonsTime();
 	}
 
 /**
@@ -301,7 +310,10 @@ class QuizAnswerSummaryCsv extends QuizAnswerSummary {
 
 		$cols = array();
 		$cols[] = $this->_getUserName($quiz, $summary);
-		$cols[] = $summary['QuizAnswerSummaryCsv']['answer_finish_time'];
+		$cols[] = $this->__NetCommonsTime->dateFormat(
+			$summary['QuizAnswerSummaryCsv']['answer_finish_time'],
+			'Y-m-d H:i:s'
+		);
 		$cols[] = $summary['QuizAnswerSummaryCsv']['elapsed_second'];
 		$cols[] = $summary['QuizAnswerSummaryCsv']['answer_number'];
 		$cols[] = $summary['QuizAnswerSummaryCsv']['summary_score'];
